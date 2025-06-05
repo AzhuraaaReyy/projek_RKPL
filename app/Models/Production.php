@@ -44,7 +44,7 @@ class Production extends Model
 
     public function productType()
     {
-        return $this->belongsTo(ProductType::class);
+        return $this->belongsTo(ProductTypes::class);
     }
 
     public function creator()

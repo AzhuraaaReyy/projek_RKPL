@@ -216,7 +216,7 @@
                             </span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Produksi Hari Ini</span>
-                                <span class="info-box-number">150 <small>Roti</small></span>
+                                <span class="info-box-number">{{ $totalProduksiHariIni ?? 0 }} <small>Roti</small></span>
                             </div>
                         </div>
                     </div>
@@ -227,7 +227,7 @@
                             </span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Stok Bahan</span>
-                                <span class="info-box-number">20 <small>Jenis</small></span>
+                                <span class="info-box-number">{{$totalbahanbaku ?? 0}} <small>Jenis</small></span>
                             </div>
                         </div>
                     </div>
@@ -238,7 +238,7 @@
                             </span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Penjualan Hari Ini</span>
-                                <span class="info-box-number">Rp 1.250.000</span>
+                                <span class="info-box-number">{{$totalPenjualan ?? 0}}</span>
                             </div>
                         </div>
                     </div>
@@ -277,11 +277,11 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         const ctx = document.getElementById('produksiChart').getContext('2d');
 
-        // Create enhanced gradient
+        // Fungsi buat gradient warna (optional)
         const createGradient = (ctx, color1, color2) => {
             const gradient = ctx.createLinearGradient(0, 0, 0, 400);
             gradient.addColorStop(0, color1);
@@ -290,49 +290,41 @@
             return gradient;
         };
 
-        // Enhanced data with more realistic production patterns
-        let labels = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00'];
-        let productionData = [185, 192, 178, 225, 208, 195, 215];
-        let targetData = [200, 200, 200, 200, 200, 200, 200];
-
-        const produksiChart = new Chart(ctx, {
+        // Inisialisasi Chart.js tanpa data dulu
+        let produksiChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: labels,
+                labels: [],
                 datasets: [{
-                        label: 'Produksi Aktual',
-                        data: productionData,
-                        backgroundColor: createGradient(ctx, 'rgba(16, 185, 129, 0.8)', 'rgba(16, 185, 129, 0.2)'),
-                        borderColor: '#10b981',
-                        borderWidth: 4,
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 7,
-                        pointBackgroundColor: '#fff',
-                        pointBorderColor: '#10b981',
-                        pointBorderWidth: 3,
-                        pointHoverRadius: 9,
-                        pointHoverBackgroundColor: '#10b981',
-                        pointHoverBorderColor: '#fff',
-                        pointHoverBorderWidth: 3,
-                        pointShadowColor: 'rgba(16, 185, 129, 0.5)',
-                        pointShadowBlur: 10,
-                    },
-                    {
-                        label: 'Target Produksi',
-                        data: targetData,
-                        backgroundColor: 'transparent',
-                        borderColor: '#ef4444',
-                        borderWidth: 3,
-                        borderDash: [8, 4],
-                        fill: false,
-                        tension: 0,
-                        pointRadius: 0,
-                        pointHoverRadius: 6,
-                        pointHoverBackgroundColor: '#ef4444',
-                        pointHoverBorderColor: '#fff',
-                    }
-                ]
+                    label: 'Produksi Aktual',
+                    data: [],
+                    backgroundColor: createGradient(ctx, 'rgba(16, 185, 129, 0.8)', 'rgba(16, 185, 129, 0.2)'),
+                    borderColor: '#10b981',
+                    borderWidth: 4,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 7,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#10b981',
+                    pointBorderWidth: 3,
+                    pointHoverRadius: 9,
+                    pointHoverBackgroundColor: '#10b981',
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 3,
+                }, {
+                    label: 'Target Produksi',
+                    data: [],
+                    backgroundColor: 'transparent',
+                    borderColor: '#ef4444',
+                    borderWidth: 3,
+                    borderDash: [8, 4],
+                    fill: false,
+                    tension: 0,
+                    pointRadius: 0,
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: '#ef4444',
+                    pointHoverBorderColor: '#fff',
+                }]
             },
             options: {
                 responsive: true,
@@ -346,15 +338,8 @@
                     }
                 },
                 animation: {
-                    duration: 2500,
+                    duration: 1500,
                     easing: 'easeInOutCubic',
-                    onProgress: function(animation) {
-                        const progress = animation.currentStep / animation.numSteps;
-                        if (progress > 0.8) {
-                            this.data.datasets[0].pointRadius = 7 + Math.sin(Date.now() / 300) * 1.5;
-                            this.update('none');
-                        }
-                    }
                 },
                 interaction: {
                     intersect: false,
@@ -397,7 +382,6 @@
                                 const value = context.formattedValue;
                                 const target = 200;
                                 let label = context.dataset.label + ': ' + value + ' pcs';
-
                                 if (context.dataset.label === 'Produksi Aktual') {
                                     const percentage = ((context.raw / target) * 100).toFixed(1);
                                     const status = context.raw >= target ? '✅' : '⚠️';
@@ -412,7 +396,7 @@
                     y: {
                         beginAtZero: false,
                         suggestedMin: 150,
-                        suggestedMax: 250,
+                        suggestedMax: 280,
                         grid: {
                             color: 'rgba(148, 163, 184, 0.2)',
                             lineWidth: 1
@@ -424,9 +408,7 @@
                                 weight: '600',
                                 family: "'Inter', sans-serif"
                             },
-                            callback: function(value) {
-                                return value + ' pcs';
-                            },
+                            callback: (value) => value + ' pcs',
                             padding: 10
                         }
                     },
@@ -447,6 +429,61 @@
                 }
             }
         });
+
+        let lastDataHash = null;
+
+        function hashData(data) {
+            return JSON.stringify(data);
+        }
+
+        function fetchDataAndUpdateChart() {
+            axios.get('/api/production-stats').then(res => {
+                let labels = res.data.labels;
+                let actual = res.data.actual;
+                let target = res.data.target;
+
+                // Gabungkan jadi objek array supaya mudah di-sort
+                const combinedData = labels.map((label, idx) => ({
+                    label,
+                    actual: actual[idx],
+                    target: target[idx]
+                }));
+
+                // Urutkan ascending berdasarkan tanggal (label)
+                combinedData.sort((a, b) => new Date(a.label) - new Date(b.label));
+
+                // Pisahkan kembali
+                labels = combinedData.map(item => item.label);
+                actual = combinedData.map(item => item.actual);
+                target = combinedData.map(item => item.target);
+
+                const currentHash = hashData({
+                    labels,
+                    actual,
+                    target
+                });
+
+                if (currentHash === lastDataHash) {
+                    return;
+                }
+
+                lastDataHash = currentHash;
+
+                produksiChart.data.labels = labels;
+                produksiChart.data.datasets[0].data = actual;
+                produksiChart.data.datasets[1].data = target;
+                produksiChart.update();
+            }).catch(error => {
+                console.error('Error fetching production stats:', error);
+            });
+        }
+
+
+        // Load data pertama kali
+        fetchDataAndUpdateChart();
+
+        // Update data setiap 10 detik
+        setInterval(fetchDataAndUpdateChart, 10000);
 
         // Enhanced sidebar toggle
         document.addEventListener('DOMContentLoaded', function() {
@@ -612,88 +649,7 @@
         });
 
         // Enhanced real-time date and time updates
-        const updateDateTime = () => {
-            const now = new Date();
 
-            const timeOptions = {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false
-            };
-            const timeString = now.toLocaleTimeString('id-ID', timeOptions);
-
-            const dateOptions = {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            };
-            const dateString = now.toLocaleDateString('id-ID', dateOptions);
-
-            const timeElement = document.getElementById('currentTime');
-            const dateElement = document.getElementById('currentDate');
-
-            if (timeElement) {
-                timeElement.textContent = timeString;
-                // Add subtle glow effect every minute
-                if (now.getSeconds() === 0) {
-                    timeElement.style.textShadow = '0 0 10px rgba(99, 102, 241, 0.5)';
-                    setTimeout(() => {
-                        timeElement.style.textShadow = 'none';
-                    }, 1000);
-                }
-            }
-            if (dateElement) dateElement.textContent = dateString;
-        };
-
-        updateDateTime();
-        setInterval(updateDateTime, 1000);
-
-        // Enhanced chart data updates with more realistic patterns
-        let updateCounter = 0;
-        const updateChart = () => {
-            updateCounter++;
-
-            const now = new Date();
-            const hours = now.getHours();
-            const minutes = now.getMinutes();
-            const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-
-            // More sophisticated production simulation
-            const baseProduction = 200;
-            const timeOfDayFactor = Math.sin(((hours - 6) / 12) * Math.PI) * 30; // Peak around noon
-            const randomVariation = (Math.random() - 0.5) * 40;
-            const trendFactor = Math.sin(updateCounter / 15) * 15; // Longer trend cycles
-
-            const newProductionValue = Math.max(150, Math.min(280,
-                baseProduction + timeOfDayFactor + randomVariation + trendFactor
-            ));
-
-            // Smooth data transition
-            produksiChart.data.labels.push(timeString);
-            produksiChart.data.labels.shift();
-
-            produksiChart.data.datasets[0].data.push(Math.round(newProductionValue));
-            produksiChart.data.datasets[0].data.shift();
-
-            produksiChart.data.datasets[1].data.push(200);
-            produksiChart.data.datasets[1].data.shift();
-
-            // Enhanced update animation
-            produksiChart.update('active');
-
-            // Special effects every 10 updates
-            if (updateCounter % 10 === 0) {
-                produksiChart.data.datasets[0].borderWidth = 6;
-                produksiChart.data.datasets[0].pointRadius = 9;
-                setTimeout(() => {
-                    produksiChart.data.datasets[0].borderWidth = 4;
-                    produksiChart.data.datasets[0].pointRadius = 7;
-                    produksiChart.update('none');
-                }, 300);
-            }
-        };
 
         // Start updates with variable intervals for more natural feel
         const startEnhancedUpdates = () => {
