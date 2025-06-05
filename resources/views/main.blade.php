@@ -17,12 +17,822 @@
     <!-- Animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
-    @include('lib.ext_css')
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --info: #06b6d4;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            --gradient-success: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            --gradient-info: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            --gradient-warning: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --shadow-light: 0 8px 32px rgba(31, 38, 135, 0.37);
+            --shadow-dark: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Glass morphism effect */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+        }
+
+        /* Sidebar Styling */
+        .main-sidebar {
+            background: rgba(30, 41, 59, 0.95) !important;
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow-dark);
+            transition: var(--transition);
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1037;
+        }
+
+        .brand-link {
+            background: var(--gradient-primary) !important;
+            color: white !important;
+            border: none !important;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+        }
+
+        .brand-link::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: var(--transition);
+            pointer-events: none;
+        }
+
+        .brand-link:hover::before {
+            animation: shine 0.8s ease-in-out;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
+        }
+
+        .brand-text {
+            font-size: 1.4rem !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-toggle-btn {
+            background: rgba(255, 255, 255, 0.2) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            border-radius: 50% !important;
+            width: 36px !important;
+            height: 36px !important;
+            transition: var(--transition) !important;
+            backdrop-filter: blur(10px);
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1000;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.3) !important;
+            transform: translateY(-50%) scale(1.1) !important;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .sidebar-toggle-btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5);
+        }
+
+        /* User Panel */
+        .user-panel {
+            padding: 1.5rem !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        .user-panel .image img {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            transition: var(--transition);
+            width: 45px;
+            height: 45px;
+        }
+
+        .user-panel:hover .image img {
+            border-color: var(--primary);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+        }
+
+        .user-panel .info a {
+            color: #f1f5f9 !important;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .user-panel .info a:hover {
+            color: var(--primary) !important;
+            text-decoration: none;
+        }
+
+        /* Navigation */
+        .nav-sidebar .nav-item .nav-link {
+            color: #cbd5e1 !important;
+            border-radius: 12px;
+            margin: 0.3rem 1rem;
+            transition: var(--transition);
+            padding: 0.8rem 1rem;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .nav-sidebar .nav-item .nav-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 4px;
+            height: 0;
+            background: var(--primary);
+            border-radius: 0 4px 4px 0;
+            transition: var(--transition);
+            transform: translateY(-50%);
+        }
+
+        .nav-sidebar .nav-item .nav-link:hover {
+            background: rgba(99, 102, 241, 0.15) !important;
+            color: #ffffff !important;
+            transform: translateX(8px);
+        }
+
+        .nav-sidebar .nav-item .nav-link:hover::before {
+            height: 20px;
+        }
+
+        .nav-sidebar .nav-item .nav-link.active {
+            background: var(--gradient-primary) !important;
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            transform: translateX(8px);
+        }
+
+        .nav-sidebar .nav-item .nav-link.active::before {
+            height: 20px;
+        }
+
+        .nav-icon {
+            transition: var(--transition);
+            margin-right: 0.75rem !important;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-link:hover .nav-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        /* Treeview */
+        .nav-treeview {
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
+            margin: 0.3rem 1rem;
+            backdrop-filter: blur(10px);
+            display: none;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item.menu-open .nav-treeview {
+            display: block;
+        }
+
+        .nav-treeview .nav-link {
+            padding-left: 3rem !important;
+            font-size: 0.9rem;
+            margin: 0.2rem 0.5rem;
+        }
+
+        .nav-item.has-treeview .right {
+            transition: transform 0.3s ease;
+        }
+
+        .nav-item.menu-open .right {
+            transform: rotate(-90deg);
+        }
+
+        /* Logout Button */
+        .sidebar-logout {
+            margin-top: auto;
+            padding: 1.5rem;
+        }
+
+        .sidebar-logout .btn {
+            background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+            border: none !important;
+            border-radius: 25px !important;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+            width: 100%;
+        }
+
+        .sidebar-logout .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+            background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+        }
+
+        /* Content Wrapper */
+        .content-wrapper {
+            margin-left: 250px !important;
+            transition: var(--transition) !important;
+            background: transparent !important;
+            min-height: 100vh;
+        }
+
+        body.sidebar-collapse .content-wrapper {
+            margin-left: 4.6rem !important;
+        }
+
+        /* Sidebar collapse styles */
+        body.sidebar-collapse .main-sidebar {
+            width: 4.6rem !important;
+        }
+
+        body.sidebar-collapse .brand-text {
+            display: none;
+        }
+
+        body.sidebar-collapse .brand-link {
+            padding: 1.5rem 0.75rem !important;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+        }
+
+        body.sidebar-collapse .brand-link:hover {
+            background: linear-gradient(135deg, #7c3aed, #8b5cf6) !important;
+        }
+
+        body.sidebar-collapse .brand-link::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 4px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 2px;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            50% {
+                opacity: 1;
+            }
+
+            51%,
+            100% {
+                opacity: 0.3;
+            }
+        }
+
+        body.sidebar-collapse .sidebar-toggle-btn {
+            position: absolute !important;
+            right: 8px !important;
+            left: auto !important;
+            transform: translateY(-50%) !important;
+            top: 50% !important;
+            width: 32px !important;
+            height: 32px !important;
+            z-index: 999;
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            background: rgba(255, 255, 255, 0.3) !important;
+        }
+
+        body.sidebar-collapse .nav-sidebar .nav-link p {
+            display: none;
+        }
+
+        body.sidebar-collapse .nav-sidebar .nav-link {
+            width: calc(4.6rem - 1rem);
+            text-align: center;
+            padding: 0.8rem 0;
+            margin: 0.3rem 0.5rem;
+        }
+
+        body.sidebar-collapse .nav-icon {
+            margin-right: 0 !important;
+        }
+
+        body.sidebar-collapse .user-panel .info {
+            display: none;
+        }
+
+        body.sidebar-collapse .user-panel {
+            padding: 1rem 0.5rem !important;
+            justify-content: center;
+        }
+
+        body.sidebar-collapse .sidebar-logout {
+            padding: 1rem 0.5rem;
+        }
+
+        body.sidebar-collapse .sidebar-logout .btn {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border-radius: 50% !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        body.sidebar-collapse .sidebar-logout .btn i {
+            margin-right: 0 !important;
+        }
+
+        body.sidebar-collapse .sidebar-logout .btn span {
+            display: none;
+        }
+
+        body.sidebar-collapse .nav-treeview {
+            display: none;
+        }
+
+        /* Content Header */
+        .content-header {
+            background: rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(20px);
+            color: white !important;
+            border-radius: 0 0 24px 24px !important;
+            margin: 0 1rem 2rem 1rem !important;
+            padding: 2.5rem !important;
+            box-shadow: var(--shadow-light);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            pointer-events: none;
+        }
+
+        .content-header h1 {
+            font-size: 2.5rem !important;
+            font-weight: 800 !important;
+            margin: 0 !important;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 2;
+        }
+
+        .content-header small {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 500;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header-info-box {
+            background: rgba(255, 255, 255, 0.2) !important;
+            backdrop-filter: blur(15px);
+            border-radius: 16px !important;
+            padding: 1rem !important;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: var(--transition);
+            position: relative;
+            z-index: 2;
+        }
+
+        .header-info-box:hover {
+            background: rgba(255, 255, 255, 0.25) !important;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Content */
+        .content {
+            padding: 0 2rem 2rem 2rem;
+        }
+
+        /* Info Boxes */
+        .info-box {
+            border-radius: 20px !important;
+            box-shadow: var(--shadow-light) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            transition: var(--transition) !important;
+            overflow: hidden;
+            position: relative;
+            backdrop-filter: blur(15px);
+            margin-bottom: 1.5rem;
+        }
+
+        .info-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: var(--transition);
+            pointer-events: none;
+        }
+
+        .info-box:hover::before {
+            animation: shine 0.8s ease-in-out;
+        }
+
+        .info-box:hover {
+            transform: translateY(-8px) !important;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .info-box-icon {
+            border-radius: 20px 0 20px 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 2.2rem !important;
+            width: 100px !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-box-content {
+            padding: 1.5rem !important;
+            color: white;
+        }
+
+        .info-box-text {
+            font-size: 0.9rem !important;
+            font-weight: 600 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-box-number {
+            font-size: 2rem !important;
+            font-weight: 800 !important;
+            margin-top: 0.5rem !important;
+        }
+
+        .bg-success {
+            background: linear-gradient(135deg, #10b981, #059669) !important;
+        }
+
+        .bg-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+        }
+
+        .bg-info {
+            background: linear-gradient(135deg, #06b6d4, #0891b2) !important;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-light);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            margin: 2rem 1rem;
+        }
+
+        .chart-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            pointer-events: none;
+        }
+
+        .chart-wrapper {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+            backdrop-filter: blur(10px);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .chart-title {
+            color: var(--dark);
+            font-weight: 800;
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .chart-stats {
+            position: absolute;
+            top: 2.5rem;
+            right: 2.5rem;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 0.8rem 1.2rem;
+            border-radius: 25px;
+            box-shadow: var(--shadow-light);
+            z-index: 3;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .pulse-dot {
+            width: 12px;
+            height: 12px;
+            background: var(--success);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+                transform: scale(1);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+                transform: scale(1.05);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+                transform: scale(1);
+            }
+        }
+
+        /* Footer */
+        .main-footer {
+            background: rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
+            color: white !important;
+            padding: 1.5rem !important;
+            margin: 2rem 1rem 0 1rem;
+            border-radius: 20px 20px 0 0;
+            font-weight: 500;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content-wrapper {
+                margin-left: 0 !important;
+            }
+
+            .main-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            body.sidebar-open .main-sidebar {
+                transform: translateX(0);
+            }
+
+            body.sidebar-collapse .main-sidebar {
+                transform: translateX(-100%);
+            }
+
+            .content-header {
+                border-radius: 0 !important;
+                margin: 0 0 2rem 0 !important;
+            }
+
+            .content-header h1 {
+                font-size: 2rem !important;
+            }
+
+            .content {
+                padding: 0 1rem 2rem 1rem;
+            }
+
+            .chart-container {
+                margin: 2rem 0;
+                padding: 1.5rem;
+            }
+
+            .chart-stats {
+                position: static;
+                margin-bottom: 1rem;
+                display: inline-block;
+                width: auto;
+            }
+
+            .info-box .info-box-icon {
+                width: 80px !important;
+                font-size: 1.8rem !important;
+            }
+
+            .main-footer {
+                margin: 2rem 0 0 0;
+                border-radius: 0;
+            }
+
+            /* Mobile menu button */
+            .mobile-menu-btn {
+                display: block;
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+                z-index: 1050;
+                background: var(--gradient-primary);
+                border: none;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                color: white;
+                font-size: 1.2rem;
+                box-shadow: var(--shadow-dark);
+                transition: var(--transition);
+            }
+
+            .mobile-menu-btn:hover {
+                transform: scale(1.1);
+                box-shadow: var(--shadow-light);
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-menu-btn {
+                display: none;
+            }
+        }
+
+        /* Scrollbar Styling */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            transition: var(--transition);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Enhanced animations */
+        .animate__fadeInDown {
+            animation-duration: 0.8s;
+        }
+
+        .animate__fadeInUp {
+            animation-duration: 0.8s;
+        }
+
+        .animate__delay-1s {
+            animation-delay: 0.3s;
+        }
+
+        /* Loading animation for chart */
+        .chart-loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 400px;
+            font-size: 1.2rem;
+            color: var(--text-light);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(99, 102, 241, 0.3);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 1rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Tooltip enhancements */
+        .tooltip-inner {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* Button enhancements */
+        .btn {
+            font-weight: 600;
+            transition: var(--transition);
+            border-radius: 12px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 
 <body class="hold-transition sidebar-mini">
     <div class="wrapper">
-
+        @if(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+        @endif
         <!-- Mobile Menu Button -->
         <button class="mobile-menu-btn d-md-none" id="mobileMenuBtn">
             <i class="fas fa-bars"></i>
@@ -62,19 +872,19 @@
                         </li>
 
                         <li class="nav-item has-treeview">
-                            <a href="/monitoring" class="nav-link">
+                            <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-boxes"></i>
                                 <p>Bahan Baku<i class="right fas fa-angle-left"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="/inputProduksiBahanBaku" class="nav-link">
+                                    <a href="#" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Input Produksi</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="/riwayatBahanBaku" class="nav-link">
+                                    <a href="#" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Riwayat Produksi</p>
                                     </a>
@@ -89,13 +899,13 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="/produksiRoti" class="nav-link">
+                                    <a href="#" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Input Produksi</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="/riwayatProduksiRoti" class="nav-link">
+                                    <a href="#" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Riwayat Produksi</p>
                                     </a>
@@ -104,19 +914,19 @@
                         </li>
 
                         <li class="nav-item has-treeview">
-                            <a href="/laporan" class="nav-link">
+                            <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-chart-line"></i>
                                 <p>Laporan<i class="right fas fa-angle-left"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="/laporanstok" class="nav-link">
+                                    <a href="#" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Laporan Stok</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="laporanproduksi" class="nav-link">
+                                    <a href="#" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Laporan Produksi</p>
                                     </a>
@@ -125,27 +935,27 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="/pengeluaran" class="nav-link">
+                            <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-wallet"></i>
                                 <p>Pengeluaran</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="/penjualan" class="nav-link">
+                            <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-receipt"></i>
                                 <p>Penjualan</p>
                             </a>
                         </li>
 
                         <li class="nav-item has-treeview">
-                            <a href="/customer" class="nav-link">
+                            <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-users-cog"></i>
                                 <p>Manajemen User<i class="right fas fa-angle-left"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="/customer" class="nav-link">
+                                    <a href="#" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Hak Akses</p>
                                     </a>
@@ -170,102 +980,7 @@
         </aside>
 
         <!-- Content Wrapper -->
-        <div class="content-wrapper">
-            <!-- Content Header -->
-            <div class="content-header animate__animated animate__fadeInDown">
-                <div class="container-fluid">
-                    <div class="row align-items-center">
-                        <div class="col-lg-6 col-md-12">
-                            <h1>Dashboard</h1>
-                            <small>Selamat datang kembali di Galaxy Bakery!</small>
-                        </div>
-                        <div class="col-lg-6 col-md-12">
-                            <div class="row mt-3 mt-lg-0">
-                                <div class="col-12 mb-2">
-                                    <div class="header-info-box text-center">
-                                        <i class="fas fa-user-circle mr-2"></i>
-                                        <span class="font-weight-bold">{{ Auth::user()->name }}</span>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="header-info-box text-center">
-                                        <i class="fas fa-clock mr-2"></i>
-                                        <div class="font-weight-bold" id="currentTime">21:34:22</div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="header-info-box text-center">
-                                        <i class="fas fa-calendar-alt mr-2"></i>
-                                        <div class="small" id="currentDate">Selasa, 3 Juni 2025</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Main Content -->
-            <div class="content">
-                <!-- Info Boxes -->
-                <div class="row animate__animated animate__fadeInUp">
-                    <div class="col-lg-4 col-md-6 col-sm-12">
-                        <div class="info-box bg-success">
-                            <span class="info-box-icon">
-                                <i class="fas fa-bread-slice"></i>
-                            </span>
-                            <div class="info-box-content">
-                                <span class="info-box-text">Produksi Hari Ini</span>
-                                <span class="info-box-number">150 <small>Roti</small></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-sm-12">
-                        <div class="info-box bg-warning">
-                            <span class="info-box-icon">
-                                <i class="fas fa-boxes"></i>
-                            </span>
-                            <div class="info-box-content">
-                                <span class="info-box-text">Stok Bahan</span>
-                                <span class="info-box-number">20 <small>Jenis</small></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-sm-12">
-                        <div class="info-box bg-info">
-                            <span class="info-box-icon">
-                                <i class="fas fa-receipt"></i>
-                            </span>
-                            <div class="info-box-content">
-                                <span class="info-box-text">Penjualan Hari Ini</span>
-                                <span class="info-box-number">Rp 1.250.000</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Chart Section -->
-                <div class="row animate__animated animate__fadeInUp animate__delay-1s">
-                    <div class="col-12">
-                        <div class="chart-container">
-                            <div class="chart-stats">
-                                <span class="pulse-dot"></span>
-                                <small class="text-success font-weight-bold">Live Data</small>
-                            </div>
-                            <div class="chart-wrapper">
-                                <h3 class="chart-title">
-                                    <i class="fas fa-chart-line text-primary"></i>
-                                    Statistik Produksi Real-time
-                                </h3>
-                                <div style="position: relative; height: 400px; width: 100%;">
-                                    <canvas id="produksiChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        @yield('content-header')
 
         <!-- Footer -->
         <footer class="main-footer text-center">
