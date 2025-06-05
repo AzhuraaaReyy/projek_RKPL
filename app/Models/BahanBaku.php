@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+
 class BahanBaku extends Model
 {
     use HasFactory;
@@ -74,7 +75,7 @@ class BahanBaku extends Model
     }
     public function productTypes()
     {
-        return $this->belongsToMany(ProductType::class, 'product_type_raw_material', 'bahan_baku_id', 'product_type_id')
+        return $this->belongsToMany(ProductTypes::class, 'product_type_raw_material', 'bahan_baku_id', 'product_type_id')
             ->withPivot('quantity_per_unit')
             ->withTimestamps();
     }
