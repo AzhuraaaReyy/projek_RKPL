@@ -68,8 +68,9 @@ class expenseTableController extends Controller
         }
     }
 
-    public function show($id){
+    public function show($id)
+    {
         $expenses = Expenses::findOrFail($id);
-        return view('',compact('expenses'));
+        return view('', compact('expenses'));
     }
 }

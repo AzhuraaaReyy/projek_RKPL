@@ -43,6 +43,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/customer', [CustomersController::class, 'index'])->name('customers');
     Route::get('/pengeluaran', [expenseCategoriesController::class, 'index']);
     Route::get('/penjualan', [SalesTableController::class, 'index']);
+   
+    Route::post('/penjualan', [SalesTableController::class, 'store'])->name('sale');
     Route::get('/produksiRoti', [ProductionsController::class, 'index'])->name('productions');
     Route::get('/riwayatBahanBaku', [stokMovementsController::class, 'index']);
 });

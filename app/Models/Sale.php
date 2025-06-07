@@ -19,7 +19,6 @@ class Sale extends Model
     protected $fillable = [
         'sale_date',
         'customer_id',
-        'customer_name',
         'total_amount',
         'payment_method',
         'payment_status',
@@ -54,8 +53,13 @@ class Sale extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function salesItems()
+    public function saleItem()
     {
-        return $this->hasMany(SalesItems::class, 'sale_id');
+        return $this->hasMany(SaleItem::class, 'sale_id');
+    }
+
+     public function productType()
+    {
+        return $this->belongsTo(ProductType::class);
     }
 }

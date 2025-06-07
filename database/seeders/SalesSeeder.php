@@ -13,7 +13,6 @@ class SalesSeeder extends Seeder
             [
                 'sale_date' => now(),
                 'customer_id' => null,
-                'customer_name' => 'Umum',
                 'total_amount' => 50000,
                 'payment_method' => 'cash',
                 'payment_status' => 'paid',

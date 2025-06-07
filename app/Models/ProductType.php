@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ProductTypes extends Model
+class ProductType extends Model
 {
     use HasFactory;
 
@@ -28,9 +28,9 @@ class ProductTypes extends Model
         return $this->hasMany(Sale::class, 'product_type_id');
     }
 
-    public function salesItems()
+    public function saleItem()
     {
-        return $this->hasMany(SalesItems::class, 'product_type_id');
+        return $this->hasMany(SaleItem::class, 'product_type_id');
     }
     public function production()
     {
@@ -40,7 +40,7 @@ class ProductTypes extends Model
 
     public function bahanBaku()
     {
-        return $this->belongsToMany(BahanBaku::class, 'product_type_raw_material', 'product_type_id', 'raw_material_id')
+        return $this->belongsToMany(BahanBaku::class, 'product_type_raw_material', 'product_type_id', 'bahan_baku_id')
             ->withPivot('quantity_per_unit')
             ->withTimestamps();
     }
