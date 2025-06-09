@@ -71,7 +71,7 @@ class BahanBaku extends Model
 
     public function stokMovements()
     {
-        return $this->hashMany(StokMovements::class, 'bahan_baku_id');
+        return $this->hasMany(StokMovements::class, 'bahan_baku_id');
     }
     public function productTypes()
     {

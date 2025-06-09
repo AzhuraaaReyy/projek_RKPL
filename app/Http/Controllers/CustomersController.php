@@ -15,6 +15,13 @@ class CustomersController extends Controller
         return view('manajemen_customer', compact('customers'));
     }
 
+    public function form_customers()
+    {
+        $customers = Customers::orderBy('name')->get();
+
+        return view('form.create_customer', compact('customers'));
+    }
+
     public function addCustomer(Request $request)
     {
         $request->validate([
@@ -29,7 +36,7 @@ class CustomersController extends Controller
             'address' => $request->address,
             'is_active' => false,
         ]);
-        return redirect()->route('customers')->with('Success', 'Data Berhasil ditambahkan');
+        return redirect()->route('sale')->with('Success', 'Data Berhasil ditambahkan');
     }
     public function update(Request $request, $id)
     {

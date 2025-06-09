@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BahanBaku;
 use App\Models\Production;
+use App\Models\ProductType;
 use Illuminate\Http\Request;
 
 class ProductionsController extends Controller
@@ -13,7 +15,20 @@ class ProductionsController extends Controller
         $productions = Production::all();
         return view('inputProduksiRoti', compact('productions'));
     }
+    public function formproduksi()
+    {
+        $productions = Production::all();
+        $producType = ProductType::all();
+        $bahanBakus = BahanBaku::all();
+        return view('form.create_produksi', compact('productions', 'producType', 'bahanBakus'));
+    }
 
+    public function formproduk()
+    {
+        $productType = ProductType::orderBy('name')->get();
+        $bahanBakus = BahanBaku::all();
+        return view('form.create_produk', compact('productType', 'bahanBakus'));
+    }
     public function store(Request $request)
     {
         $request->validate([
@@ -22,10 +37,12 @@ class ProductionsController extends Controller
             'quantity_produced' => 'required|numeric',
             'batch_number' => 'required|string',
             'production_cost' => 'required|numeric',
-            'notes' => 'required|string',
+            'notes' => 'nullable|string',
             'status' => 'required|string',
         ]);
-        Production::create([
+
+        // Simpan data produksi
+        $production = Production::create([
             'production_date' => $request->production_date,
             'product_type_id' => $request->product_type_id,
             'quantity_produced' => $request->quantity_produced,
@@ -33,9 +50,11 @@ class ProductionsController extends Controller
             'production_cost' => $request->production_cost,
             'notes' => $request->notes,
             'status' => $request->status,
+            'created_by' => auth()->id(),
         ]);
-        return redirect()->route('productions')->with('success', 'Data Berhasil Ditambahkan');
+        return redirect()->route('productions')->with('success', 'Data produksi dan relasi bahan baku berhasil disimpan.');
     }
+
 
     public function update(Request $request, $id)
     {
@@ -77,5 +96,33 @@ class ProductionsController extends Controller
     {
         $production = Production::findOrFail($id);
         return view('', compact('productions'));
+    }
+
+    public function pivotStore(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|max:255',
+            'description' => 'required|string',
+            'bahan_baku_id' => 'array',
+            'quantity_per_unit' => 'array',
+        ]);
+
+        $productType = ProductType::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'estimated_production_time' => $request->estimated_production_time
+        ]);
+
+        if ($request->filled('bahan_baku_id')) {
+            foreach ($request->bahan_baku_id as $bahanBakuId) {
+                $qty = $request->quantity_per_unit[$bahanBakuId] ?? 0;
+
+                $productType->bahanBaku()->attach($bahanBakuId, [
+                    'quantity_per_unit' => $qty,
+                ]);
+            }
+        }
+
+        return redirect()->route('productions')->with('success', 'Produk berhasil ditambahkan');
     }
 }

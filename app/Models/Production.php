@@ -51,4 +51,43 @@ class Production extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+
+    protected static function booted()
+    {
+        static::created(function ($production) {
+            if ($production->status === 'completed') {
+                $production->reduceRawMaterials();
+            }
+        });
+
+        static::updated(function ($production) {
+            if ($production->isDirty('status') && $production->status === 'completed') {
+                $production->reduceRawMaterials();
+            }
+        });
+    }
+    public function reduceRawMaterials()
+    {
+        $productType = $this->productType;
+
+        foreach ($productType->bahanBaku as $bahanBaku) {
+            $totalDigunakan = $bahanBaku->pivot->quantity_per_unit * $this->quantity_produced;
+
+            $bahanBaku->stok -= $totalDigunakan;
+            $bahanBaku->save();
+
+            \App\Models\StokMovements::create([
+                'bahan_baku_id' => $bahanBaku->id,
+                'movement_type' => 'out',
+                'quantity' => $totalDigunakan,
+                'remaining_stock' => $bahanBaku->stok,
+                'reference_type' => 'production',
+                'reference_id' => $this->id,
+                'notes' => 'Pengurangan stok karena produksi',
+                'movement_date' => now(),
+                'created_by' => auth()->id() ?? null,
+            ]);
+        }
+    }
 }

@@ -21,6 +21,12 @@
     </div>
     @endif
 
+    <a href="/customer" class="btn btn-sm btn-primary">
+        <i class="fas fa-plus"></i> Tambah customer
+    </a>
+
+    <hr>
+
     <form action="{{ route('sale') }}" method="POST">
         @csrf
 

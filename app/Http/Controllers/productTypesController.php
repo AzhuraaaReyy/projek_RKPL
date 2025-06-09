@@ -14,6 +14,7 @@ class productTypesController extends Controller
         $productType = ProductType::orderBy('name')->get();
         return view('inputProduksiRoti', compact('productType'));
     }
+    
 
     public function store(Request $request)
     {
@@ -28,7 +29,7 @@ class productTypesController extends Controller
             'estimated_production_time' => $request->estimated_production_time,
             'is_active' => false,
         ]);
-        return redirect()->route('productType')->with('success', 'Berhasil menambahkan Data');
+        return redirect()->route('form.produksi')->with('success', 'Berhasil menambahkan Data');
     }
 
     public function update(Request $request, $id)

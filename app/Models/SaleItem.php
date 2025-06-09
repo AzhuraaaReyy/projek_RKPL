@@ -29,12 +29,6 @@ class SaleItem extends Model
         'created_at' => 'datetime'
     ];
 
-    protected static function booted()
-    {
-        static::created(function ($item) {
-            $item->reduceBahanBakuStock();
-        });
-    }
 
     public function sale()
     {
@@ -46,27 +40,5 @@ class SaleItem extends Model
         return $this->belongsTo(ProductType::class);
     }
 
-    public function reduceBahanBakuStock()
-    {
-        $productType = $this->productType;
-
-        foreach ($productType->bahanBaku as $bahanBaku) {
-            $usedQuantity = $bahanBaku->pivot->quantity_per_unit * $this->quantity;
-
-            $bahanBaku->stok -= $usedQuantity;
-            $bahanBaku->save();
-
-            StokMovements::create([
-                'bahan_baku_id' => $bahanBaku->id,
-                'movement_type' => 'out',
-                'quantity' => $usedQuantity,
-                'remaining_stock' => $bahanBaku->stok,
-                'reference_type' => self::class,
-                'reference_id' => $this->id,
-                'notes' => 'Pengurangan stok karena penjualan',
-                'movement_date' => now(),
-                'created_by' => auth()->id() ?? null,
-            ]);
-        }
-    }
+   
 }

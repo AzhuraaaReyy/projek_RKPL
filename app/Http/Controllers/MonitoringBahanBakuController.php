@@ -13,10 +13,19 @@ class MonitoringBahanBakuController extends Controller
     public function index()
     {
         // Ambil semua data bahan baku
-        $bahanBakus = BahanBaku::orderBy('nama')->get();
+        $bahanBakus = BahanBaku::all();
 
         // Kirim ke view monitoring/stok.blade.php
-        return view('monitoring.stok', compact('bahanBakus'));
+        return view('inputProduksiBahanBaku', compact('bahanBakus'));
+    }
+
+    public function formBahanBaku()
+    {
+        // Ambil semua data bahan baku
+        $bahan = BahanBaku::orderBy('nama')->get();
+
+        // Kirim ke view monitoring/stok.blade.php
+        return view('form.create_bahanBaku', compact('bahan'));
     }
 
     public function addbahan(Request $request)
@@ -29,6 +38,8 @@ class MonitoringBahanBakuController extends Controller
             'minimum_stok' => 'required|numeric',
             'tanggal_masuk' => 'required|date',
             'tanggal_kedaluwarsa' => 'required|date',
+            'harga' => 'required|numeric',
+            'deskripsi' => 'required|string',
         ]);
         BahanBaku::create([
             'nama' => $request->nama,
@@ -38,9 +49,11 @@ class MonitoringBahanBakuController extends Controller
             'minimum_stok' => $request->minimum_stok,
             'tanggal_masuk' => $request->tanggal_masuk,
             'tanggal_kedaluwarsa' => $request->tanggal_kedaluwarsa,
+            'harga' => $request->harga,
+            'deskripsi' => $request->deskripsi,
         ]);
 
-        return redirect()->route('bahanBakus')->with('success', 'Data berhasil di tambahkan');
+        return redirect()->route('inputbahan')->with('success', 'Data berhasil di tambahkan');
     }
     public function update(Request $request, $id)
     {
@@ -53,6 +66,8 @@ class MonitoringBahanBakuController extends Controller
             'minimum_stok' => 'required|numeric',
             'tanggal_masuk' => 'required|date',
             'tanggal_kedaluwarsa' => 'required|date',
+            'harga' => 'required|numeric',
+            'deskripsi' => 'required|string',
         ]);
 
         $bahanBakus = BahanBaku::find($id);
@@ -64,6 +79,8 @@ class MonitoringBahanBakuController extends Controller
             'minimum_stok' => $request->minimum_stok,
             'tanggal_masuk' => $request->tanggal_masuk,
             'tanggal_kedaluwarsa' => $request->tanggal_kedaluwarsa,
+            'harga' => $request->harga,
+            'deskripsi' => $request->deskripsi,
         ]);
         return redirect()->route('bahanBakus')->with('success', 'Data berhasil di update');
     }

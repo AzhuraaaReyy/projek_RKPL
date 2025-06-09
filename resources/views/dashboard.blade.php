@@ -68,7 +68,7 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="/inputProduksiBahanBaku" class="nav-link">
+                                    <a href="/bahanbaku" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Input Produksi</p>
                                     </a>
@@ -190,13 +190,13 @@
                                 <div class="col-6">
                                     <div class="header-info-box text-center">
                                         <i class="fas fa-clock mr-2"></i>
-                                        <div class="font-weight-bold" id="currentTime">21:34:22</div>
+                                        <div class="font-weight-bold" id="currentTime"></div>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="header-info-box text-center">
                                         <i class="fas fa-calendar-alt mr-2"></i>
-                                        <div class="small" id="currentDate">Selasa, 3 Juni 2025</div>
+                                        <div class="small" id="currentDate"></div>
                                     </div>
                                 </div>
                             </div>
@@ -692,6 +692,34 @@
 
         // Add smooth scrolling
         document.documentElement.style.scrollBehavior = 'smooth';
+
+
+        //set waktu dan tanggal real time
+        function updateDateTime() {
+            const now = new Date();
+
+            // Format waktu (jam:menit:detik)
+            const time = now.toLocaleTimeString('id-ID', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+
+            // Format tanggal (Hari, tanggal bulan tahun)
+            const date = now.toLocaleDateString('id-ID', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+
+            document.getElementById('currentTime').textContent = time;
+            document.getElementById('currentDate').textContent = date;
+        }
+
+        // Jalankan saat pertama kali dan setiap 1 detik
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
     </script>
 
 </body>
