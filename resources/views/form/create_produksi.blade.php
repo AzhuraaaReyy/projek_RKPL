@@ -16,6 +16,12 @@
         <div class="alert alert-success">{{ session('success') }}</div>
         @endif
 
+        @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+        @endif
+
         <form action="{{route('store.produksi')}}" method="POST">
             @csrf
 
@@ -72,7 +78,7 @@
                 </select>
                 @error('status') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
-           
+
             <button type="submit" class="btn btn-primary">Simpan</button>
         </form>
     </div>

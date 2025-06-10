@@ -72,15 +72,18 @@ class Production extends Model
         $productType = $this->productType;
 
         foreach ($productType->bahanBaku as $bahanBaku) {
-            $totalDigunakan = $bahanBaku->pivot->quantity_per_unit * $this->quantity_produced;
+            $jumlahDiperlukan = $bahanBaku->pivot->quantity_per_unit * $this->quantity_produced;
 
-            $bahanBaku->stok -= $totalDigunakan;
+            // Kurangi stok, tapi pastikan tidak minus
+            $jumlahDikurangi = min($jumlahDiperlukan, $bahanBaku->stok);
+            $bahanBaku->stok -= $jumlahDikurangi;
             $bahanBaku->save();
+
 
             \App\Models\StokMovements::create([
                 'bahan_baku_id' => $bahanBaku->id,
                 'movement_type' => 'out',
-                'quantity' => $totalDigunakan,
+                'quantity' => $jumlahDikurangi,
                 'remaining_stock' => $bahanBaku->stok,
                 'reference_type' => 'production',
                 'reference_id' => $this->id,
@@ -89,5 +92,15 @@ class Production extends Model
                 'created_by' => auth()->id() ?? null,
             ]);
         }
+    }
+
+    public function getStatusClassAttribute()
+    {
+        return match ($this->getRawOriginal('status')) {
+            'planning' => 'warning',
+            'completed' => 'success',
+            'cancelled' => 'danger',
+            default => 'warning',
+        };
     }
 }

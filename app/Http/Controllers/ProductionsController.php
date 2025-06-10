@@ -13,6 +13,8 @@ class ProductionsController extends Controller
     public function index()
     {
         $productions = Production::all();
+        $productions = Production::with('productType.bahanBaku')->get();
+
         return view('inputProduksiRoti', compact('productions'));
     }
     public function formproduksi()
@@ -40,6 +42,20 @@ class ProductionsController extends Controller
             'notes' => 'nullable|string',
             'status' => 'required|string',
         ]);
+
+        // Ambil tipe produk dan bahan baku terkait
+        $productType = ProductType::with('bahanBaku')->findOrFail($request->product_type_id);
+        $jumlahProduksi = $request->quantity_produced;
+
+        // ✅ Validasi stok cukup
+        foreach ($productType->bahanBaku as $bahanBaku) {
+            $qtyPerUnit = $bahanBaku->pivot->quantity_per_unit;
+            $stokDiperlukan = $qtyPerUnit * $jumlahProduksi;
+
+            if ($bahanBaku->stok < $stokDiperlukan) {
+                return redirect()->back()->withInput()->with('error', 'Stok bahan baku ' . $bahanBaku->nama . ' tidak mencukupi untuk produksi.');
+            }
+        }
 
         // Simpan data produksi
         $production = Production::create([
