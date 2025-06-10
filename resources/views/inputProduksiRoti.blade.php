@@ -75,7 +75,7 @@
                             </button>
                         </form>
                         @else
-                        <span class="badge bg-success"> ✅</span>
+                        <span class="badge bg-success"> </span>
                         @endif
                     </td>
 
