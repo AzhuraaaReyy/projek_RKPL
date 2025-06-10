@@ -74,17 +74,26 @@ class ProductionsController extends Controller
 
     public function update(Request $request, $id)
     {
+        $action = $request->input('action');
+
+        $production = Production::findOrFail($id);
+
+        // Kalau hanya ingin update status
+        if (in_array($action, ['completed', 'cancelled'])) {
+            $production->update(['status' => $action]);
+            return redirect()->route('productions')->with('success', 'Status produksi berhasil diperbarui.');
+        }
+
+        // Kalau update data lengkap (misalnya dari form edit)
         $request->validate([
             'production_date' => 'required|date',
             'product_type_id' => 'required|integer|exists:product_types,id',
             'quantity_produced' => 'required|numeric',
             'batch_number' => 'required|string',
             'production_cost' => 'required|numeric',
-            'notes' => 'required|string',
-            'status' => 'required|string',
+            'notes' => 'nullable|string',
         ]);
 
-        $production = Production::find($id);
         $production->update([
             'production_date' => $request->production_date,
             'product_type_id' => $request->product_type_id,
@@ -92,10 +101,12 @@ class ProductionsController extends Controller
             'batch_number' => $request->batch_number,
             'production_cost' => $request->production_cost,
             'notes' => $request->notes,
-            'status' => $request->status,
         ]);
-        return redirect()->route('productions')->with('success', 'Data berhasil di Update');
+
+        return redirect()->route('productions')->with('success', 'Data produksi berhasil diperbarui.');
     }
+
+
 
     public function destroy($id)
     {

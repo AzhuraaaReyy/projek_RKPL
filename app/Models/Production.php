@@ -96,11 +96,12 @@ class Production extends Model
 
     public function getStatusClassAttribute()
     {
-        return match ($this->getRawOriginal('status')) {
-            'planning' => 'warning',
+        return match ($this->status) {
+            'planning' => 'info',
+            'in_progress' => 'warning',
             'completed' => 'success',
             'cancelled' => 'danger',
-            default => 'warning',
+            default => 'secondary',
         };
     }
 }

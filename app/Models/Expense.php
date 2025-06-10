@@ -6,7 +6,7 @@ use App\Models\ExpenseCategories;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 
-class Expenses extends Model
+class Expense extends Model
 {
     //
     protected $fillable = [

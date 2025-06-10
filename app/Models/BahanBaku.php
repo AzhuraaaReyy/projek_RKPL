@@ -41,33 +41,56 @@ class BahanBaku extends Model
         if ($this->stok <= 0) {
             return 'Habis';
         }
+
         if ($this->stok <= $this->minimum_stok) {
             return 'Stok Menipis';
         }
+
+        if ($expDate->isToday()) {
+            return 'Kedaluwarsa Hari Ini';
+        }
+
+        if ($expDate->lessThan($today)) {
+            return 'Sudah Kedaluwarsa';
+        }
+
         if ($daysLeft <= 3) {
             return 'Akan Kedaluwarsa';
         }
+
         return 'Aktif';
     }
+
 
     public function getStatusClassAttribute()
     {
         if ($this->stok <= 0) {
-            return 'danger';
+            return 'danger'; // Habis
         }
+
         if ($this->stok <= $this->minimum_stok) {
-            return 'warning';
+            return 'warning'; // Stok Menipis
         }
 
         $today = Carbon::today();
         $expDate = Carbon::parse($this->tanggal_kedaluwarsa);
         $daysLeft = $today->diffInDays($expDate, false);
 
-        if ($daysLeft <= 3) {
-            return 'warning';
+        if ($expDate->isToday()) {
+            return 'danger'; // Kedaluwarsa Hari Ini
         }
-        return 'success';
+
+        if ($expDate->lessThan($today)) {
+            return 'dark'; // Sudah Kedaluwarsa
+        }
+
+        if ($daysLeft <= 3) {
+            return 'warning'; // Akan Kedaluwarsa
+        }
+
+        return 'success'; // Aktif
     }
+
 
     public function stokMovements()
     {

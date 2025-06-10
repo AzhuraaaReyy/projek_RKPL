@@ -41,10 +41,7 @@
                 @forelse ($productions as $index => $product)
                 <tr>
                     <td class="text-center">{{ $index + 1 }}</td>
-
                     <td>{{ $product->productType->name ?? '-' }}</td>
-
-                    </ul>
                     <td class="text-center">{{ $product->quantity_produced }}</td>
                     <td class="text-end">{{ $product->batch_number }}</td>
                     <td class="text-center">{{ $product->production_date->format('d-m-Y') }}</td>
@@ -66,26 +63,33 @@
                         </span>
                     </td>
                     <td class="text-center">
-                        @if($product->status === 'progres')
-                        <form action="{{ route('produksi.updateStatus', $product->id) }}" method="POST">
+                        @if($product->getRawOriginal('status') === 'in_progress')
+                        <form action="{{ route('productions.update', $product->id) }}" method="POST" class="d-inline">
                             @csrf
                             @method('PATCH')
-                            <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Tandai sebagai Completed?')">
+                            <button type="submit" name="action" value="completed" class="btn btn-sm btn-success" onclick="return confirm('Tandai sebagai Completed?')">
                                 ✅ Selesai
+                            </button>
+                            <button type="submit" name="action" value="cancelled" class="btn btn-sm btn-danger" onclick="return confirm('Batalkan Produksi?')">
+                                ❌ Batalkan
                             </button>
                         </form>
                         @else
-                        <span class="badge bg-success"> ✅</span>
+                        @if($product->status === 'completed')
+                        <span class="text-success fs-4" title="Selesai">✅</span>
+                        @elseif($product->status === 'cancelled')
+                        <span class="text-danger fs-4" title="Dibatalkan">❌</span>
+                        @endif
                         @endif
                     </td>
-
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="9" class="text-center text-muted">Data bahan baku belum tersedia.</td>
+                    <td colspan="10" class="text-center text-muted">Data bahan baku belum tersedia.</td>
                 </tr>
                 @endforelse
             </tbody>
+
 
         </table>
     </div>

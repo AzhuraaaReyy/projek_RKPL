@@ -11,10 +11,10 @@ class expenseCategoriesController extends Controller
     public function index()
     {
         $expensesCategories = ExpenseCategories::orderBy('name')->get();
-        return view('pengeluaran', compact('expensesCategories'));
+        return view('form.create_categoriesPengeluaran', compact('expensesCategories'));
     }
 
-    public function strore(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string',
@@ -23,10 +23,10 @@ class expenseCategoriesController extends Controller
         ExpenseCategories::create([
             'name' => $request->name,
             'description' => $request->description,
-            'is_active' => false,
+            'is_active' => true,
 
         ]);
-        return redirect()->route('expensesCategories')->with('Success', 'Data berhasil Ditambahkan');
+        return redirect()->route('pengeluaran')->with('Success', 'Data berhasil Ditambahkan');
     }
 
     public function update(Request $request, $id)
