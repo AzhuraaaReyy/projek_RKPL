@@ -18,6 +18,13 @@ class userSeeder extends Seeder
                 'name' => 'purwanti',
                 'email' => 'purcantik@gmail.com',
                 'password' => 'mbakpur',
+                'role' => 'admin'
+            ],
+            [
+                'name' => 'andhika',
+                'email' => 'andhika_ganteng@gmail.com',
+                'password' => '123456',
+                'role' => 'karyawan'
             ],
         ];
         foreach ($data as $d) {
@@ -25,6 +32,7 @@ class userSeeder extends Seeder
                 'name' => $d['name'],
                 'email' => $d['email'],
                 'password' => $d['password'],
+                'role' => $d['role']
             ]);
         }
     }

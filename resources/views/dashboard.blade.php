@@ -103,25 +103,11 @@
                             </ul>
                         </li>
 
-                        <li class="nav-item has-treeview">
+                        <li class="nav-item">
                             <a href="/laporan" class="nav-link">
                                 <i class="nav-icon fas fa-chart-line"></i>
-                                <p>Laporan<i class="right fas fa-angle-left"></i></p>
+                                <p>Laporan</p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="/laporanstok" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Laporan Stok</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="laporanproduksi" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Laporan Produksi</p>
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
 
                         <li class="nav-item">

@@ -10,16 +10,30 @@ class MonitoringBahanBakuController extends Controller
     /**
      * Tampilkan halaman monitoring stok bahan baku.
      */
-    public function index()
+     public function index()
     {
         // Ambil semua data bahan baku
         $bahanBakus = BahanBaku::all();
 
-        // Kirim ke view monitoring/stok.blade.php
-        return view('inputProduksiBahanBaku', compact('bahanBakus'));
-    }
+        // Count stok status using the getStatus method
+        $stokAman = $bahanBakus->filter(function ($bahan) {
+            return $bahan->status == 'Aktif';  // Stok Aman
+        })->count();
 
-    public function formBahanBaku()
+        $stokMenurun = $bahanBakus->filter(function ($bahan) {
+            return $bahan->status == 'Stok Menipis';  // Stok Menipis
+        })->count();
+
+        $stokHabis = $bahanBakus->filter(function ($bahan) {
+            return $bahan->status == 'Habis';  // Stok Habis
+        })->count();
+
+        $totalItem = $bahanBakus->count();  // Total Items
+
+        // Kirim ke view monitoring/stok.blade.php dengan data stok
+        return view('inputProduksiBahanBaku', compact('bahanBakus', 'stokAman', 'stokMenurun', 'stokHabis', 'totalItem'));
+    }
+public function formBahanBaku()
     {
         // Ambil semua data bahan baku
         $bahan = BahanBaku::orderBy('nama')->get();

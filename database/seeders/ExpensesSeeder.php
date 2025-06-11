@@ -31,7 +31,6 @@ class ExpensesSeeder extends Seeder
                 'description' => 'Ongkos kirim bahan baku',
                 'amount' => 50000,
                 'expense_date' => now(),
-                'receipt_number' => 'TRX001',
                 'notes' => 'Dikirim via Gojek',
                 'created_by' => 1,
             ],
