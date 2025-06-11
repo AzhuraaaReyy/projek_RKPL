@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role'
     ];
 
     /**
@@ -60,6 +61,6 @@ class User extends Authenticatable
     }
     public function expenses()
     {
-        return $this->hasMany(Expenses::class, 'created_by');
+        return $this->hasMany(Expense::class, 'created_by');
     }
 }

@@ -30,53 +30,75 @@
         @endif
 
         {{-- Filter Form --}}
-        <form action="{{ route('filterBy') }}" method="GET" class="mb-3" onsubmit="return validateFilterForm()">
-            <label for="expense_date">Tanggal:</label>
-            <input type="date" name="expense_date" id="expense_date" value="{{ request('expense_date') }}">
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            {{-- Form Filter --}}
+            <form action="{{ route('filterBy') }}" method="GET" class="mb-3" onsubmit="return validateFilterForm()" style="display: flex; align-items: center; gap: 10px;">
+                <label for="expense_date">Tanggal:</label>
+                <input type="date" name="expense_date" id="expense_date" value="{{ request('expense_date') }}">
 
-            <label for="expense_category_id">Kategori:</label>
-            <select name="expense_category_id" id="expense_category_id">
-                <option value="">-- Semua Kategori --</option>
-                @foreach($categories as $category)
-                <option value="{{ $category->id }}" {{ request('expense_category_id') == $category->id ? 'selected' : '' }}>
-                    {{ $category->name }}
-                </option>
-                @endforeach
-            </select>
+                <label for="expense_category_id">Kategori:</label>
+                <select name="expense_category_id" id="expense_category_id">
+                    <option value="">-- Semua Kategori --</option>
+                    @foreach($categories as $category)
+                    <option value="{{ $category->id }}" {{ request('expense_category_id') == $category->id ? 'selected' : '' }}>
+                        {{ $category->name }}
+                    </option>
+                    @endforeach
+                </select>
 
-            <button type="submit">Filter</button>
-            <a href="{{route('pengeluaran')}}">Reset</a>
-        </form>
+                <button type="submit" class="btn btn-primary">Filter</button>
+                <a href="{{ route('pengeluaran') }}" class="btn btn-secondary">Reset</a>
+            </form>
+
+            {{-- Tombol Download PDF --}}
+            <form action="{{ route('pengeluaran') }}" method="GET" style="display: inline;">
+                <input type="hidden" name="download" value="pdf">
+                <input type="hidden" name="expense_date" value="{{ request('expense_date') }}">
+                <input type="hidden" name="expense_category_id" value="{{ request('expense_category_id') }}">
+                <button type="submit" class="btn btn-danger">Download PDF</button>
+            </form>
+
+        </div>
+
+
 
         {{-- Tabel Data --}}
         <table border="1" cellpadding="8" cellspacing="0">
             <thead>
                 <tr>
                     <th>No</th>
+                    <th>Nama</th>
+                    <th>Pengeluaran</th>
                     <th>Tanggal</th>
-                    <th>Kategori</th>
                     <th>Deskripsi</th>
-                    <th>Jumlah</th>
-                    <th>No Kwitansi</th>
                     <th>Catatan</th>
+                    <th>Harga</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($expenses as $index => $expense)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $expense->expense_date }}</td>
+                    <td>{{ $expense->creator->name ?? '-' }}</td>
                     <td>{{ $expense->category->name ?? '-' }}</td>
+                    <td>{{ $expense->expense_date }}</td>
                     <td>{{ $expense->description }}</td>
-                    <td>Rp{{ number_format($expense->amount, 2, ',', '.') }}</td>
-                    <td>{{ $expense->receipt_number }}</td>
                     <td>{{ $expense->notes }}</td>
+                    <td>Rp{{ number_format($expense->amount, 2, ',', '.') }}</td>
                 </tr>
+
                 @empty
                 <tr>
                     <td colspan="7" class="text-center">Tidak ada data pengeluaran</td>
                 </tr>
                 @endforelse
+            <tfoot>
+                <tr>
+                    <td colspan="6" style="text-align: center;"><strong>Total Pengeluaran</strong></td>
+                    <td><strong>Rp{{ number_format($totalAmount, 2, ',', '.') }}</strong></td>
+                </tr>
+            </tfoot>
+
             </tbody>
         </table>
 

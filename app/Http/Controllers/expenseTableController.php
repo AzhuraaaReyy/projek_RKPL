@@ -5,19 +5,46 @@ namespace App\Http\Controllers;
 use App\Models\Expense;
 use App\Models\ExpenseCategories;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class expenseTableController extends Controller
 {
     //
-    public function index()
+    public function index(Request $request)
     {
-        $expenses = Expense::with('category')
-            ->latest()
-            ->paginate(10);
+        // Buat query builder terlebih dahulu
+        $query = Expense::with(['category', 'creator'])->latest();
 
-        $categories = ExpenseCategories::all(); // pastikan relasi eager loaded
-        return view('pengeluaran', compact('expenses', 'categories'));
+        // Filter jika ada input
+        if ($request->filled('expense_date')) {
+            $query->whereDate('expense_date', $request->expense_date);
+        }
+
+        if ($request->filled('expense_category_id')) {
+            $query->where('expense_category_id', $request->expense_category_id);
+        }
+
+        // Salin query sebelum dipaginate untuk PDF
+        $filteredExpenses = $query->get(); // gunakan ini untuk PDF
+        $totalAmount = $filteredExpenses->sum('amount');
+
+        // Jika diminta download PDF
+        if ($request->has('download') && $request->download == 'pdf') {
+            $pdf = Pdf::loadView('pdf.pengeluaran_pdf', [
+                'expenses' => $filteredExpenses,
+                'totalAmount' => $totalAmount,
+            ]);
+            return $pdf->download('laporan_pengeluaran.pdf');
+        }
+
+        // Paginate setelah data disalin untuk PDF
+        $expenses = $query->paginate(10);
+        $categories = ExpenseCategories::all();
+
+        return view('pengeluaran', compact('expenses', 'categories', 'totalAmount'));
     }
+
+
     public function form()
     {
         $expenses = Expense::all();
@@ -31,7 +58,7 @@ class expenseTableController extends Controller
             'description' => 'required|string',
             'amount' => 'required|numeric',
             'expense_date' => 'required|date',
-            'receipt_number' => 'required|',
+
             'notes' => 'required|',
         ]);
         Expense::create([
@@ -39,7 +66,7 @@ class expenseTableController extends Controller
             'description' => $request->description,
             'amount' => $request->amount,
             'expense_date' => $request->expense_date,
-            'receipt_number' => $request->receipt_number,
+
             'notes' => $request->notes,
             'created_by' => auth()->id(),
         ]);
@@ -53,7 +80,7 @@ class expenseTableController extends Controller
             'description' => 'required|string',
             'amount' => 'required|numeric',
             'expense_date' => 'required|date',
-            'receipt_number' => 'required|',
+
             'notes' => 'required|',
         ]);
         $expenses = Expense::find($id);
@@ -62,7 +89,7 @@ class expenseTableController extends Controller
             'description' => $request->description,
             'amount' => $request->amount,
             'expense_date' => $request->expense_date,
-            'receipt_number' => $request->receipt_number,
+
             'notes' => $request->notes,
         ]);
     }
@@ -86,15 +113,17 @@ class expenseTableController extends Controller
 
     public function filterBy(Request $request)
     {
-        $expenses = Expense::query()
+        $query = Expense::query()
             ->when($request->expense_date, fn($q) => $q->whereDate('expense_date', $request->expense_date))
             ->when($request->expense_category_id, fn($q) => $q->where('expense_category_id', $request->expense_category_id))
             ->with('category') // eager load relasi
-            ->latest()
-            ->paginate(10);
+            ->latest();
 
+
+        $expenses = $query->paginate(10);
+        $totalAmount = $query->sum('amount');
         $categories = \App\Models\ExpenseCategories::where('is_active', true)->get();
 
-        return view('pengeluaran', compact('expenses', 'categories'));
+        return view('pengeluaran', compact('expenses', 'categories', 'totalAmount'));
     }
 }

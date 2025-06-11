@@ -7,11 +7,14 @@ use App\Http\Controllers\CustomersController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\expenseCategoriesController;
 use App\Http\Controllers\expenseTableController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\ProductionsController;
 use App\Http\Controllers\productTypesController;
 use App\Http\Controllers\SaleItemsController;
 use App\Http\Controllers\SalesTableController;
 use App\Http\Controllers\stokMovementsController;
+use App\Http\Controllers\ProductionHistoryController;
+
 // Tampilkan form login
 Route::get('/', function () {
     return view('login-view');
@@ -22,9 +25,7 @@ Route::get('/riwayatProduksiRoti', function () {
 Route::get('/laporanstok', function () {
     return view('laporanStok');
 });
-Route::get('/laporanproduksi', function () {
-    return view('laporanProduksi');
-});
+
 Route::get('/inputProduksiBahanBaku', function () {
     return view('inputProduksiBahanBaku');
 });
@@ -36,7 +37,7 @@ Route::post('/login', [LoginController::class, 'login']);
 // Logout
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth','role:admin'])->group(function () {
 
     Route::get('/bahanbaku', [MonitoringBahanBakuController::class, 'index'])->name('inputbahan');
     Route::get('/form-bahanbaku', [MonitoringBahanBakuController::class, 'formBahanBaku'])->name('bahan');
@@ -75,6 +76,10 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/penjualan/{id}', [SalesTableController::class, 'destroy'])->name('sale.delete');
 
 
+    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+    Route::get('/laporan/download', [LaporanController::class, 'downloadPDF'])->name('laporan.download');
+
+
     Route::get('/riwayatBahanBaku', [stokMovementsController::class, 'index']);
 
     Route::get('/customer', [CustomersController::class, 'index']);
@@ -83,4 +88,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/customer', [CustomersController::class, 'addCustomer'])->name('customers');
     Route::put('/customer/{id}', [CustomersController::class, 'update'])->name('customers.update');
     Route::delete('/customer/{id}', [CustomersController::class, 'destroy'])->name('customers.delete');
+
+    // API Routes untuk Production History
+    Route::get('/api/production-history/stats', [ProductionHistoryController::class, 'getStats'])->name('productionHistory.stats');
+    Route::get('/api/production-history/export', [ProductionHistoryController::class, 'export'])->name('productionHistory.export');
+    Route::get('/api/production-history/by-period', [ProductionHistoryController::class, 'getProductionByPeriod'])->name('productionHistory.byPeriod');
+    Route::get('/api/production-history/top-products/{limit?}', [ProductionHistoryController::class, 'getTopProducts'])->name('productionHistory.topProducts');
 });
