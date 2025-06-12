@@ -146,7 +146,10 @@
                     </ul>
                 </nav>
 
-
+                <a href="{{ route('bahan') }}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus"></i> Tambah Bahan Baku
+                </a>
+                <hr>
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover align-middle">
                         <thead class="table-dark text-center">
@@ -188,7 +191,7 @@
                                 <td colspan="9" class="text-center text-muted">Data bahan baku belum tersedia.</td>
                             </tr>
                             @endforelse
-                        </tbody>
+                        </tbody> 
 
                     </table>
                 </div>

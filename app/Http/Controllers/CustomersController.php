@@ -70,4 +70,29 @@ class CustomersController extends Controller
         $customers = Customers::find($id);
         return view('', compact('customers'));
     }
+
+    //karyawan
+    public function karyawanformcustomers()
+    {
+        $customers = Customers::orderBy('name')->get();
+
+        return view('karyawan.form.create_customer', compact('customers'));
+    }
+
+    public function karyawanaddCustomer(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string',
+            'phone' => 'required|numeric',
+            'address' => 'required|string',
+
+        ]);
+        Customers::create([
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'is_active' => false,
+        ]);
+        return redirect()->route('karyawan.sale')->with('Success', 'Data Berhasil ditambahkan');
+    }
 }

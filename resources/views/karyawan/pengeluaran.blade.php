@@ -11,11 +11,11 @@
     <p>ini pengeluaran</p>
     <br>
     <hr>
-    <a href="/categories-pengeluaran" class="btn btn-sm btn-primary">
+    <a href="/karyawan-categoriespengeluaran" class="btn btn-sm btn-primary">
         <i class="fas fa-plus"></i> Tambah Kategori Pengeluaran
     </a>
     <hr>
-    <a href="/formpengeluaran" class="btn btn-sm btn-primary">
+    <a href="/karyawan-formpengeluaran" class="btn btn-sm btn-primary">
         <i class="fas fa-plus"></i> Tambah Pengeluaran
     </a>
 
@@ -48,7 +48,7 @@
 
                 <button type="submit" class="btn btn-primary">Filter</button>
                 <a href="{{ route('pengeluaran') }}" class="btn btn-secondary">Reset</a>
-            </form> 
+            </form>
 
             {{-- Tombol Download PDF --}}
             <form action="{{ route('pengeluaran') }}" method="GET" style="display: inline;">

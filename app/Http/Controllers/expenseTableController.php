@@ -126,4 +126,41 @@ class expenseTableController extends Controller
 
         return view('pengeluaran', compact('expenses', 'categories', 'totalAmount'));
     }
+
+
+
+    //untuk karyawan
+    public function karyawanpengeluaran(Request $request)
+    {
+        // Buat query builder terlebih dahulu
+        $query = Expense::with(['category', 'creator'])->latest();
+
+        // Filter jika ada input
+        if ($request->filled('expense_date')) {
+            $query->whereDate('expense_date', $request->expense_date);
+        }
+
+        if ($request->filled('expense_category_id')) {
+            $query->where('expense_category_id', $request->expense_category_id);
+        }
+
+        // Salin query sebelum dipaginate untuk PDF
+        $filteredExpenses = $query->get(); // gunakan ini untuk PDF
+        $totalAmount = $filteredExpenses->sum('amount');
+
+        // Jika diminta download PDF
+        if ($request->has('download') && $request->download == 'pdf') {
+            $pdf = Pdf::loadView('pdf.pengeluaran_pdf', [
+                'expenses' => $filteredExpenses,
+                'totalAmount' => $totalAmount,
+            ]);
+            return $pdf->download('laporan_pengeluaran.pdf');
+        }
+
+        // Paginate setelah data disalin untuk PDF
+        $expenses = $query->paginate(10);
+        $categories = ExpenseCategories::all();
+
+        return view('karyawan.pengeluaran', compact('expenses', 'categories', 'totalAmount'));
+    }
 }

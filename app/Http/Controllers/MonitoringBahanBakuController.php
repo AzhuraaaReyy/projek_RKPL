@@ -7,16 +7,17 @@ use App\Models\BahanBaku;
 
 class MonitoringBahanBakuController extends Controller
 {
-    /**
-     * Tampilkan halaman monitoring stok bahan baku.
-     */
     public function index()
     {
-        // Ambil semua data bahan baku
-        $bahanBakus = BahanBaku::all();
 
-        // Kirim ke view monitoring/stok.blade.php
-        return view('inputProduksiBahanBaku', compact('bahanBakus'));
+        $bahanBakus = BahanBaku::all(); //ambil semua bahan baku
+        return view('inputProduksiBahanBaku', compact('bahanBakus')); //arahkan ke view
+    }
+    public function karyawanbahanBaku()
+    {
+
+        $bahanBakus = BahanBaku::all(); //ambil semua bahan baku
+        return view('karyawan.inputProduksiBahanBaku', compact('bahanBakus')); //arahkan ke view
     }
 
     public function formBahanBaku()
@@ -99,6 +100,6 @@ class MonitoringBahanBakuController extends Controller
     public function show($id)
     {
         $bahanBakus = BahanBaku::findOrFail($id);
-        return view('monitoring.stok', compact('bahanBakus'));
+        return view('inputProduksiBahanBaku', compact('bahanBakus'));
     }
 }

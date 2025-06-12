@@ -37,7 +37,7 @@ Route::post('/login', [LoginController::class, 'login']);
 // Logout
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::middleware(['auth','role:admin'])->group(function () {
+Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::get('/bahanbaku', [MonitoringBahanBakuController::class, 'index'])->name('inputbahan');
     Route::get('/form-bahanbaku', [MonitoringBahanBakuController::class, 'formBahanBaku'])->name('bahan');
@@ -94,4 +94,49 @@ Route::middleware(['auth','role:admin'])->group(function () {
     Route::get('/api/production-history/export', [ProductionHistoryController::class, 'export'])->name('productionHistory.export');
     Route::get('/api/production-history/by-period', [ProductionHistoryController::class, 'getProductionByPeriod'])->name('productionHistory.byPeriod');
     Route::get('/api/production-history/top-products/{limit?}', [ProductionHistoryController::class, 'getTopProducts'])->name('productionHistory.topProducts');
+});
+
+Route::middleware(['auth', 'role:karyawan'])->group(function () {
+    //dashboard
+    Route::get('/dashboard-karyawan', [DashboardController::class, 'dashboardkaryawan'])->name('karyawan');
+    Route::get('/api/production-stats', [DashboardController::class, 'getProductionStats']);
+
+    //bahanbaku
+    Route::get('/karyawan-bahanbaku', [MonitoringBahanBakuController::class, 'karyawanbahanBaku'])->name('karyawan.inputbahan');
+    Route::get('/karyawan-riwayatbahanbaku', [MonitoringBahanBakuController::class, 'karyawanbahanBaku'])->name('karyawan.inputbahan');
+
+    //produksi
+    Route::get('/karyawan-produksiRoti', [ProductionsController::class, 'karyawanproduksi'])->name('karyawan.produksi');
+    Route::get('/karyawan-formproduksi', [ProductionsController::class, 'karyawanformproduksi'])->name('karyawan.formproduksi');
+    Route::get('/karyawan-formproduk', [ProductionsController::class, 'karyawanformproduk']);
+    Route::Post('/karyawan-tambahproduksi', [ProductionsController::class, 'pivotStorekaryawan'])->name('karyawan.storetambah');
+    Route::Post('/karyawan-produksiRoti', [ProductionsController::class, 'karyawanstore'])->name('karyawan.storeproduksi');
+
+    //laporan
+    Route::get('/karyawan-laporan', [LaporanController::class, 'karyawanlaporan'])->name('karyawan.laporan');
+    Route::get('/karyawan-laporan/download', [LaporanController::class, 'downloadPDF'])->name('laporan.download');
+
+    //pengeluaran
+    Route::get('/karyawan-pengeluaran', [expenseTableController::class, 'karyawanpengeluaran'])->name(('pengeluaran'));
+    Route::get('/karyawan-formpengeluaran', [expenseTableController::class, 'form'])->name('formPengeluaran');
+    Route::get('/pengeluaranByfilter', [expenseTableController::class, 'filterBy'])->name('filterBy');
+    Route::post('/pengeluaran', [expenseTableController::class, 'store'])->name('expenses.store');
+    Route::put('/pengeluaran/{id}', [expenseTableController::class, 'update'])->name('expenses.update');
+    Route::delete('/pengeluaran/{id}', [expenseTableController::class, 'destroy'])->name('expenses.delete');
+
+    Route::get('/karyawan-categoriespengeluaran', [expenseCategoriesController::class, 'karyawancategories'])->name(('karyawan.categories'));
+    Route::post('/categories-pengeluaran', [expenseCategoriesController::class, 'store'])->name(('categories.store'));
+    Route::put('/categories-pengeluaran/{id}', [expenseCategoriesController::class, 'update'])->name(('categories.update'));
+    Route::delete('/categories-pengeluaran/{id}', [expenseCategoriesController::class, 'destroy'])->name(('categories.delete'));
+
+    Route::get('/karyawan-penjualan', [SalesTableController::class, 'karyawanpenjualan']);
+    Route::get('/karyawan-penjualan', [SalesTableController::class, 'karyawanpenjualan'])->name('karyawanpenjualan');
+    Route::post('/karyawan-penjualan', [SalesTableController::class, 'karyawanstore'])->name('karyawan.sale');
+    Route::put('/karyawan-penjualan/{id}/status', [SalesTableController::class, 'updateStatusPembayaran'])->name('karyawan.update-status');
+
+
+    Route::get('/karyawan-customer', [CustomersController::class, 'index']);
+    Route::get('/karyawan-customer', [CustomersController::class, 'index'])->name('karyawan.customers');
+    Route::get('/karyawan-formcustomers', [CustomersController::class, 'karyawanformcustomers'])->name('karyawan.customers');
+    Route::post('/karyawan-customer', [CustomersController::class, 'karyawanaddCustomer'])->name('karyawan.customers');
 });

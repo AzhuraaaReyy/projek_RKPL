@@ -88,6 +88,80 @@ class LaporanController extends Controller
             'keyword'
         ));
     }
+    public function karyawanlaporan(Request $request)
+    {
+        $keyword = $request->input('keyword');
+
+        // Bahan Baku
+        $bahanBakus = BahanBaku::when($keyword, function ($query) use ($keyword) {
+            $query->where('nama', 'like', '%' . $keyword . '%')
+                ->orWhere('kategori', 'like', '%' . $keyword . '%')
+                ->orWhere('deskripsi', 'like', '%' . $keyword . '%');
+        })->latest()->paginate(10);
+
+        // Produksi
+        $productions = Production::with('productType')->when($keyword, function ($query) use ($keyword) {
+            $query->whereHas('productType', function ($q) use ($keyword) {
+                $q->where('name', 'like', '%' . $keyword . '%');
+            })
+                ->orWhere('notes', 'like', '%' . $keyword . '%');
+        })->latest()->paginate(10);
+
+        // Penjualan
+        $sales = Sale::with(['customer', 'creator', 'saleItems.productType'])->when($keyword, function ($query) use ($keyword) {
+            $query->whereHas('customer', function ($q) use ($keyword) {
+                $q->where('name', 'like', '%' . $keyword . '%');
+            })
+                ->orWhereHas('saleItems.productType', function ($q) use ($keyword) {
+                    $q->where('name', 'like', '%' . $keyword . '%');
+                });
+        })->latest()->paginate(10);
+
+        // Pengeluaran
+        $queryExpense = Expense::with(['category', 'creator'])->when($keyword, function ($query) use ($keyword) {
+            $query->where('description', 'like', '%' . $keyword . '%')
+                ->orWhereHas('creator', function ($q) use ($keyword) {
+                    $q->where('name', 'like', '%' . $keyword . '%');
+                });
+        })->latest();
+        $filteredExpenses = $queryExpense->get();
+        $totalAmount = $filteredExpenses->sum('amount');
+        $expenses = $queryExpense->paginate(10);
+
+        // Pergerakan Stok
+        $stokMovements = StokMovements::with(['bahanBaku', 'creator'])
+            ->when($keyword, function ($query) use ($keyword) {
+                $query->whereHas('bahanBaku', function ($q) use ($keyword) {
+                    $q->where('nama', 'like', '%' . $keyword . '%');
+                });
+            })->latest()->paginate(10);
+
+
+        // Riwayat Produksi
+        $productionHistories = Production::with(['productType', 'productType.bahanBaku', 'creator'])->when($keyword, function ($query) use ($keyword) {
+            $query->whereHas('productType', function ($q) use ($keyword) {
+                $q->where('name', 'like', '%' . $keyword . '%');
+            })
+                ->orWhere('notes', 'like', '%' . $keyword . '%');
+        })->orderBy('production_date', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        // Dropdown Tipe Produk
+        $productTypes = ProductType::select('id', 'name')->where('is_active', true)->orderBy('name')->get();
+
+        return view('karyawan.laporan', compact(
+            'bahanBakus',
+            'productions',
+            'sales',
+            'expenses',
+            'totalAmount',
+            'stokMovements',
+            'productionHistories',
+            'productTypes',
+            'keyword'
+        ));
+    }
 
 
 

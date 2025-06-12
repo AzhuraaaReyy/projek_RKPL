@@ -59,4 +59,12 @@ class expenseCategoriesController extends Controller
         $expensesCategories = ExpenseCategories::findOrFail($id);
         return view('', compact('expensesCategories'));
     }
+
+    //karyawan
+
+     public function karyawancategories()
+    {
+        $expensesCategories = ExpenseCategories::orderBy('name')->get();
+        return view('karyawan.form.create_categoriesPengeluaran', compact('expensesCategories'));
+    }
 }

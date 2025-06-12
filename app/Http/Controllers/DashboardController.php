@@ -22,20 +22,32 @@ class DashboardController extends Controller
 
         $totalPenjualan = Sale::whereDate('sale_date', now()->toDateString())->sum('total_amount');
 
-        return view('dashboard', compact('totalProduksiHariIni', 'totalbahanbaku','totalPenjualan'));
+        return view('dashboard', compact('totalProduksiHariIni', 'totalbahanbaku', 'totalPenjualan'));
+    }
+
+    public function dashboardkaryawan()
+    {
+        // Ambil total produksi hari ini
+        $totalProduksi = Production::whereDate('created_at', now()->toDateString())
+            ->sum('quantity_produced'); // sesuaikan nama kolom
+        $totalbahan = BahanBaku::whereNotNull('tanggal_masuk')->sum('stok');
+
+        $totalsale = Sale::whereDate('sale_date', now()->toDateString())->sum('total_amount');
+
+        return view('karyawan.dashboard', compact('totalProduksi', 'totalbahan', 'totalsale'));
     }
     public function getProductionStats(): JsonResponse
     {
         $productions = Production::with('productType')
             ->orderBy('created_at', 'desc')
-            ->take(7)
+            ->take(30)
             ->get()
             ->reverse();
 
         $labels = $productions->map(function ($item) {
-            $time = optional($item->created_at)->format('H:i');
+            $date = optional($item->created_at)->format('d M Y');
             $name = optional($item->productType)->name ?? 'Produk';
-            return "{$time} - {$name}";
+            return "{$date} - {$name}";
         })->values(); // pastikan jadi array numerik
 
         $actualData = $productions->pluck('quantity_produced')->values();
