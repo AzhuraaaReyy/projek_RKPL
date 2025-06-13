@@ -64,7 +64,8 @@ Route::middleware(['auth','role:admin'])->group(function () {
     Route::put('/pengeluaran/{id}', [expenseTableController::class, 'update'])->name('expenses.update');
     Route::delete('/pengeluaran/{id}', [expenseTableController::class, 'destroy'])->name('expenses.delete');
 
-    Route::get('/categories-pengeluaran', [expenseCategoriesController::class, 'index'])->name(('index'));
+    Route::get('/categories', [expenseCategoriesController::class, 'index'])->name(('index'));
+    Route::get('/categories-form', [expenseCategoriesController::class, 'formcategories'])->name(('categories.form'));
     Route::post('/categories-pengeluaran', [expenseCategoriesController::class, 'store'])->name(('categories.store'));
     Route::put('/categories-pengeluaran/{id}', [expenseCategoriesController::class, 'update'])->name(('categories.update'));
     Route::delete('/categories-pengeluaran/{id}', [expenseCategoriesController::class, 'destroy'])->name(('categories.delete'));

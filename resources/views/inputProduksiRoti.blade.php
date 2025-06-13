@@ -17,305 +17,7 @@
     <!-- Animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-
-        .content-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 15px;
-            margin: 20px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        .action-buttons {
-            margin: 20px;
-            padding: 20px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        }
-
-        .btn-custom {
-            border-radius: 25px;
-            padding: 12px 25px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            margin: 5px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-custom:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            text-decoration: none;
-        }
-
-        .btn-add-product {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-        }
-
-        .btn-add-production {
-            background: linear-gradient(45deg, #f093fb, #f5576c);
-            color: white;
-            border: none;
-        }
-
-        .production-table-container {
-            margin: 20px;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        .table-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 25px;
-            margin: 0;
-        }
-
-        .table-header h2 {
-            margin: 0;
-            font-weight: 700;
-            font-size: 1.8rem;
-        }
-
-        .table-responsive {
-            margin: 0;
-            border-radius: 0;
-        }
-
-        .table {
-            margin: 0;
-            border-collapse: separate;
-            border-spacing: 0;
-        }
-
-        .table thead th {
-            background: linear-gradient(135deg, #4c63d2 0%, #6b46c1 100%);
-            color: white;
-            border: none;
-            padding: 18px 15px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        .table thead th:first-child {
-            border-top-left-radius: 0;
-        }
-
-        .table thead th:last-child {
-            border-top-right-radius: 0;
-        }
-
-        .table tbody tr {
-            transition: all 0.3s ease;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .table tbody tr:hover {
-            background-color: #f8fafc;
-            transform: scale(1.01);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-        }
-
-        .table tbody td {
-            padding: 15px;
-            vertical-align: middle;
-            border: none;
-            font-size: 0.95rem;
-        }
-
-        .badge {
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .bg-success {
-            background: linear-gradient(45deg, #10b981, #059669) !important;
-        }
-
-        .bg-warning {
-            background: linear-gradient(45deg, #f59e0b, #d97706) !important;
-        }
-
-        .bg-danger {
-            background: linear-gradient(45deg, #ef4444, #dc2626) !important;
-        }
-
-        .btn-action {
-            border-radius: 20px;
-            padding: 8px 15px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin: 2px;
-            transition: all 0.3s ease;
-            border: none;
-        }
-
-        .btn-action:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .btn-success {
-            background: linear-gradient(45deg, #10b981, #059669);
-        }
-
-        .btn-danger {
-            background: linear-gradient(45deg, #ef4444, #dc2626);
-        }
-
-        .ingredient-list {
-            max-width: 200px;
-        }
-
-        .ingredient-list ul {
-            margin: 0;
-            padding-left: 15px;
-        }
-
-        .ingredient-list li {
-            font-size: 0.85rem;
-            color: #6b7280;
-            margin-bottom: 5px;
-        }
-
-        .status-icon {
-            font-size: 1.5rem;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #9ca3af;
-        }
-
-        .empty-state i {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-
-        .mobile-menu-btn {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1050;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-        }
-
-        .mobile-menu-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        }
-
-        .sidebar-logout .btn {
-            width: 100%;
-            border-radius: 25px;
-            padding: 12px;
-            font-weight: 600;
-            margin: 15px 0;
-            background: linear-gradient(45deg, #ef4444, #dc2626);
-            border: none;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar-logout .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
-        }
-
-        .brand-link {
-            background: linear-gradient(135deg, #1e293b, #334155);
-            padding: 20px;
-            border-bottom: 3px solid #667eea;
-        }
-
-        .brand-text {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: white;
-        }
-
-        .nav-link.active {
-            background: linear-gradient(45deg, #667eea, #764ba2) !important;
-            border-radius: 10px;
-            margin: 2px 10px;
-            color: white !important;
-        }
-
-        .nav-link:hover {
-            background: rgba(102, 126, 234, 0.1);
-            border-radius: 10px;
-            margin: 2px 10px;
-            transition: all 0.3s ease;
-        }
-
-        @media (max-width: 768px) {
-            .content-header {
-                margin: 10px;
-                padding: 20px;
-            }
-            
-            .action-buttons {
-                margin: 10px;
-                padding: 15px;
-            }
-            
-            .production-table-container {
-                margin: 10px;
-            }
-            
-            .table-header {
-                padding: 20px;
-            }
-            
-            .table thead th,
-            .table tbody td {
-                padding: 10px;
-                font-size: 0.8rem;
-            }
-            
-            .btn-custom {
-                padding: 10px 20px;
-                font-size: 0.9rem;
-            }
-        }
-    </style>
+    @include('lib.ext_css')
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -341,10 +43,10 @@
                 <!-- User Panel -->
                 <div class="user-panel d-flex align-items-center">
                     <div class="image">
-                        <img src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff&size=128" class="img-circle elevation-2" alt="User Image">
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=6366f1&color=fff&size=128" class="img-circle elevation-2" alt="User Image">
                     </div>
                     <div class="info ml-3">
-                        <a href="#" class="d-block">Admin User</a>
+                        <a href="#" class="d-block">{{ Auth::user()->name }}</a>
                     </div>
                 </div>
 
@@ -368,13 +70,13 @@
                                 <li class="nav-item">
                                     <a href="/bahanbaku" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Input Bahan Baku</p>
+                                        <p>Input Produksi</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="/riwayatBahanBaku" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Riwayat Bahan Baku</p>
+                                        <p>Riwayat Produksi</p>
                                     </a>
                                 </li>
                             </ul>
@@ -385,7 +87,7 @@
                                 <i class="nav-icon fas fa-bread-slice"></i>
                                 <p>Produksi Roti<i class="right fas fa-angle-left"></i></p>
                             </a>
-                            <ul class="nav nav-treeview" style="display: block;">
+                            <ul class="nav nav-treeview" style="display: block; max-height: none;">
                                 <li class="nav-item">
                                     <a href="/produksiRoti" class="nav-link active">
                                         <i class="far fa-circle nav-icon"></i>
@@ -401,25 +103,11 @@
                             </ul>
                         </li>
 
-                        <li class="nav-item has-treeview">
+                        <li class="nav-item">
                             <a href="/laporan" class="nav-link">
                                 <i class="nav-icon fas fa-chart-line"></i>
-                                <p>Laporan<i class="right fas fa-angle-left"></i></p>
+                                <p>Laporan</p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="/laporanstok" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Laporan Stok</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="laporanproduksi" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Laporan Produksi</p>
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
 
                         <li class="nav-item">
@@ -454,9 +142,10 @@
                     </ul>
                 </nav>
 
-                <!-- Logout Button -->
+                <!-- Logout Button - Always at bottom -->
                 <div class="sidebar-logout mt-auto">
-                    <form method="POST" action="/logout">
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
                         <button type="submit" class="btn btn-danger">
                             <i class="fas fa-sign-out-alt mr-2"></i>
                             <span>Logout</span>
@@ -472,22 +161,32 @@
             <div class="content-header animate__animated animate__fadeInDown">
                 <div class="container-fluid">
                     <div class="row align-items-center">
-                        <div class="col-md-8">
-                            <h1 class="mb-2">
+                        <div class="col-lg-6 col-md-12">
+                            <h1>
                                 <i class="fas fa-bread-slice mr-3"></i>
                                 Input Produksi Roti
                             </h1>
-                            <p class="mb-0 opacity-75">Kelola produksi roti harian Galaxy Bakery</p>
+                            <small>Kelola produksi roti harian Galaxy Bakery</small>
                         </div>
-                        <div class="col-md-4 text-right">
-                            <div class="d-flex flex-column align-items-end">
-                                <div class="mb-2">
-                                    <i class="fas fa-calendar-alt mr-2"></i>
-                                    <span id="currentDate"></span>
+                        <div class="col-lg-6 col-md-12">
+                            <div class="row mt-3 mt-lg-0">
+                                <div class="col-12 mb-2">
+                                    <div class="header-info-box text-center">
+                                        <i class="fas fa-user-circle mr-2"></i>
+                                        <span class="font-weight-bold">{{ Auth::user()->name }}</span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <i class="fas fa-clock mr-2"></i>
-                                    <span id="currentTime"></span>
+                                <div class="col-6">
+                                    <div class="header-info-box text-center">
+                                        <i class="fas fa-clock mr-2"></i>
+                                        <div class="font-weight-bold" id="currentTime"></div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="header-info-box text-center">
+                                        <i class="fas fa-calendar-alt mr-2"></i>
+                                        <div class="small" id="currentDate"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -495,187 +194,214 @@
                 </div>
             </div>
 
-            <!-- Action Buttons -->
-            <div class="action-buttons animate__animated animate__fadeInUp">
-                <div class="row">
-                    <div class="col-lg-6 col-md-12 mb-3">
-                        <a href="/form-produk" class="btn btn-add-product btn-custom btn-lg w-100">
-                            <i class="fas fa-plus-circle"></i>
-                            <div>
-                                <div class="font-weight-bold">Tambah Produk Roti</div>
-                                <small>Daftarkan jenis roti baru</small>
-                            </div>
-                        </a>
+            <!-- Main Content -->
+            <div class="content">
+                <!-- Action Buttons -->
+                <div class="row animate__animated animate__fadeInUp">
+                    <div class="col-lg-6 col-md-12">
+                        <div class="action-card">
+                            <a href="/form-produk" class="action-btn btn-add-product">
+                                <div class="action-icon">
+                                    <i class="fas fa-plus-circle"></i>
+                                </div>
+                                <div class="action-content">
+                                    <h4>Tambah Produk Roti</h4>
+                                    <p>Daftarkan jenis roti baru</p>
+                                </div>
+                                <div class="action-arrow">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </a>
+                        </div>
                     </div>
-                    <div class="col-lg-6 col-md-12 mb-3">
-                        <a href="/form-produksi" class="btn btn-add-production btn-custom btn-lg w-100">
-                            <i class="fas fa-cogs"></i>
-                            <div>
-                                <div class="font-weight-bold">Tambah Produksi</div>
-                                <small>Buat batch produksi baru</small>
-                            </div>
-                        </a>
+                    <div class="col-lg-6 col-md-12">
+                        <div class="action-card">
+                            <a href="/form-produksi" class="action-btn btn-add-production">
+                                <div class="action-icon">
+                                    <i class="fas fa-cogs"></i>
+                                </div>
+                                <div class="action-content">
+                                    <h4>Tambah Produksi</h4>
+                                    <p>Buat batch produksi baru</p>
+                                </div>
+                                <div class="action-arrow">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Production Table -->
-            <div class="production-table-container animate__animated animate__fadeInUp animate__delay-1s">
-                <div class="table-header">
-                    <h2>
-                        <i class="fas fa-list-alt mr-3"></i>
-                        Detail Produksi
-                    </h2>
-                    <small>Daftar semua produksi roti hari ini</small>
-                </div>
-                
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead>
-                            <tr>
-                                <th width="5%">No</th>
-                                <th width="12%">Nama Produk</th>
-                                <th width="10%">Jumlah Produksi</th>
-                                <th width="8%">Nomor Batch</th>
-                                <th width="10%">Tanggal Produksi</th>
-                                <th width="12%">Biaya Produksi</th>
-                                <th width="15%">Bahan Baku</th>
-                                <th width="10%">Catatan</th>
-                                <th width="8%">Status</th>
-                                <th width="10%">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Sample Data Row 1 -->
-                            <tr>
-                                <td class="text-center font-weight-bold">1</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-bread-slice text-warning mr-2"></i>
-                                        <strong>Roti Tawar</strong>
+                <!-- Production Table -->
+                <div class="row animate__animated animate__fadeInUp animate__delay-1s">
+                    <div class="col-12">
+                        <div class="data-container">
+                            <div class="data-header">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h3>
+                                            <i class="fas fa-list-alt mr-3"></i>
+                                            Detail Produksi
+                                        </h3>
+                                        <small>Daftar semua produksi roti hari ini</small>
                                     </div>
-                                </td>
-                                <td class="text-center">
-                                    <span class="badge badge-info">150 pcs</span>
-                                </td>
-                                <td class="text-center">
-                                    <code>BTH-001</code>
-                                </td>
-                                <td class="text-center">11-06-2025</td>
-                                <td class="text-right">
-                                    <strong class="text-success">Rp 750.000,00</strong>
-                                </td>
-                                <td class="ingredient-list">
-                                    <ul class="list-unstyled mb-0">
-                                        <li><i class="fas fa-circle text-warning" style="font-size: 0.4rem;"></i> Tepung - 15 kg</li>
-                                        <li><i class="fas fa-circle text-info" style="font-size: 0.4rem;"></i> Gula - 3 kg</li>
-                                        <li><i class="fas fa-circle text-danger" style="font-size: 0.4rem;"></i> Telur - 30 butir</li>
-                                    </ul>
-                                </td>
-                                <td class="text-center">
-                                    <span class="text-muted">Produksi normal</span>
-                                </td>
-                                <td class="text-center">
-                                    <span class="badge bg-warning">In Progress</span>
-                                </td>
-                                <td class="text-center">
-                                    <form class="d-inline">
-                                        <button type="button" class="btn btn-success btn-action" onclick="return confirm('Tandai sebagai Completed?')">
-                                            <i class="fas fa-check"></i> Selesai
-                                        </button>
-                                        <button type="button" class="btn btn-danger btn-action" onclick="return confirm('Batalkan Produksi?')">
-                                            <i class="fas fa-times"></i> Batal
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-
-                            <!-- Sample Data Row 2 -->
-                            <tr>
-                                <td class="text-center font-weight-bold">2</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-cookie-bite text-success mr-2"></i>
-                                        <strong>Roti Manis</strong>
+                                    <div class="data-stats">
+                                        <span class="pulse-dot"></span>
+                                        <small class="text-success font-weight-bold">Live Data</small>
                                     </div>
-                                </td>
-                                <td class="text-center">
-                                    <span class="badge badge-info">100 pcs</span>
-                                </td>
-                                <td class="text-center">
-                                    <code>BTH-002</code>
-                                </td>
-                                <td class="text-center">11-06-2025</td>
-                                <td class="text-right">
-                                    <strong class="text-success">Rp 650.000,00</strong>
-                                </td>
-                                <td class="ingredient-list">
-                                    <ul class="list-unstyled mb-0">
-                                        <li><i class="fas fa-circle text-warning" style="font-size: 0.4rem;"></i> Tepung - 12 kg</li>
-                                        <li><i class="fas fa-circle text-info" style="font-size: 0.4rem;"></i> Gula - 5 kg</li>
-                                        <li><i class="fas fa-circle text-success" style="font-size: 0.4rem;"></i> Mentega - 2 kg</li>
-                                    </ul>
-                                </td>
-                                <td class="text-center">
-                                    <span class="text-muted">Extra manis</span>
-                                </td>
-                                <td class="text-center">
-                                    <span class="badge bg-success">Completed</span>
-                                </td>
-                                <td class="text-center">
-                                    <span class="status-icon text-success" title="Selesai">✅</span>
-                                </td>
-                            </tr>
+                                </div>
+                            </div>
+                            
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th width="5%">No</th>
+                                            <th width="12%">Nama Produk</th>
+                                            <th width="10%">Jumlah Produksi</th>
+                                            <th width="8%">Nomor Batch</th>
+                                            <th width="10%">Tanggal Produksi</th>
+                                            <th width="12%">Biaya Produksi</th>
+                                            <th width="15%">Bahan Baku</th>
+                                            <th width="10%">Catatan</th>
+                                            <th width="8%">Status</th>
+                                            <th width="10%">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Sample Data Row 1 -->
+                                        <tr>
+                                            <td class="text-center font-weight-bold">1</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-bread-slice text-warning mr-2"></i>
+                                                    <strong>Roti Tawar</strong>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge badge-info">150 pcs</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <code>BTH-001</code>
+                                            </td>
+                                            <td class="text-center">13-06-2025</td>
+                                            <td class="text-right">
+                                                <strong class="text-success">Rp 750.000,00</strong>
+                                            </td>
+                                            <td class="ingredient-list">
+                                                <ul class="list-unstyled mb-0">
+                                                    <li><i class="fas fa-circle text-warning" style="font-size: 0.4rem;"></i> Tepung - 15 kg</li>
+                                                    <li><i class="fas fa-circle text-info" style="font-size: 0.4rem;"></i> Gula - 3 kg</li>
+                                                    <li><i class="fas fa-circle text-danger" style="font-size: 0.4rem;"></i> Telur - 30 butir</li>
+                                                </ul>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="text-muted">Produksi normal</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge bg-warning">In Progress</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-success btn-action" onclick="return confirm('Tandai sebagai Completed?')">
+                                                        <i class="fas fa-check"></i> Selesai
+                                                    </button>
+                                                    <button type="button" class="btn btn-danger btn-action" onclick="return confirm('Batalkan Produksi?')">
+                                                        <i class="fas fa-times"></i> Batal
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
 
-                            <!-- Sample Data Row 3 -->
-                            <tr>
-                                <td class="text-center font-weight-bold">3</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-hamburger text-primary mr-2"></i>
-                                        <strong>Roti Burger</strong>
-                                    </div>
-                                </td>
-                                <td class="text-center">
-                                    <span class="badge badge-info">80 pcs</span>
-                                </td>
-                                <td class="text-center">
-                                    <code>BTH-003</code>
-                                </td>
-                                <td class="text-center">11-06-2025</td>
-                                <td class="text-right">
-                                    <strong class="text-success">Rp 520.000,00</strong>
-                                </td>
-                                <td class="ingredient-list">
-                                    <ul class="list-unstyled mb-0">
-                                        <li><i class="fas fa-circle text-warning" style="font-size: 0.4rem;"></i> Tepung - 10 kg</li>
-                                        <li><i class="fas fa-circle text-danger" style="font-size: 0.4rem;"></i> Telur - 20 butir</li>
-                                        <li><i class="fas fa-circle text-dark" style="font-size: 0.4rem;"></i> Wijen - 500 gr</li>
-                                    </ul>
-                                </td>
-                                <td class="text-center">
-                                    <span class="text-muted">Dengan wijen</span>
-                                </td>
-                                <td class="text-center">
-                                    <span class="badge bg-danger">Cancelled</span>
-                                </td>
-                                <td class="text-center">
-                                    <span class="status-icon text-danger" title="Dibatalkan">❌</span>
-                                </td>
-                            </tr>
+                                        <!-- Sample Data Row 2 -->
+                                        <tr>
+                                            <td class="text-center font-weight-bold">2</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-cookie-bite text-success mr-2"></i>
+                                                    <strong>Roti Manis</strong>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge badge-info">100 pcs</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <code>BTH-002</code>
+                                            </td>
+                                            <td class="text-center">13-06-2025</td>
+                                            <td class="text-right">
+                                                <strong class="text-success">Rp 650.000,00</strong>
+                                            </td>
+                                            <td class="ingredient-list">
+                                                <ul class="list-unstyled mb-0">
+                                                    <li><i class="fas fa-circle text-warning" style="font-size: 0.4rem;"></i> Tepung - 12 kg</li>
+                                                    <li><i class="fas fa-circle text-info" style="font-size: 0.4rem;"></i> Gula - 5 kg</li>
+                                                    <li><i class="fas fa-circle text-success" style="font-size: 0.4rem;"></i> Mentega - 2 kg</li>
+                                                </ul>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="text-muted">Extra manis</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge bg-success">Completed</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="status-icon text-success" title="Selesai">✅</span>
+                                            </td>
+                                        </tr>
 
-                            <!-- Empty State (uncomment to show when no data) -->
-                            <!-- 
-                            <tr>
-                                <td colspan="10" class="empty-state">
-                                    <i class="fas fa-bread-slice"></i>
-                                    <h5>Belum Ada Data Produksi</h5>
-                                    <p>Silakan tambah produksi roti terlebih dahulu</p>
-                                </td>
-                            </tr>
-                            -->
-                        </tbody>
-                    </table>
+                                        <!-- Sample Data Row 3 -->
+                                        <tr>
+                                            <td class="text-center font-weight-bold">3</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-hamburger text-primary mr-2"></i>
+                                                    <strong>Roti Burger</strong>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge badge-info">80 pcs</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <code>BTH-003</code>
+                                            </td>
+                                            <td class="text-center">13-06-2025</td>
+                                            <td class="text-right">
+                                                <strong class="text-success">Rp 520.000,00</strong>
+                                            </td>
+                                            <td class="ingredient-list">
+                                                <ul class="list-unstyled mb-0">
+                                                    <li><i class="fas fa-circle text-warning" style="font-size: 0.4rem;"></i> Tepung - 10 kg</li>
+                                                    <li><i class="fas fa-circle text-danger" style="font-size: 0.4rem;"></i> Telur - 20 butir</li>
+                                                    <li><i class="fas fa-circle text-dark" style="font-size: 0.4rem;"></i> Wijen - 500 gr</li>
+                                                </ul>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="text-muted">Dengan wijen</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge bg-danger">Cancelled</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="status-icon text-danger" title="Dibatalkan">❌</span>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Empty State (uncomment to show when no data) -->
+                                        <!-- 
+                                        <tr>
+                                            <td colspan="10" class="empty-state">
+                                                <i class="fas fa-bread-slice"></i>
+                                                <h5>Belum Ada Data Produksi</h5>
+                                                <p>Silakan tambah produksi roti terlebih dahulu</p>
+                                            </td>
+                                        </tr>
+                                        -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -691,17 +417,19 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Enhanced sidebar toggle functionality
+        // Enhanced sidebar toggle
         document.addEventListener('DOMContentLoaded', function() {
             const toggleButton = document.querySelector('[data-widget="pushmenu"]');
             const toggleIcon = document.getElementById('toggleIcon');
             const mobileMenuBtn = document.getElementById('mobileMenuBtn');
             const sidebar = document.querySelector('.main-sidebar');
 
+            // Function to toggle sidebar
             function toggleSidebar() {
                 const isMobile = window.innerWidth <= 768;
 
                 if (isMobile) {
+                    // Mobile behavior
                     document.body.classList.toggle('sidebar-open');
                     if (mobileMenuBtn) {
                         const icon = mobileMenuBtn.querySelector('i');
@@ -714,7 +442,10 @@
                         }
                     }
                 } else {
+                    // Desktop behavior
                     document.body.classList.toggle('sidebar-collapse');
+
+                    // Update icon rotation
                     if (toggleIcon) {
                         if (document.body.classList.contains('sidebar-collapse')) {
                             toggleIcon.style.transform = 'rotate(180deg)';
@@ -729,6 +460,7 @@
                 }
             }
 
+            // Desktop toggle button
             if (toggleButton) {
                 toggleButton.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -737,6 +469,7 @@
                 });
             }
 
+            // Mobile menu button
             if (mobileMenuBtn) {
                 mobileMenuBtn.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -745,6 +478,15 @@
                 });
             }
 
+            // Backup event listener - click anywhere on brand-link when collapsed
+            document.querySelector('.brand-link').addEventListener('click', function(e) {
+                if (document.body.classList.contains('sidebar-collapse') && window.innerWidth > 768) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleSidebar();
+                }
+            });
+
             // Close mobile sidebar when clicking outside
             document.addEventListener('click', function(e) {
                 if (window.innerWidth <= 768 && document.body.classList.contains('sidebar-open')) {
@@ -752,7 +494,8 @@
                         document.body.classList.remove('sidebar-open');
                         if (mobileMenuBtn) {
                             const icon = mobileMenuBtn.querySelector('i');
-                            icon.classList.remove('fa-times icon.classList.add('fa-bars')');
+                            icon.classList.remove('fa-times');
+                            icon.classList.add('fa-bars');
                         }
                     }
                 }
@@ -770,67 +513,101 @@
                 }
             });
 
-            // Initialize sidebar state based on screen size
-            if (window.innerWidth <= 768) {
-                document.body.classList.add('sidebar-collapse');
-            }
-        });
-
-        // Date and Time Display
-        function updateDateTime() {
-            const now = new Date();
-            
-            // Format date
-            const dateOptions = { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            };
-            const formattedDate = now.toLocaleDateString('id-ID', dateOptions);
-            
-            // Format time
-            const timeOptions = { 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit',
-                hour12: false
-            };
-            const formattedTime = now.toLocaleTimeString('id-ID', timeOptions);
-            
-            // Update elements
-            const dateElement = document.getElementById('currentDate');
-            const timeElement = document.getElementById('currentTime');
-            
-            if (dateElement) dateElement.textContent = formattedDate;
-            if (timeElement) timeElement.textContent = formattedTime;
-        }
-
-        // Update time every second
-        setInterval(updateDateTime, 1000);
-        updateDateTime(); // Initial call
-
-        // Table animations and interactions
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add hover effect to table rows
-            const tableRows = document.querySelectorAll('.table tbody tr');
-            tableRows.forEach(row => {
-                row.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateX(5px)';
-                });
-                
-                row.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateX(0)';
-                });
+            // Keyboard shortcut: Ctrl + B to toggle sidebar
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 'b') {
+                    e.preventDefault();
+                    toggleSidebar();
+                }
             });
 
+            // Handle treeview menu
+            document.querySelectorAll('.nav-item.has-treeview > .nav-link').forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    // Don't open treeview when sidebar is collapsed
+                    if (document.body.classList.contains('sidebar-collapse') && window.innerWidth > 768) {
+                        return;
+                    }
+
+                    const navItem = this.parentElement;
+                    const treeview = navItem.querySelector('.nav-treeview');
+                    const icon = this.querySelector('.right');
+
+                    if (treeview) {
+                        // Toggle open state
+                        navItem.classList.toggle('menu-open');
+
+                        // Animate treeview
+                        if (navItem.classList.contains('menu-open')) {
+                            treeview.style.display = 'block';
+                            treeview.style.maxHeight = '0';
+                            treeview.style.overflow = 'hidden';
+                            treeview.style.transition = 'max-height 0.3s ease';
+
+                            // Calculate height
+                            const height = treeview.scrollHeight;
+                            setTimeout(() => {
+                                treeview.style.maxHeight = height + 'px';
+                            }, 10);
+
+                            // Rotate icon
+                            if (icon) {
+                                icon.style.transform = 'rotate(-90deg)';
+                            }
+                        } else {
+                            treeview.style.maxHeight = '0';
+
+                            setTimeout(() => {
+                                treeview.style.display = 'none';
+                            }, 300);
+
+                            // Rotate icon back
+                            if (icon) {
+                                icon.style.transform = 'rotate(0deg)';
+                            }
+                        }
+                    }
+                });
+            });
+        });
+
+        // Real-time date and time updates
+        function updateDateTime() {
+            const now = new Date();
+
+            // Format waktu (jam:menit:detik)
+            const time = now.toLocaleTimeString('id-ID', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+
+            // Format tanggal (Hari, tanggal bulan tahun)
+            const date = now.toLocaleDateString('id-ID', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+
+            document.getElementById('currentTime').textContent = time;
+            document.getElementById('currentDate').textContent = date;
+        }
+
+        // Jalankan saat pertama kali dan setiap 1 detik
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+
+        // Enhanced table interactions
+        document.addEventListener('DOMContentLoaded', function() {
             // Handle action buttons
             const actionButtons = document.querySelectorAll('.btn-action');
             actionButtons.forEach(button => {
                 button.addEventListener('click', function(e) {
                     e.preventDefault();
                     
-                    const buttonText = this.textContent.trim();
                     const isCompleteButton = this.classList.contains('btn-success');
                     const isCancelButton = this.classList.contains('btn-danger');
                     
@@ -839,6 +616,17 @@
                     } else if (isCancelButton) {
                         handleCancelProduction(this);
                     }
+                });
+            });
+
+            // Enhanced hover effects for action cards
+            document.querySelectorAll('.action-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
                 });
             });
         });
@@ -968,133 +756,13 @@
             }, 5000);
         }
 
-        // Enhanced button interactions
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add click effect to custom buttons
-            const customButtons = document.querySelectorAll('.btn-custom');
-            customButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    // Create ripple effect
-                    const ripple = document.createElement('span');
-                    const rect = this.getBoundingClientRect();
-                    const size = Math.max(rect.width, rect.height);
-                    const x = e.clientX - rect.left - size / 2;
-                    const y = e.clientY - rect.top - size / 2;
-                    
-                    ripple.style.cssText = `
-                        position: absolute;
-                        border-radius: 50%;
-                        background: rgba(255, 255, 255, 0.6);
-                        transform: scale(0);
-                        animation: ripple 0.6s linear;
-                        left: ${x}px;
-                        top: ${y}px;
-                        width: ${size}px;
-                        height: ${size}px;
-                        pointer-events: none;
-                    `;
-                    
-                    this.style.position = 'relative';
-                    this.style.overflow = 'hidden';
-                    this.appendChild(ripple);
-                    
-                    setTimeout(() => ripple.remove(), 600);
-                });
-            });
-        });
+        // Initialize tooltips
+        $('[data-toggle="tooltip"]').tooltip();
 
-        // CSS for ripple animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes ripple {
-                0% {
-                    transform: scale(0);
-                    opacity: 1;
-                }
-                100% {
-                    transform: scale(4);
-                    opacity: 0;
-                }
-            }
-            
-            .custom-notification {
-                transition: all 0.3s ease;
-            }
-            
-            .table tbody tr {
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-            
-            .btn-action {
-                position: relative;
-                overflow: hidden;
-            }
-            
-            .status-icon {
-                display: inline-block;
-                transition: transform 0.3s ease;
-            }
-            
-            .status-icon:hover {
-                transform: scale(1.2);
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Initialize tooltips if Bootstrap tooltips are available
-        if (typeof $().tooltip === 'function') {
-            $('[data-toggle="tooltip"], [title]').tooltip({
-                placement: 'top',
-                trigger: 'hover'
-            });
-        }
-
-        // Table search functionality (if needed)
-        function initTableSearch() {
-            const searchInput = document.getElementById('tableSearch');
-            if (searchInput) {
-                searchInput.addEventListener('input', function() {
-                    const searchTerm = this.value.toLowerCase();
-                    const tableRows = document.querySelectorAll('.table tbody tr');
-                    
-                    tableRows.forEach(row => {
-                        const text = row.textContent.toLowerCase();
-                        if (text.includes(searchTerm)) {
-                            row.style.display = '';
-                            row.classList.add('animate__animated', 'animate__fadeIn');
-                        } else {
-                            row.style.display = 'none';
-                        }
-                    });
-                });
-            }
-        }
-
-        // Initialize search when DOM is loaded
-        document.addEventListener('DOMContentLoaded', initTableSearch);
-
-        // Performance optimization - lazy loading for large tables
-        function initLazyLoading() {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('animate__animated', 'animate__fadeInUp');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, {
-                threshold: 0.1
-            });
-
-            const tableRows = document.querySelectorAll('.table tbody tr');
-            tableRows.forEach(row => {
-                observer.observe(row);
-            });
-        }
-
-        // Initialize lazy loading when DOM is loaded
-        document.addEventListener('DOMContentLoaded', initLazyLoading);
-
+        // Add smooth scrolling
+        document.documentElement.style.scrollBehavior = 'smooth';
     </script>
+
 </body>
+
 </html>

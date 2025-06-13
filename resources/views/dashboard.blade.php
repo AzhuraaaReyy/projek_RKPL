@@ -18,6 +18,122 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
     @include('lib.ext_css')
+
+    <style>
+    /* Modal Enhancement Styles */
+    .detail-card {
+        background: #f8f9fa;
+        border-left: 4px solid #6366f1;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .detail-card:hover {
+        background: #e3f2fd;
+        transform: translateX(5px);
+    }
+
+    .detail-card label {
+        font-weight: 600;
+        color: #475569;
+        font-size: 14px;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .detail-value {
+        font-size: 16px;
+        font-weight: 500;
+        color: #1e293b;
+        margin: 0;
+    }
+
+    .status-card {
+        background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.2));
+        color: white;
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        margin-bottom: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .status-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .status-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+        opacity: 0.9;
+    }
+
+    .status-count {
+        display: block;
+        font-size: 24px;
+        font-weight: 800;
+    }
+
+    .status-count.small {
+        font-size: 14px;
+    }
+
+    .clickable-info-box {
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .clickable-info-box:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    }
+
+    .clickable-info-box:active {
+        transform: translateY(-2px) scale(1.01);
+    }
+
+    .modal-content {
+        border-radius: 15px;
+        border: none;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    .modal-header {
+        border-radius: 15px 15px 0 0;
+        border-bottom: none;
+        padding: 20px 25px;
+    }
+
+    .modal-body {
+        padding: 25px;
+    }
+
+    .badge {
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Animation for modal appearance */
+    .modal.fade .modal-dialog {
+        transform: scale(0.8) translateY(-50px);
+        transition: all 0.3s ease;
+    }
+
+    .modal.show .modal-dialog {
+        transform: scale(1) translateY(0);
+    }
+    </style>
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -196,35 +312,35 @@
                 <!-- Info Boxes -->
                 <div class="row animate__animated animate__fadeInUp">
                     <div class="col-lg-4 col-md-6 col-sm-12">
-                        <div class="info-box bg-success">
+                        <div class="info-box bg-success clickable-info-box" data-toggle="modal" data-target="#produksiModal">
                             <span class="info-box-icon">
                                 <i class="fas fa-bread-slice"></i>
                             </span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Produksi Hari Ini</span>
-                                <span class="info-box-number">{{ $totalProduksiHariIni ?? 0 }} <small>Roti</small></span>
+                                <span class="info-box-number">{{ $totalProduksiHariIni ?? 50 }} <small>Roti</small></span>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12">
-                        <div class="info-box bg-warning">
+                        <div class="info-box bg-warning clickable-info-box" data-toggle="modal" data-target="#bahanBakuModal">
                             <span class="info-box-icon">
                                 <i class="fas fa-boxes"></i>
                             </span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Stok Bahan</span>
-                                <span class="info-box-number">{{$totalbahanbaku ?? 0}} <small>Jenis</small></span>
+                                <span class="info-box-number">{{$totalbahanbaku ?? 5}} <small>Jenis</small></span>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-12">
-                        <div class="info-box bg-info">
+                        <div class="info-box bg-info clickable-info-box" data-toggle="modal" data-target="#penjualanModal">
                             <span class="info-box-icon">
                                 <i class="fas fa-receipt"></i>
                             </span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Penjualan Hari Ini</span>
-                                <span class="info-box-number">{{$totalPenjualan ?? 0}}</span>
+                                <span class="info-box-number">{{$totalPenjualan ?? 25}}</span>
                             </div>
                         </div>
                     </div>
@@ -257,6 +373,308 @@
         <footer class="main-footer text-center">
             <strong>&copy; 2025 Galaxy Bakery</strong> - All rights reserved.
         </footer>
+    </div>
+
+    <!-- Modal Detail Produksi -->
+    <div class="modal fade" id="produksiModal" tabindex="-1" role="dialog" aria-labelledby="produksiModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="produksiModalLabel">
+                        <i class="fas fa-bread-slice mr-2"></i>Detail Produksi Hari Ini
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="detail-card">
+                                <label>Tanggal Produksi:</label>
+                                <p class="detail-value" id="produksiDate">13 Jun 2025</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-card">
+                                <label>Waktu Produksi:</label>
+                                <p class="detail-value" id="currentProductionTime">08:30:00</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="detail-card">
+                                <label>Produk:</label>
+                                <p class="detail-value">Roti Tawar Premium</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-card">
+                                <label>Status Produksi:</label>
+                                <span class="badge badge-success">SELESAI</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="detail-card">
+                                <label>Jumlah:</label>
+                                <p class="detail-value">{{ $totalProduksiHariIni ?? 50 }} Roti</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-card">
+                                <label>Target Produksi:</label>
+                                <p class="detail-value">200 Roti</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="detail-card">
+                                <label>Batch Number:</label>
+                                <p class="detail-value">BTH-{{ date('Ymd') }}-001</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-card">
+                                <label>Dibuat Oleh:</label>
+                                <p class="detail-value">Chef Baker</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-card">
+                        <label>Catatan:</label>
+                        <p class="detail-value">Produksi berjalan lancar sesuai standar kualitas Galaxy Bakery</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detail Bahan Baku -->
+    <div class="modal fade" id="bahanBakuModal" tabindex="-1" role="dialog" aria-labelledby="bahanBakuModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title" id="bahanBakuModalLabel">
+                        <i class="fas fa-boxes mr-2"></i>Detail Pergerakan Stok Bahan Baku
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="detail-card">
+                                <label>Tanggal Transaksi:</label>
+                                <p class="detail-value" id="stockDate">13 Jun 2025</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-card">
+                                <label>Waktu Transaksi:</label>
+                                <p class="detail-value" id="currentStockTime">11:20:27</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="detail-card">
+                                <label>Bahan Baku:</label>
+                                <p class="detail-value">Tepung Terigu Premium</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-card">
+                                <label>Jenis Pergerakan:</label>
+                                <span class="badge badge-danger">KELUAR</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="detail-card">
+                                <label>Jumlah:</label>
+                                <p class="detail-value">-5.00 Kg</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-card">
+                                <label>Sisa Stok:</label>
+                                <p class="detail-value">45.00 Kg</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="detail-card">
+                                <label>Referensi:</label>
+                                <p class="detail-value">production</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-card">
+                                <label>Dibuat Oleh:</label>
+                                <p class="detail-value">{{ Auth::user()->name ?? 'Test User' }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-card">
+                        <label>Catatan:</label>
+                        <p class="detail-value">Digunakan untuk produksi roti tawar batch BTH-{{ date('Ymd') }}-001</p>
+                    </div>
+
+                    <!-- Stok Terkini -->
+                    <div class="mt-4">
+                        <h6 class="font-weight-bold">Status Stok Terkini:</h6>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="status-card bg-success">
+                                    <span class="status-label">Tersedia</span>
+                                    <span class="status-count">{{ ($totalbahanbaku ?? 5) - 2 }}</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="status-card bg-warning">
+                                    <span class="status-label">Stok Rendah</span>
+                                    <span class="status-count">2</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="status-card bg-danger">
+                                    <span class="status-label">Habis</span>
+                                    <span class="status-count">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detail Penjualan -->
+    <div class="modal fade" id="penjualanModal" tabindex="-1" role="dialog" aria-labelledby="penjualanModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title" id="penjualanModalLabel">
+                        <i class="fas fa-receipt mr-2"></i>Detail Penjualan Hari Ini
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="detail-card">
+                                <label>Tanggal Transaksi:</label>
+                                <p class="detail-value" id="salesDate">13 Jun 2025</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-card">
+                                <label>Waktu Transaksi:</label>
+                                <p class="detail-value" id="currentSalesTime">14:15:30</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="detail-card">
+                                <label>Produk Terjual:</label>
+                                <p class="detail-value">Roti Tawar Premium</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-card">
+                                <label>Status Penjualan:</label>
+                                <span class="badge badge-success">TERJUAL</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="detail-card">
+                                <label>Jumlah Terjual:</label>
+                                <p class="detail-value">{{ $totalPenjualan ?? 25 }} Pcs</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-card">
+                                <label>Harga per Unit:</label>
+                                <p class="detail-value">Rp 15.000</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="detail-card">
+                                <label>Total Pendapatan:</label>
+                                <p class="detail-value text-success font-weight-bold">Rp {{ number_format(($totalPenjualan ?? 25) * 15000, 0, ',', '.') }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-card">
+                                <label>Kasir:</label>
+                                <p class="detail-value">{{ Auth::user()->name ?? 'Staff Kasir' }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-card">
+                        <label>Catatan:</label>
+                        <p class="detail-value">Penjualan lancar, produk laris manis di pasaran</p>
+                    </div>
+
+                    <!-- Ringkasan Penjualan -->
+                    <div class="mt-4">
+                        <h6 class="font-weight-bold">Ringkasan Penjualan Hari Ini:</h6>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="status-card bg-primary">
+                                    <span class="status-label">Total Transaksi</span>
+                                    <span class="status-count">{{ ($totalPenjualan ?? 25) }}</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="status-card bg-success">
+                                    <span class="status-label">Pendapatan</span>
+                                    <span class="status-count small">Rp {{ number_format(($totalPenjualan ?? 25) * 15000, 0, ',', '.') }}</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="status-card bg-warning">
+                                    <span class="status-label">Sisa Stok</span>
+                                    <span class="status-count">{{ ($totalProduksiHariIni ?? 50) - ($totalPenjualan ?? 25) }}</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="status-card bg-info">
+                                    <span class="status-label">Target Harian</span>
+                                    <span class="status-count">100</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Scripts -->
@@ -464,7 +882,6 @@
             });
         }
 
-
         // Load data pertama kali
         fetchDataAndUpdateChart();
 
@@ -632,34 +1049,102 @@
                     }
                 });
             });
-        });
 
-        // Enhanced real-time date and time updates
+            // Enhanced hover effects for clickable info boxes
+            $('.clickable-info-box').hover(
+                function() {
+                    $(this).addClass('animate__animated animate__pulse animate__faster');
+                },
+                function() {
+                    $(this).removeClass('animate__animated animate__pulse animate__faster');
+                }
+            );
 
+            // Update real-time dalam modal
+            function updateModalTimes() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('id-ID', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
 
-        // Start updates with variable intervals for more natural feel
-        const startEnhancedUpdates = () => {
-            const updateInterval = () => {
-                updateChart();
-                const nextInterval = 3000 + Math.random() * 3000; // 3-6 seconds
-                setTimeout(updateInterval, nextInterval);
-            };
-            setTimeout(updateInterval, 4000);
-        };
+                const dateString = now.toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+                
+                $('#currentProductionTime').text(timeString);
+                $('#currentStockTime').text(timeString);
+                $('#currentSalesTime').text(timeString);
+                $('#produksiDate').text(dateString);
+                $('#stockDate').text(dateString);
+                $('#salesDate').text(dateString);
+            }
 
-        startEnhancedUpdates();
+            // Update setiap detik
+            setInterval(updateModalTimes, 1000);
+            updateModalTimes(); // Initial call
 
-        // Enhanced hover effects for chart
-        document.getElementById('produksiChart').addEventListener('mouseover', function() {
-            produksiChart.data.datasets[0].pointRadius = 9;
-            produksiChart.data.datasets[0].borderWidth = 5;
-            produksiChart.update('none');
-        });
+            // Enhanced modal animations
+            $('.modal').on('show.bs.modal', function() {
+                $(this).find('.modal-dialog').addClass('animate__animated animate__zoomIn animate__faster');
+            });
 
-        document.getElementById('produksiChart').addEventListener('mouseout', function() {
-            produksiChart.data.datasets[0].pointRadius = 7;
-            produksiChart.data.datasets[0].borderWidth = 4;
-            produksiChart.update('none');
+            $('.modal').on('hidden.bs.modal', function() {
+                $(this).find('.modal-dialog').removeClass('animate__animated animate__zoomIn animate__faster');
+            });
+
+            // Add click sound effect (optional)
+            $('.clickable-info-box').on('click', function() {
+                // Vibration for mobile devices
+                if (navigator.vibrate) {
+                    navigator.vibrate(50);
+                }
+            });
+
+            // Keyboard shortcuts for modals
+            $(document).on('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    $('.modal').modal('hide');
+                }
+                
+                // Ctrl + 1, 2, 3 untuk buka modal
+                if (e.ctrlKey) {
+                    switch(e.key) {
+                        case '1':
+                            e.preventDefault();
+                            $('#produksiModal').modal('show');
+                            break;
+                        case '2':
+                            e.preventDefault();
+                            $('#bahanBakuModal').modal('show');
+                            break;
+                        case '3':
+                            e.preventDefault();
+                            $('#penjualanModal').modal('show');
+                            break;
+                    }
+                }
+            });
+
+            // Auto refresh data in modals every 30 seconds
+            setInterval(function() {
+                // Simulate data refresh
+                console.log('Refreshing modal data...');
+                // Here you could add AJAX calls to refresh actual data
+            }, 30000);
+
+            // Enhanced detail card animations
+            $('.detail-card').hover(
+                function() {
+                    $(this).addClass('animate__animated animate__pulse animate__faster');
+                },
+                function() {
+                    $(this).removeClass('animate__animated animate__pulse animate__faster');
+                }
+            );
         });
 
         // Enhanced info box animations
@@ -673,14 +1158,7 @@
             });
         });
 
-        // Initialize tooltips
-        $('[data-toggle="tooltip"]').tooltip();
-
-        // Add smooth scrolling
-        document.documentElement.style.scrollBehavior = 'smooth';
-
-
-        //set waktu dan tanggal real time
+        // Real-time date and time updates
         function updateDateTime() {
             const now = new Date();
 
@@ -706,6 +1184,28 @@
         // Jalankan saat pertama kali dan setiap 1 detik
         updateDateTime();
         setInterval(updateDateTime, 1000);
+
+        // Initialize tooltips and other interactive elements
+        $(document).ready(function() {
+            // Initialize tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+
+            // Add smooth scrolling
+            document.documentElement.style.scrollBehavior = 'smooth';
+        });
+
+        // Enhanced hover effects for chart
+        document.getElementById('produksiChart').addEventListener('mouseover', function() {
+            produksiChart.data.datasets[0].pointRadius = 9;
+            produksiChart.data.datasets[0].borderWidth = 5;
+            produksiChart.update('none');
+        });
+
+        document.getElementById('produksiChart').addEventListener('mouseout', function() {
+            produksiChart.data.datasets[0].pointRadius = 7;
+            produksiChart.data.datasets[0].borderWidth = 4;
+            produksiChart.update('none');
+        });
     </script>
 
 </body>

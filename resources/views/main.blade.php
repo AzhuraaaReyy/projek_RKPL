@@ -865,7 +865,7 @@
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
                         <li class="nav-item">
-                            <a href="/dashboard" class="nav-link active">
+                            <a href="/dashboard" class="nav-link">
                                 <i class="nav-icon fas fa-home"></i>
                                 <p>Dashboard</p>
                             </a>
@@ -878,13 +878,13 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="#" class="nav-link">
+                                    <a href="/bahanbaku" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Input Produksi</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="#" class="nav-link">
+                                    <a href="/riwayatBahanBaku" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Riwayat Produksi</p>
                                     </a>
@@ -899,13 +899,13 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="#" class="nav-link">
+                                    <a href="/produksiRoti" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Input Produksi</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="#" class="nav-link">
+                                    <a href="/riwayatProduksiRoti" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Riwayat Produksi</p>
                                     </a>
@@ -913,49 +913,35 @@
                             </ul>
                         </li>
 
-                        <li class="nav-item has-treeview">
-                            <a href="#" class="nav-link">
+                        <li class="nav-item">
+                            <a href="/laporan" class="nav-link">
                                 <i class="nav-icon fas fa-chart-line"></i>
-                                <p>Laporan<i class="right fas fa-angle-left"></i></p>
+                                <p>Laporan</p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Laporan Stok</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Laporan Produksi</p>
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
 
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="/pengeluaran" class="nav-link active">
                                 <i class="nav-icon fas fa-wallet"></i>
                                 <p>Pengeluaran</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="/penjualan" class="nav-link">
                                 <i class="nav-icon fas fa-receipt"></i>
                                 <p>Penjualan</p>
                             </a>
                         </li>
 
                         <li class="nav-item has-treeview">
-                            <a href="#" class="nav-link">
+                            <a href="/customer" class="nav-link">
                                 <i class="nav-icon fas fa-users-cog"></i>
                                 <p>Manajemen User<i class="right fas fa-angle-left"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="#" class="nav-link">
+                                    <a href="/customer" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Hak Akses</p>
                                     </a>

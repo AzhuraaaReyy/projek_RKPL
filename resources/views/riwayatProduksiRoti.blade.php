@@ -24,164 +24,6 @@
     @include('lib.ext_css')
 
     <style>
-        /* Sidebar Fixed Improvements */
-        .main-sidebar {
-            position: fixed !important;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            z-index: 1039;
-            transition: all 0.3s ease;
-            width: 250px;
-            overflow: hidden;
-        }
-
-        .sidebar {
-            height: 100vh !important;
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
-
-        .sidebar::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .sidebar::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .sidebar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 2px;
-        }
-
-        .brand-link {
-            position: sticky;
-            top: 0;
-            z-index: 1040;
-            background: rgba(44, 62, 80, 0.95) !important;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 15px 20px;
-            min-height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .brand-text {
-            font-size: 1.2rem !important;
-            font-weight: 700 !important;
-            color: white !important;
-            text-decoration: none !important;
-            flex: 1;
-        }
-
-        .sidebar-toggle-btn {
-            background: rgba(255, 255, 255, 0.1) !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
-            color: white !important;
-            border-radius: 6px !important;
-            padding: 8px 10px !important;
-            transition: all 0.3s ease;
-        }
-
-        .user-panel {
-            background: rgba(255, 255, 255, 0.05) !important;
-            margin: 15px 10px !important;
-            padding: 15px !important;
-            border-radius: 10px !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        }
-
-        .nav-sidebar {
-            padding: 0 10px 20px 10px !important;
-        }
-
-        .nav-sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.8) !important;
-            border-radius: 8px !important;
-            padding: 12px 15px !important;
-            transition: all 0.3s ease !important;
-            font-weight: 500 !important;
-        }
-
-        .nav-sidebar .nav-link:hover {
-            background: rgba(255, 255, 255, 0.15) !important;
-            color: white !important;
-            transform: translateX(5px);
-        }
-
-        .nav-sidebar .nav-link.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            color: white !important;
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .nav-treeview .nav-link.active {
-            background: rgba(255, 255, 255, 0.15) !important;
-            border-left: 3px solid #667eea !important;
-            color: white !important;
-        }
-
-        .sidebar-logout {
-            background: rgba(220, 53, 69, 0.1) !important;
-            margin: 15px 10px 20px 10px !important;
-            padding: 15px !important;
-            border-radius: 10px !important;
-            border: 1px solid rgba(220, 53, 69, 0.2) !important;
-            position: sticky;
-            bottom: 0;
-        }
-
-        .content-wrapper {
-            margin-left: 250px !important;
-            transition: margin-left 0.3s ease !important;
-            min-height: 100vh;
-        }
-
-        .mobile-menu-btn {
-            position: fixed !important;
-            top: 15px !important;
-            left: 15px !important;
-            z-index: 1050 !important;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            color: white !important;
-            border: none !important;
-            padding: 12px 14px !important;
-            border-radius: 8px !important;
-            display: none !important;
-        }
-
-        /* Sidebar collapsed state */
-        .sidebar-collapse .main-sidebar {
-            width: 70px !important;
-        }
-
-        .sidebar-collapse .content-wrapper {
-            margin-left: 70px !important;
-        }
-
-        /* Mobile responsive */
-        @media (max-width: 768px) {
-            .main-sidebar {
-                transform: translateX(-100%) !important;
-                width: 250px !important;
-            }
-
-            .content-wrapper {
-                margin-left: 0 !important;
-            }
-
-            .mobile-menu-btn {
-                display: block !important;
-            }
-
-            .sidebar-open .main-sidebar {
-                transform: translateX(0) !important;
-            }
-        }
-
         /* Custom styles untuk halaman riwayat produksi roti */
         .riwayat-content-header {
             background: linear-gradient(135deg, #ff9a56 0%, #ff6b6b 100%);
@@ -670,25 +512,11 @@
                             </ul>
                         </li>
 
-                        <li class="nav-item has-treeview">
+                        <li class="nav-item">
                             <a href="/laporan" class="nav-link">
                                 <i class="nav-icon fas fa-chart-line"></i>
-                                <p>Laporan<i class="right fas fa-angle-left"></i></p>
+                                <p>Laporan</p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="/laporanstok" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Laporan Stok</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="/laporanproduksi" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Laporan Produksi</p>
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
 
                         <li class="nav-item">
@@ -739,25 +567,31 @@
         <!-- Content Wrapper -->
         <div class="content-wrapper">
             <!-- Content Header -->
-            <div class="riwayat-content-header animate__animated animate__fadeInDown">
-                <div class="row align-items-center">
-                    <div class="col-lg-8 col-md-12">
-                        <h1><i class="fas fa-history mr-3"></i>Riwayat Produksi Roti</h1>
-                        <small>Pantau dan analisis riwayat produksi roti Galaxy Bakery</small>
-                    </div>
-                    <div class="col-lg-4 col-md-12 mt-3 mt-lg-0">
-                        <div class="header-stats">
+            <div class="content-header animate__animated animate__fadeInDown">
+                <div class="container-fluid">
+                    <div class="row align-items-center">
+                        <div class="col-lg-8 col-md-12">
+                            <h1><i class="fas fa-history mr-3"></i>Riwayat Produksi Roti</h1>
+                            <small>Pantau dan analisis riwayat produksi roti Galaxy Bakery</small>
+                        </div>
+                        <div class="col-lg-4 col-md-12 mt-3 mt-lg-0">
                             <div class="row">
-                                <div class="col-6">
-                                    <div class="stat-item">
-                                        <span class="stat-number">{{ count($productionHistories ?? []) }}</span>
-                                        <span class="stat-label">Total Riwayat</span>
+                                <div class="col-12 mb-2">
+                                    <div class="header-info-box text-center">
+                                        <i class="fas fa-user-circle mr-2"></i>
+                                        <span class="font-weight-bold">{{ Auth::user()->name ?? 'Admin User' }}</span>
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <div class="stat-item">
-                                        <span class="pulse-dot"></span>
-                                        <span class="stat-label">Real-time Data</span>
+                                    <div class="header-info-box text-center">
+                                        <i class="fas fa-clock mr-2"></i>
+                                        <div class="font-weight-bold" id="currentTime"></div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="header-info-box text-center">
+                                        <i class="fas fa-calendar-alt mr-2"></i>
+                                        <div class="small" id="currentDate"></div>
                                     </div>
                                 </div>
                             </div>
@@ -768,7 +602,56 @@
 
             <!-- Main Content -->
             <div class="content">
-                <div class="main-card animate__animated animate__fadeInUp">
+                <!-- Stats Cards -->
+                <div class="row animate__animated animate__fadeInUp">
+                    <div class="col-lg-3 col-md-6 col-sm-12">
+                        <div class="info-box bg-primary">
+                            <span class="info-box-icon">
+                                <i class="fas fa-list"></i>
+                            </span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Total Riwayat</span>
+                                <span class="info-box-number">{{ count($productionHistories ?? []) }} <small>Records</small></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-12">
+                        <div class="info-box bg-success">
+                            <span class="info-box-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Selesai</span>
+                                <span class="info-box-number">{{ collect($productionHistories ?? [])->where('status', 'completed')->count() }} <small>Items</small></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-12">
+                        <div class="info-box bg-warning">
+                            <span class="info-box-icon">
+                                <i class="fas fa-clock"></i>
+                            </span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Planning</span>
+                                <span class="info-box-number">{{ collect($productionHistories ?? [])->where('status', 'planning')->count() }} <small>Items</small></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-12">
+                        <div class="info-box bg-danger">
+                            <span class="info-box-icon">
+                                <i class="fas fa-times-circle"></i>
+                            </span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Dibatalkan</span>
+                                <span class="info-box-number">{{ collect($productionHistories ?? [])->where('status', 'cancelled')->count() }} <small>Items</small></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Card -->
+                <div class="main-card animate__animated animate__fadeInUp animate__delay-1s">
                     <div class="card-header-custom">
                         <h3><i class="fas fa-table mr-2"></i>Data Riwayat Produksi Roti</h3>
                     </div>
@@ -1114,7 +997,7 @@
                 }
             });
 
-            // Enhanced sidebar toggle
+            // Enhanced sidebar toggle - same as dashboard
             const toggleButton = document.querySelector('[data-widget="pushmenu"]');
             const toggleIcon = document.getElementById('toggleIcon');
             const mobileMenuBtn = document.getElementById('mobileMenuBtn');
@@ -1172,6 +1055,101 @@
                 });
             }
 
+            // Close mobile sidebar when clicking outside
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768 && document.body.classList.contains('sidebar-open')) {
+                    if (!sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                        document.body.classList.remove('sidebar-open');
+                        if (mobileMenuBtn) {
+                            const icon = mobileMenuBtn.querySelector('i');
+                            icon.classList.remove('fa-times');
+                            icon.classList.add('fa-bars');
+                        }
+                    }
+                }
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    document.body.classList.remove('sidebar-open');
+                    if (mobileMenuBtn) {
+                        const icon = mobileMenuBtn.querySelector('i');
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                }
+            });
+
+            // Handle treeview menu
+            document.querySelectorAll('.nav-item.has-treeview > .nav-link').forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    if (document.body.classList.contains('sidebar-collapse') && window.innerWidth > 768) {
+                        return;
+                    }
+
+                    const navItem = this.parentElement;
+                    const treeview = navItem.querySelector('.nav-treeview');
+                    const icon = this.querySelector('.right');
+
+                    if (treeview) {
+                        navItem.classList.toggle('menu-open');
+
+                        if (navItem.classList.contains('menu-open')) {
+                            treeview.style.display = 'block';
+                            treeview.style.maxHeight = '0';
+                            treeview.style.overflow = 'hidden';
+                            treeview.style.transition = 'max-height 0.3s ease';
+
+                            const height = treeview.scrollHeight;
+                            setTimeout(() => {
+                                treeview.style.maxHeight = height + 'px';
+                            }, 10);
+
+                            if (icon) {
+                                icon.style.transform = 'rotate(-90deg)';
+                            }
+                        } else {
+                            treeview.style.maxHeight = '0';
+
+                            setTimeout(() => {
+                                treeview.style.display = 'none';
+                            }, 300);
+
+                            if (icon) {
+                                icon.style.transform = 'rotate(0deg)';
+                            }
+                        }
+                    }
+                });
+            });
+
+            // Real-time date and time updates - same as dashboard
+            function updateDateTime() {
+                const now = new Date();
+
+                const time = now.toLocaleTimeString('id-ID', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+
+                const date = now.toLocaleDateString('id-ID', {
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+
+                document.getElementById('currentTime').textContent = time;
+                document.getElementById('currentDate').textContent = date;
+            }
+
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+
             // Filter functionality
             $('#filterForm').on('submit', function(e) {
                 const submitBtn = $(this).find('button[type="submit"]');
@@ -1188,7 +1166,6 @@
                 const id = $(this).data('id');
                 const row = $(this).closest('tr');
                 
-                // Show loading
                 $('#detailModal .modal-body').html(`
                     <div class="text-center py-4">
                         <i class="fas fa-spinner fa-spin fa-2x text-primary mb-3"></i>
@@ -1197,7 +1174,6 @@
                 `);
                 $('#detailModal').modal('show');
 
-                // Simulate API call
                 setTimeout(() => {
                     const detailData = {
                         product: row.find('td:eq(1)').text().trim(),
@@ -1282,7 +1258,6 @@
             $(document).on('click', '.btn-edit', function() {
                 const id = $(this).data('id');
                 showNotification('info', `Fungsi edit akan mengarahkan ke halaman edit dengan ID: ${id}`);
-                // window.location.href = '/riwayatProduksiRoti/' + id + '/edit';
             });
 
             // Delete functionality

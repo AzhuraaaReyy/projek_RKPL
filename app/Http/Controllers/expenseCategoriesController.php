@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Expense;
 
 use App\Models\ExpenseCategories;
 use Illuminate\Http\Request;
@@ -10,8 +11,16 @@ class expenseCategoriesController extends Controller
     //
     public function index()
     {
+        $categories = ExpenseCategories::orderBy('name')->get();
+        $expenses = Expense::with('category')
+            ->latest()
+            ->paginate(10);
+        return view('form.create_categoriesPengeluaran', compact('categories','expenses'));
+    }
+    public function formcategories()
+    {
         $expensesCategories = ExpenseCategories::orderBy('name')->get();
-        return view('pengeluaran', compact('expensesCategories'));
+        return view('form.create_categoriesPengeluaran', compact('expensesCategories'));
     }
 
     public function strore(Request $request)

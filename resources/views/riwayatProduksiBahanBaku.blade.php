@@ -760,10 +760,10 @@
                 <!-- User Panel -->
                 <div class="user-panel d-flex align-items-center">
                     <div class="image">
-                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Admin') }}&background=6366f1&color=fff&size=128" class="img-circle elevation-2" alt="User Image">
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=6366f1&color=fff&size=128" class="img-circle elevation-2" alt="User Image">
                     </div>
                     <div class="info ml-3">
-                        <a href="#" class="d-block">{{ Auth::user()->name ?? 'Admin User' }}</a>
+                        <a href="#" class="d-block">{{ Auth::user()->name }}</a>
                     </div>
                 </div>
 
@@ -772,26 +772,26 @@
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
                         <li class="nav-item">
-                            <a href="/dashboard" class="nav-link">
+                            <a href="{{ route('production.stats') }}" class="nav-link">
                                 <i class="nav-icon fas fa-home"></i>
                                 <p>Dashboard</p>
                             </a>
                         </li>
 
                         <li class="nav-item has-treeview menu-open">
-                            <a href="/monitoring" class="nav-link active">
+                            <a href="{{ route('inputbahan') }}" class="nav-link">
                                 <i class="nav-icon fas fa-boxes"></i>
                                 <p>Bahan Baku<i class="right fas fa-angle-left"></i></p>
                             </a>
-                            <ul class="nav nav-treeview" style="display: block;">
+                            <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="/bahanbaku" class="nav-link">
+                                    <a href="{{ route('inputbahan') }}" class="nav-link active">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Input Produksi</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="/riwayatBahanBaku" class="nav-link active">
+                                    <a href="/riwayatBahanBaku" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Riwayat Produksi</p>
                                     </a>
@@ -806,7 +806,7 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="/produksiRoti" class="nav-link">
+                                    <a href="{{ route('productions') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Input Produksi</p>
                                     </a>
@@ -820,29 +820,15 @@
                             </ul>
                         </li>
 
-                        <li class="nav-item has-treeview">
-                            <a href="/laporan" class="nav-link">
+                        <li class="nav-item">
+                            <a href="{{ route('laporan.index') }}" class="nav-link">
                                 <i class="nav-icon fas fa-chart-line"></i>
-                                <p>Laporan<i class="right fas fa-angle-left"></i></p>
+                                <p>Laporan</p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="/laporanstok" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Laporan Stok</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="/laporanproduksi" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Laporan Produksi</p>
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
 
                         <li class="nav-item">
-                            <a href="/pengeluaran" class="nav-link">
+                            <a href="{{ route('pengeluaran') }}" class="nav-link">
                                 <i class="nav-icon fas fa-wallet"></i>
                                 <p>Pengeluaran</p>
                             </a>
@@ -856,13 +842,13 @@
                         </li>
 
                         <li class="nav-item has-treeview">
-                            <a href="/customer" class="nav-link">
+                            <a href="{{ route('customers') }}" class="nav-link">
                                 <i class="nav-icon fas fa-users-cog"></i>
                                 <p>Manajemen User<i class="right fas fa-angle-left"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="/customer" class="nav-link">
+                                    <a href="{{ route('customers') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Hak Akses</p>
                                     </a>
