@@ -14,12 +14,13 @@ class SalesTableController extends Controller
     public function index()
     {
         $sale = Sale::all();
+        $sales = Sale::with(['customer', 'creator', 'saleItems.productType'])->latest()->paginate(10);
         $customers = Customers::all();
         $producType = ProductType::select('id', 'name', 'description') // atau tambahkan harga default jika ada
             ->with('saleItem') // atau ambil dari relasi terkait
             ->get();
 
-        return view('penjualan', compact('sale', 'customers', 'producType'));
+        return view('penjualan', compact('sale', 'sales', 'customers', 'producType'));
     }
 
 
@@ -38,7 +39,6 @@ class SalesTableController extends Controller
             'unit_price' => 'required|array',
             'unit_price.*' => 'numeric|min:0',
             'payment_method' => 'required|string',
-            'payment_status' => 'required|string',
             'notes' => 'required|string',
         ]);
 
@@ -55,7 +55,7 @@ class SalesTableController extends Controller
             'customer_id' => $request->customer_id,
             'total_amount' => $totalAmount,
             'payment_method' => $request->payment_method,
-            'payment_status' => $request->payment_status,
+            'payment_status' => 'pending',
             'notes' => $request->notes,
             'created_by' => auth()->id(),
         ]);

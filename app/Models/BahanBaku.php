@@ -31,6 +31,8 @@ class BahanBaku extends Model
         'minimum_stok' => 'integer',
         'harga' => 'float',
     ];
+    protected $appends = ['status', 'status_class'];
+
 
     public function getStatusAttribute()
     {
@@ -101,5 +103,9 @@ class BahanBaku extends Model
         return $this->belongsToMany(ProductType::class, 'product_type_raw_material', 'bahan_baku_id', 'product_type_id')
             ->withPivot('quantity_per_unit')
             ->withTimestamps();
+    }
+    public function getTanggalKadaluwarsaFormatAttribute()
+    {
+        return \Carbon\Carbon::parse($this->tanggal_kadaluwarsa)->translatedFormat('d F Y');
     }
 }

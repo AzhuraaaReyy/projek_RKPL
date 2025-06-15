@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->decimal('quantity', 10, 2);
             $table->decimal('remaining_stock', 10, 2);
             $table->enum('reference_type', ['purchase', 'production', 'adjustment', 'waste']);
-            $table->unsignedBigInteger('reference_id')->nullable();
+           
             $table->text('notes')->nullable();
             $table->date('movement_date');
             $table->foreignId('created_by')->constrained('users');

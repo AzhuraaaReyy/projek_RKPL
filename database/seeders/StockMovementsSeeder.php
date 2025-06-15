@@ -22,7 +22,7 @@ class StockMovementsSeeder extends Seeder
                 'notes' => 'Digunakan produksi',
                 'quantity' => 5,
                 'bahan_baku_id' => $rawMaterial->id,
-                'reference_id' => 1,
+               
                 'reference_type' => 'production',
                 'remaining_stock' => 45,
             ],
@@ -36,7 +36,7 @@ class StockMovementsSeeder extends Seeder
                 'notes' => $d['notes'],
                 'quantity' => $d['quantity'],
                 'bahan_baku_id' => $d['bahan_baku_id'],
-                'reference_id' => $d['reference_id'],
+               
                 'reference_type' => $d['reference_type'],
                 'remaining_stock' => $d['remaining_stock'],
             ]);

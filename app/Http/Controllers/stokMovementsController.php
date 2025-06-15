@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\StokMovements;
 use Illuminate\Http\Request;
+use App\Models\BahanBaku;
 
 class stokMovementsController extends Controller
 {
@@ -11,7 +12,8 @@ class stokMovementsController extends Controller
     public function index()
     {
         $stokMovements = StokMovements::all();
-        return view('riwayatProduksiBahanBaku', compact('stokMovements'));
+        $bahanBakus = BahanBaku::select('id', 'nama')->get();
+        return view('riwayatProduksiBahanBaku', compact('stokMovements', 'bahanBakus'));
     }
 
     public function store(Request $request)
@@ -63,24 +65,40 @@ class stokMovementsController extends Controller
             'movement_date' => $request->movement_date,
 
         ]);
-        return redirect()->route('stokMovements')->with('success', 'Data berhasil di update');
+        return response()->json([
+            'success' => true,
+            'message' => 'Data berhasil diupdate'
+        ]);
     }
 
     public function destroy($id)
     {
         try {
-            $stokMovements = StokMovements::findOrFail($id);
-            $stokMovements->delete();
+            $stokMovement = StokMovements::find($id);
 
-            return redirect()->route('stokMovements')->with('success', 'Data Berhasil Dihapus');
-        } catch (\Illuminate\Database\QueryException $e) {
-            return redirect()->route('stokMovements')->with('error', 'Data gagal Dihapus');
+            if (!$stokMovement) {
+                return response()->json(['message' => 'Data tidak ditemukan'], 404);
+            }
+
+            $stokMovement->delete();
+
+            return response()->json(['message' => 'Data berhasil dihapus'], 200);
+        } catch (\Exception $e) {
+            \Log::error("Gagal menghapus stok movement ID $id: " . $e->getMessage());
+            return response()->json(['message' => 'Terjadi kesalahan saat menghapus data'], 500);
         }
     }
 
+
+
     public function show($id)
     {
-        $stokMovements = StokMovements::findOrFail($id);
-        return view('', compact('stokMovements'));
+        $data = StokMovements::with('bahanBaku')->find($id);
+
+        if (!$data) {
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        }
+
+        return response()->json($data);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\BahanBaku;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class MonitoringBahanBakuController extends Controller
 {
@@ -88,18 +89,60 @@ class MonitoringBahanBakuController extends Controller
     public function destroy($id)
     {
         try {
-            $bahanBakus = BahanBaku::findOrFail($id);
+            $bahanBakus = BahanBaku::find($id);
+
+            if (!$bahanBakus) {
+                return response()->json(['message' => 'Data Tidak Ditemukan'], 404);
+            }
+
+            // Hapus relasi stok movements jika ada
+            $bahanBakus->stokMovements()->delete();
+
             $bahanBakus->delete();
 
-            return redirect()->route('bahanBakus')->with('Success', 'Data Berhasil Dihapus');
-        } catch (\Illuminate\Database\QueryException $e) {
-            return redirect()->route('bahanBakus')->with('error', 'Data tidak dapat dihapus');
+            return response()->json(['message' => 'Data Berhasil Dihapus']);
+        } catch (\Exception $e) {
+            \Log::error("Gagal hapus data: " . $e->getMessage());
+            return response()->json(['message' => 'Gagal menghapus data'], 500);
         }
     }
 
+
     public function show($id)
     {
-        $bahanBakus = BahanBaku::findOrFail($id);
+        $data = BahanBaku::find($id);
+
+        if (!$data) {
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        }
+
+        return response()->json($data);
+    }
+
+
+    public function filterBybahanBaku(Request $request)
+    {
+        $bahanBakus = BahanBaku::query()
+            ->when($request->kategori, fn($q) => $q->where('kategori', $request->kategori))
+            ->when($request->tanggal_dari, fn($q) =>
+            $q->whereDate('created_at', '>=', $request->tanggal_dari))
+            ->when($request->tanggal_sampai, fn($q) =>
+            $q->whereDate('created_at', '<=', $request->tanggal_sampai))
+            ->when($request->search, fn($q) =>
+            $q->where('nama', 'like', '%' . $request->search . '%'))
+            ->latest()
+            ->paginate(10);
+
         return view('inputProduksiBahanBaku', compact('bahanBakus'));
+    }
+
+    public function downlod_pdf()
+    {
+        $bahanBakus = BahanBaku::latest()->get();
+        $pdf = PDF::loadView('pdf.bahanBaku_pdf', compact(
+            'bahanBakus',
+        ));
+
+        return $pdf->download('laporan_bahanBaku.pdf');
     }
 }

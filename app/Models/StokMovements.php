@@ -16,7 +16,7 @@ class StokMovements extends Model
         'quantity',
         'remaining_stock',
         'reference_type',
-        'reference_id',
+
         'notes',
         'movement_date',
         'created_by',

@@ -86,7 +86,6 @@ class Production extends Model
                 'quantity' => $jumlahDikurangi,
                 'remaining_stock' => $bahanBaku->stok,
                 'reference_type' => 'production',
-                'reference_id' => $this->id,
                 'notes' => 'Pengurangan stok karena produksi',
                 'movement_date' => now(),
                 'created_by' => auth()->id() ?? null,

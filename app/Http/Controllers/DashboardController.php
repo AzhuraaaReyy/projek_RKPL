@@ -9,12 +9,38 @@ use App\Models\Production;
 use App\Models\ProductTypes;
 use App\Models\Sale;
 use Illuminate\Http\JsonResponse;
+use Carbon\Carbon;
+use App\Models\ProductType;
 
 class DashboardController extends Controller
 {
     //
     public function index()
     {
+        $today = Carbon::today();
+
+        $jumlahStokRendah = BahanBaku::whereColumn('stok', '<', 'minimum_stok')->count();
+        $stokHabis = BahanBaku::where('stok', 0)->get();
+
+        $produksi = \App\Models\Production::with('productType', 'creator')
+            ->whereDate('created_at', now()->toDateString())
+            ->latest()
+            ->first();
+
+        $penjualan = Sale::with('productType', 'creator', 'saleItems', 'customer',)
+            ->whereDate('created_at', now()->toDateString())
+            ->latest()
+            ->first();
+        $jumlahTransaksi = Sale::count();
+        $bahan = BahanBaku::with('stokMovements')->latest()->first();
+
+        $bulanIni = Carbon::now()->month;
+        $tahunIni = Carbon::now()->year;
+
+        $totalPenjualanBulanIni = Sale::whereMonth('created_at', $bulanIni)
+            ->whereYear('created_at', $tahunIni)
+            ->sum('total_amount');
+
         // Ambil total produksi hari ini
         $totalProduksiHariIni = Production::whereDate('created_at', now()->toDateString())
             ->sum('quantity_produced'); // sesuaikan nama kolom
@@ -22,7 +48,7 @@ class DashboardController extends Controller
 
         $totalPenjualan = Sale::whereDate('sale_date', now()->toDateString())->sum('total_amount');
 
-        return view('dashboard', compact('totalProduksiHariIni', 'totalbahanbaku', 'totalPenjualan'));
+        return view('dashboard', compact('totalProduksiHariIni', 'totalbahanbaku', 'totalPenjualan', 'today', 'produksi', 'bahan', 'jumlahStokRendah', 'stokHabis', 'penjualan', 'jumlahTransaksi', 'totalPenjualanBulanIni'));
     }
 
     public function dashboardkaryawan()
@@ -36,6 +62,7 @@ class DashboardController extends Controller
 
         return view('karyawan.dashboard', compact('totalProduksi', 'totalbahan', 'totalsale'));
     }
+
     public function getProductionStats(): JsonResponse
     {
         $productions = Production::with('productType')
