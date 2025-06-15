@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>Pengeluaran - Galaxy Bakery</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- AdminLTE, Bootstrap, FontAwesome -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
@@ -306,162 +306,62 @@
                                         <thead class="thead-dark">
                                             <tr>
                                                 <th>No</th>
+                                                <th>Nama</th>
+                                                <th>Pengeluaran</th>
                                                 <th>Tanggal</th>
-                                                <th>Kategori</th>
                                                 <th>Deskripsi</th>
-                                                <th>Jumlah</th>
-                                                <th>No Kwitansi</th>
                                                 <th>Catatan</th>
+                                                <th>Harga</th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
-                                        <tbody id="expenseTableBody">
-                                            <tr>
-                                                <td>1</td>
-                                                <td>
-                                                    <i class="fas fa-calendar-alt mr-2 text-muted"></i>
-                                                    2025-06-12
-                                                </td>
-                                                <td>
-                                                    <span class="badge badge-primary">Bahan Baku</span>
-                                                </td>
-                                                <td>Pembelian tepung terigu</td>
-                                                <td class="text-right font-weight-bold text-danger">
-                                                    Rp 250.000
-                                                </td>
-                                                <td>
-                                                    <code>BK001</code>
-                                                </td>
-                                                <td>Untuk produksi roti minggu ini</td>
-                                                <td>
-                                                    <button class="btn btn-info btn-sm mr-1" title="Detail">
-                                                        <i class="fas fa-eye"></i>
-                                                    </button>
-                                                    <button class="btn btn-warning btn-sm mr-1" title="Edit">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button class="btn btn-danger btn-sm" title="Hapus">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
+                                        <tbody>
+                                            @forelse($expenses as $index => $expense)
+                                            <tr data-id="{{ $expense->id }}">
+                                                <td>{{ $expenses->firstItem() + $index  }}</td>
+                                                <td>{{ $expense->creator->name ?? '-' }}</td>
+                                                <td>{{ $expense->category->name ?? '-' }}</td>
+                                                <td>{{ $expense->expense_date }}</td>
+                                                <td>{{ $expense->description }}</td>
+                                                <td>{{ $expense->notes }}</td>
+                                                <td>Rp{{ number_format($expense->amount, 2, ',', '.') }}</td>
+                                                <td class="text-center">
+                                                    <div class="btn-group btn-group-sm">
+                                                        <button type="button" class="btn btn-info btn-sm" onclick="showDetail({{ $input->id ?? 1 }})" title="Detail" data-toggle="tooltip">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-warning btn-sm" onclick="editData({{ $input->id ?? 1 }})" title="Edit" data-toggle="tooltip">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                        <button type="button"
+                                                            class="btn btn-danger btn-sm"
+                                                            onclick="deletedata({{ $input->id ?? 1 }})"
+                                                            title="Hapus"
+                                                            data-toggle="tooltip">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </tr>
+
+                                            @empty
                                             <tr>
-                                                <td>2</td>
-                                                <td>
-                                                    <i class="fas fa-calendar-alt mr-2 text-muted"></i>
-                                                    2025-06-11
-                                                </td>
-                                                <td>
-                                                    <span class="badge badge-success">Operasional</span>
-                                                </td>
-                                                <td>Biaya listrik</td>
-                                                <td class="text-right font-weight-bold text-danger">
-                                                    Rp 450.000
-                                                </td>
-                                                <td>
-                                                    <code>PLN002</code>
-                                                </td>
-                                                <td>Tagihan bulan Juni</td>
-                                                <td>
-                                                    <button class="btn btn-info btn-sm mr-1" title="Detail">
-                                                        <i class="fas fa-eye"></i>
-                                                    </button>
-                                                    <button class="btn btn-warning btn-sm mr-1" title="Edit">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button class="btn btn-danger btn-sm" title="Hapus">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
+                                                <td colspan="11" class="text-center">
+                                                    <div class="alert alert-warning m-0" role="alert">
+                                                        Data tidak dapat ditemukan.
+                                                    </div>
                                                 </td>
                                             </tr>
+                                            @endforelse
+                                        <tfoot>
                                             <tr>
-                                                <td>3</td>
-                                                <td>
-                                                    <i class="fas fa-calendar-alt mr-2 text-muted"></i>
-                                                    2025-06-10
-                                                </td>
-                                                <td>
-                                                    <span class="badge badge-info">Marketing</span>
-                                                </td>
-                                                <td>Promosi media sosial</td>
-                                                <td class="text-right font-weight-bold text-danger">
-                                                    Rp 150.000
-                                                </td>
-                                                <td>
-                                                    <span class="text-muted">-</span>
-                                                </td>
-                                                <td>Facebook & Instagram Ads</td>
-                                                <td>
-                                                    <button class="btn btn-info btn-sm mr-1" title="Detail">
-                                                        <i class="fas fa-eye"></i>
-                                                    </button>
-                                                    <button class="btn btn-warning btn-sm mr-1" title="Edit">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button class="btn btn-danger btn-sm" title="Hapus">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </td>
+                                                <td colspan="6" style="text-align: center;"><strong>Total Pengeluaran</strong></td>
+                                                <td><strong>Rp{{ number_format($totalAmount, 2, ',', '.') }}</strong></td>
                                             </tr>
-                                            <tr>
-                                                <td>4</td>
-                                                <td>
-                                                    <i class="fas fa-calendar-alt mr-2 text-muted"></i>
-                                                    2025-06-09
-                                                </td>
-                                                <td>
-                                                    <span class="badge badge-warning">Maintenance</span>
-                                                </td>
-                                                <td>Service mesin oven</td>
-                                                <td class="text-right font-weight-bold text-danger">
-                                                    Rp 350.000
-                                                </td>
-                                                <td>
-                                                    <code>MT003</code>
-                                                </td>
-                                                <td>Maintenance rutin bulanan</td>
-                                                <td>
-                                                    <button class="btn btn-info btn-sm mr-1" title="Detail">
-                                                        <i class="fas fa-eye"></i>
-                                                    </button>
-                                                    <button class="btn btn-warning btn-sm mr-1" title="Edit">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button class="btn btn-danger btn-sm" title="Hapus">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>5</td>
-                                                <td>
-                                                    <i class="fas fa-calendar-alt mr-2 text-muted"></i>
-                                                    2025-06-08
-                                                </td>
-                                                <td>
-                                                    <span class="badge badge-primary">Bahan Baku</span>
-                                                </td>
-                                                <td>Pembelian mentega dan telur</td>
-                                                <td class="text-right font-weight-bold text-danger">
-                                                    Rp 180.000
-                                                </td>
-                                                <td>
-                                                    <code>BK004</code>
-                                                </td>
-                                                <td>Stock bahan baku mingguan</td>
-                                                <td>
-                                                    <button class="btn btn-info btn-sm mr-1" title="Detail">
-                                                        <i class="fas fa-eye"></i>
-                                                    </button>
-                                                    <button class="btn btn-warning btn-sm mr-1" title="Edit">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button class="btn btn-danger btn-sm" title="Hapus">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
+                                        </tfoot>
+
                                         </tbody>
+
                                     </table>
                                 </div>
 
@@ -491,8 +391,45 @@
                         </div>
                     </div>
                 </div>
+                <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header bg-info text-white">
+                                <h5 class="modal-title" id="detailModalLabel">Detail Bahan Baku</h5>
+                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Tutup">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body" id="detailContent">
+                                <!-- Konten detail akan dimuat di sini oleh JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <form id="editBahanForm" method="POST">
+                            @csrf
+                            @method('PUT')
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Edit Bahan Baku</h5>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body" id="editContent">
+                                    <!-- Form dinamis akan dimasukkan di sini -->
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Simpan</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
+
 
         <!-- Footer -->
         <footer class="main-footer text-center">
@@ -503,8 +440,322 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Chart.js (jika digunakan untuk grafik) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
+        function deletedata(id) {
+            fetch(`/api/pengeluaran/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Gagal menghapus data');
+                    }
+                    return response.json();
+                })
+                .then(() => {
+                    const row = document.querySelector(`tr[data-id="${id}"]`);
+                    if (row) {
+                        row.classList.add('animate__animated', 'animate__fadeOut');
+                        setTimeout(() => {
+                            row.remove();
+                        }, 500);
+                    }
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Terhapus!',
+                        text: 'Data berhasil dihapus.',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                    location.reload();
+                })
+                .catch(error => {
+                    let message = 'Gagal mengupdate data.';
+
+                    if (error.response) {
+                        message += ` (${error.response.status} - ${error.response.statusText})`;
+                        console.error(error.response.data);
+                    }
+
+                    if (error.response) {
+                        // Server merespons dengan status di luar 2xx
+                        message = `Gagal mengambil data. Status: ${error.response.status} - ${error.response.statusText}`;
+                        console.error('Detail error:', error.response.data);
+                    } else if (error.request) {
+                        // Permintaan dikirim tapi tidak ada respons
+                        message = 'Tidak ada respons dari server. Cek koneksi atau endpoint.';
+                        console.error('Permintaan:', error.request);
+                    } else {
+                        // Terjadi kesalahan saat men-setup request
+                        message = `Error saat menyiapkan permintaan: ${error.message}`;
+                    }
+                    Swal.fire('Error', message, 'error');
+                    console.error('Error detail:', error);
+                });
+        }
+
+
+        const kategoriList = @json($categories);
+
+        function showDetail(id) {
+            axios.get(`/api/pengeluaran/${id}`)
+                .then(response => {
+                    const data = response.data;
+                    const tanggal = new Date(data.expense_date).toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                    const detailHtml = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Nama Penginput:</strong> ${data.creator?.name ?? '-'}</p>
+                        <p><strong>Kategori:</strong> ${data.category?.name ?? '-'}</p>
+                       <p><strong>Tanggal:</strong> ${tanggal}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Deskripsi:</strong> ${data.description}</p>
+                        <p><strong>Catatan:</strong> ${data.notes ?? '-'}</p>
+                        <p><strong>Jumlah:</strong> Rp${Number(data.amount).toLocaleString('id-ID', { minimumFractionDigits: 2 })}</p>
+                    </div>
+                </div>
+            `;
+
+                    document.getElementById('detailContent').innerHTML = detailHtml;
+                    $('#detailModal').modal('show');
+                })
+                .catch(error => {
+                    let message = 'Terjadi kesalahan tak dikenal.';
+                    if (error.response) {
+                        message = `Gagal mengambil data. Status: ${error.response.status} - ${error.response.statusText}`;
+                        console.error('Detail error:', error.response.data);
+                    } else if (error.request) {
+                        message = 'Tidak ada respons dari server. Cek koneksi atau endpoint.';
+                        console.error('Permintaan:', error.request);
+                    } else {
+                        message = `Error saat menyiapkan permintaan: ${error.message}`;
+                    }
+                    Swal.fire('Gagal', message, 'error');
+                });
+        }
+
+
+        function editData(id) {
+            axios.get(`/api/pengeluaran/${id}`)
+                .then(response => {
+                    const data = response.data;
+
+                    // Buat <option> untuk kategori dari kategoriList
+                    let kategoriOptions = `<option value="">-- Pilih Kategori --</option>`;
+                    kategoriList.forEach(kategori => {
+                        const selected = data.expense_category_id === kategori.id ? 'selected' : '';
+                        kategoriOptions += `<option value="${kategori.id}" ${selected}>${kategori.name}</option>`;
+                    });
+
+                    const tanggal = new Date(data.expense_date).toISOString().split('T')[0];
+
+                    const editHtml = `
+                <input type="hidden" name="id" value="${data.id}">
+               <div class="form-group">
+    <label for="creator">Nama <span class="text-danger">*</span></label>
+    <input type="text" class="form-control" name="creator" value="${data.creator?.name ?? '-'}" readonly>
+</div>
+
+                <div class="form-group">
+                    <label for="edit_tanggal">Tanggal <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" name="expense_date" value="${tanggal}" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_kategori">Kategori <span class="text-danger">*</span></label>
+                    <select name="expense_category_id" class="form-control" required>
+                        ${kategoriOptions}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit_amount">Jumlah (Rp) <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control" name="amount" value="${data.amount}" min="0" step="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_deskripsi">Deskripsi</label>
+                    <textarea class="form-control" name="description" rows="2">${data.description ?? ''}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="edit_catatan">Catatan</label>
+                    <textarea class="form-control" name="notes" rows="2">${data.notes ?? ''}</textarea>
+                </div>
+            `;
+
+                    document.getElementById('editContent').innerHTML = editHtml;
+                    document.getElementById('editBahanForm').action = `/api/pengeluaran/${id}`;
+                    $('#editModal').modal('show');
+                })
+                .catch(error => {
+                    let message = 'Terjadi kesalahan tak dikenal.';
+                    if (error.response) {
+                        message = `Gagal mengambil data. Status: ${error.response.status} - ${error.response.statusText}`;
+                        console.error('Detail error:', error.response.data);
+                    } else if (error.request) {
+                        message = 'Tidak ada respons dari server. Cek koneksi atau endpoint.';
+                        console.error('Permintaan:', error.request);
+                    } else {
+                        message = `Error saat menyiapkan permintaan: ${error.message}`;
+                    }
+
+                    Swal.fire('Gagal', message, 'error');
+                });
+        }
+
+        $('#editBahanForm').on('submit', function(e) {
+            e.preventDefault();
+
+            const submitBtn = $(this).find('button[type="submit"]');
+            const originalHtml = submitBtn.html();
+            submitBtn.html('<i class="fas fa-spinner fa-spin mr-1"></i> Updating...').prop('disabled', true);
+
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries()); // Convert FormData to plain object
+            const id = data.id;
+
+            axios.put(`/api/pengeluaran/${id}`, data)
+                .then(response => {
+                    submitBtn.html(originalHtml).prop('disabled', false);
+                    $('#editModal').modal('hide');
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: 'Data bahan baku berhasil diupdate.',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+
+                    // Update row jika kamu punya fungsinya
+                    updateTableRow(id, response.data);
+                })
+                .catch(error => {
+                    submitBtn.html(originalHtml).prop('disabled', false);
+                    let message = 'Gagal mengupdate data.';
+
+                    if (error.response) {
+                        message += ` (${error.response.status} - ${error.response.statusText})`;
+                        console.error(error.response.data);
+                    }
+
+                    if (error.response) {
+                        // Server merespons dengan status di luar 2xx
+                        message = `Gagal mengambil data. Status: ${error.response.status} - ${error.response.statusText}`;
+                        console.error('Detail error:', error.response.data);
+                    } else if (error.request) {
+                        // Permintaan dikirim tapi tidak ada respons
+                        message = 'Tidak ada respons dari server. Cek koneksi atau endpoint.';
+                        console.error('Permintaan:', error.request);
+                    } else {
+                        // Terjadi kesalahan saat men-setup request
+                        message = `Error saat menyiapkan permintaan: ${error.message}`;
+                    }
+                    Swal.fire('Error', message, 'error');
+                });
+        });
+
+
+        function updateTableRow(id, data) {
+            const row = document.querySelector(`tr[data-id="${id}"]`);
+            if (row) {
+                const tanggal = new Date(data.expense_date).toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+
+                row.innerHTML = `
+            <td>${data.id}</td>
+            <td>${data.creator?.name ?? '-'}</td>
+            <td>${data.category?.name ?? '-'}</td>
+            <td>${tanggal}</td>
+            <td>${data.description ?? '-'}</td>
+            <td>${data.notes ?? '-'}</td>
+            <td>Rp${Number(data.amount).toLocaleString('id-ID', { minimumFractionDigits: 2 })}</td>
+            <td class="text-center">
+                <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-info btn-sm" onclick="showDetail(${data.id})" title="Detail" data-toggle="tooltip">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button type="button" class="btn btn-warning btn-sm" onclick="editData(${data.id})" title="Edit" data-toggle="tooltip">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteData(${data.id})" title="Hapus" data-toggle="tooltip">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+
+                // Re-init tooltip
+                $('[data-toggle="tooltip"]').tooltip();
+            }
+        }
+
+
+
+
+
+
+        function showInputModal() {
+            // Reset form
+            document.getElementById('inputBahanForm').reset();
+            document.getElementById('tanggal_masuk').value = '{{ date("Y-m-d") }}';
+            document.getElementById('stok_minimum').value = '10';
+            document.getElementById('totalNilai').textContent = 'Rp 0';
+
+            // Show modal
+            $('#inputBahanModal').modal('show');
+        }
+
+        $('#inputBahanForm').on('submit', function(e) {
+            e.preventDefault();
+
+            // Show loading state
+            const submitBtn = $(this).find('button[type="submit"]');
+            const originalHtml = submitBtn.html();
+            submitBtn.html('<i class="fas fa-spinner fa-spin mr-1"></i> Menyimpan...').prop('disabled', true);
+
+            // Get form data
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+
+            // Simulate API call
+            setTimeout(() => {
+                // Reset button
+                submitBtn.html(originalHtml).prop('disabled', false);
+
+                // Hide modal
+                $('#inputBahanModal').modal('hide');
+
+                // Show success message
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Data bahan baku berhasil disimpan.',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+
+                // Add new row to table (in real implementation, refresh from server)
+                addNewRowToTable(data);
+
+            }, 1500);
+        });
         // Set today's date as default for filter
         document.getElementById('filter_date').value = new Date().toISOString().split('T')[0];
 

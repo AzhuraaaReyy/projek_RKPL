@@ -80,36 +80,50 @@ class expenseTableController extends Controller
             'description' => 'required|string',
             'amount' => 'required|numeric',
             'expense_date' => 'required|date',
-
-            'notes' => 'required|',
+            'notes' => 'nullable|string', // diperbaiki: validasi notes
         ]);
-        $expenses = Expense::find($id);
+
+        $expenses = Expense::findOrFail($id); // lebih aman daripada find()
+
         $expenses->update([
             'expense_category_id' => $request->expense_category_id,
             'description' => $request->description,
             'amount' => $request->amount,
             'expense_date' => $request->expense_date,
-
             'notes' => $request->notes,
         ]);
+        $expenses->load(['category', 'creator']); // penting: ambil relasi
+        return response()->json($expenses);
     }
+
 
     public function destroy($id)
     {
         try {
             $expenses = Expense::findOrFail($id);
+            if (!$expenses) {
+                return response()->json(['message' => 'Data Tidak Ditemukan'], 404);
+            }
+
             $expenses->delete();
-            return redirect()->route('expenses')->with('success', 'Data berhasil dihapus');
+            return response()->json(['message' => 'Data Berhasil Dihapus']);
         } catch (\Illuminate\Database\QueryException $e) {
-            return redirect()->route('')->with('error', 'Data gagal dihapus');
+            \Log::error("Gagal hapus data: " . $e->getMessage());
+            return response()->json(['message' => 'Gagal menghapus data'], 500);
         }
     }
 
+
     public function show($id)
     {
-        $expenses = Expense::findOrFail($id);
-        return view('', compact('expenses'));
+        $expenses = Expense::with('creator', 'category')->findOrFail($id);
+
+        if (!$expenses) {
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        }
+        return response()->json($expenses);
     }
+
 
     public function filterBy(Request $request)
     {

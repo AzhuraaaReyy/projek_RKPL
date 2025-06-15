@@ -19,9 +19,7 @@ use App\Http\Controllers\ProductionHistoryController;
 Route::get('/', function () {
     return view('login-view');
 });
-Route::get('/riwayatProduksiRoti', function () {
-    return view('riwayatProduksiRoti');
-});
+
 Route::get('/laporanstok', function () {
     return view('laporanStok');
 });
@@ -54,6 +52,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/api/stokMovements/{id}', [stokMovementsController::class, 'show']);
     Route::delete('/api/stokMovements/{id}', [stokMovementsController::class, 'destroy']);
 
+    Route::put('/api/riwayatproduksi/{id}', [ProductionHistoryController::class, 'update'])->name('update.stokmovements');
+    Route::get('/api/riwayatproduksi/{id}', [ProductionHistoryController::class, 'show']);
+    Route::delete('/api/riwayatproduksi/{id}', [ProductionHistoryController::class, 'destroy']);
+
     Route::get('/produksiRoti', [ProductionsController::class, 'index'])->name('productions');
     Route::get('/form-produksi', [ProductionsController::class, 'formproduksi'])->name('form.produksi');
     Route::Post('/produksiRoti', [ProductionsController::class, 'store'])->name('store.produksi');
@@ -61,6 +63,13 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/form-produk', [ProductionsController::class, 'formproduk']);
     Route::patch('/produksiRoti/{id}', [ProductionsController::class, 'update'])->name('productions.update');
     Route::delete('/produksiRoti/{id}', [ProductionsController::class, 'destroy'])->name('productions.delete');
+
+    Route::get('/riwayatProduksiRoti', [ProductionHistoryController::class, 'index']);
+    Route::get('/filterByProduksi', [ProductionsController::class, 'filterByproduksi'])->name('filterByproduksi');
+
+
+
+
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('production.stats');
     Route::get('/api/production-stats', [DashboardController::class, 'getProductionStats']);
@@ -70,8 +79,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/formpengeluaran', [expenseTableController::class, 'form'])->name('formPengeluaran');
     Route::get('/pengeluaranByfilter', [expenseTableController::class, 'filterBy'])->name('filterBy');
     Route::post('/pengeluaran', [expenseTableController::class, 'store'])->name('expenses.store');
-    Route::put('/pengeluaran/{id}', [expenseTableController::class, 'update'])->name('expenses.update');
+    Route::put('/api/pengeluaran/{id}', [expenseTableController::class, 'update'])->name('expenses.update');
     Route::delete('/pengeluaran/{id}', [expenseTableController::class, 'destroy'])->name('expenses.delete');
+    Route::get('/api/pengeluaran/{id}', [expenseTableController::class, 'show']);
+    Route::delete('/api/pengeluaran/{id}', [expenseTableController::class, 'destroy']);
 
     Route::get('/categories-pengeluaran', [expenseCategoriesController::class, 'index'])->name(('index'));
     Route::post('/categories-pengeluaran', [expenseCategoriesController::class, 'store'])->name(('categories.store'));
@@ -87,10 +98,12 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
-    Route::get('/laporan/download', [LaporanController::class, 'downloadPDF'])->name('laporan.download');
+    Route::get('/laporan/download', [LaporanController::class, 'downloadPDF'])->name('download');
 
 
     Route::get('/riwayatBahanBaku', [stokMovementsController::class, 'index']);
+
+    
 
     Route::get('/customer', [CustomersController::class, 'index']);
     Route::get('/customer', [CustomersController::class, 'index'])->name('customers');

@@ -37,20 +37,25 @@ class ProductionHistoryController extends Controller
 
         // Urutkan berdasarkan tanggal produksi terbaru
         $productionHistories = $query->orderBy('production_date', 'desc')
-                                    ->orderBy('created_at', 'desc')
-                                    ->get();
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+
 
         // Ambil semua tipe produk untuk dropdown filter
         $productTypes = ProductType::select('id', 'name')->where('is_active', true)->orderBy('name')->get();
+        $countCompleted = Production::where('status', 'completed')->count();
+        $countPlanning = Production::where('status', 'planning')->count();
+        $countCancelled = Production::where('status', 'cancelled')->count();
 
-        return view('riwayatProduksiRoti', compact('productionHistories', 'productTypes'));
+        return view('riwayatProduksiRoti', compact('productionHistories', 'productTypes', 'countCompleted', 'countPlanning', 'countCancelled'));
     }
 
     public function show($id)
     {
         try {
             $production = Production::with(['productType', 'productType.bahanBaku', 'creator'])->findOrFail($id);
-            
+
             return response()->json([
                 'success' => true,
                 'data' => [
@@ -88,7 +93,7 @@ class ProductionHistoryController extends Controller
         try {
             $production = Production::with(['productType'])->findOrFail($id);
             $productTypes = ProductType::select('id', 'name')->where('is_active', true)->orderBy('name')->get();
-            
+
             return view('editProductionHistory', compact('production', 'productTypes'));
         } catch (\Exception $e) {
             return redirect()->route('productionHistory.index')->with('error', 'Data tidak ditemukan');
@@ -109,7 +114,7 @@ class ProductionHistoryController extends Controller
 
         try {
             $production = Production::findOrFail($id);
-            
+
             $production->update([
                 'product_type_id' => $request->product_type_id,
                 'quantity_produced' => $request->quantity_produced,
@@ -131,7 +136,7 @@ class ProductionHistoryController extends Controller
         try {
             $production = Production::findOrFail($id);
             $productName = $production->productType->name ?? 'Unknown';
-            
+
             $production->delete();
 
             return redirect()->route('productionHistory.index')->with('success', "Data riwayat produksi '{$productName}' berhasil dihapus");
@@ -196,20 +201,20 @@ class ProductionHistoryController extends Controller
                 'total_productions' => Production::count(),
                 'productions_today' => Production::whereDate('production_date', $today)->count(),
                 'productions_this_month' => Production::whereMonth('production_date', now()->month)
-                                                     ->whereYear('production_date', now()->year)
-                                                     ->count(),
+                    ->whereYear('production_date', now()->year)
+                    ->count(),
                 'completed_today' => Production::where('status', 'completed')
-                                                ->whereDate('production_date', $today)
-                                                ->count(),
+                    ->whereDate('production_date', $today)
+                    ->count(),
                 'planning_count' => Production::where('status', 'planning')->count(),
                 'cancelled_count' => Production::where('status', 'cancelled')->count(),
                 'total_quantity_today' => Production::whereDate('production_date', $today)
-                                                   ->sum('quantity_produced'),
+                    ->sum('quantity_produced'),
                 'total_cost_today' => Production::whereDate('production_date', $today)
-                                                ->sum('production_cost'),
+                    ->sum('production_cost'),
                 'avg_cost_per_unit' => Production::whereDate('production_date', $today)
-                                                 ->selectRaw('AVG(production_cost / quantity_produced) as avg_cost')
-                                                 ->first()->avg_cost ?? 0,
+                    ->selectRaw('AVG(production_cost / quantity_produced) as avg_cost')
+                    ->first()->avg_cost ?? 0,
             ];
 
             return response()->json([
@@ -243,24 +248,24 @@ class ProductionHistoryController extends Controller
             switch ($period) {
                 case 'daily':
                     $data = $query->selectRaw('DATE(production_date) as date, SUM(quantity_produced) as total_quantity, COUNT(*) as total_productions')
-                                 ->groupBy('date')
-                                 ->orderBy('date')
-                                 ->get();
+                        ->groupBy('date')
+                        ->orderBy('date')
+                        ->get();
                     break;
-                
+
                 case 'weekly':
                     $data = $query->selectRaw('YEARWEEK(production_date) as week, SUM(quantity_produced) as total_quantity, COUNT(*) as total_productions')
-                                 ->groupBy('week')
-                                 ->orderBy('week')
-                                 ->get();
+                        ->groupBy('week')
+                        ->orderBy('week')
+                        ->get();
                     break;
-                
+
                 case 'monthly':
                     $data = $query->selectRaw('YEAR(production_date) as year, MONTH(production_date) as month, SUM(quantity_produced) as total_quantity, COUNT(*) as total_productions')
-                                 ->groupBy('year', 'month')
-                                 ->orderBy('year')
-                                 ->orderBy('month')
-                                 ->get();
+                        ->groupBy('year', 'month')
+                        ->orderBy('year')
+                        ->orderBy('month')
+                        ->get();
                     break;
             }
 
@@ -281,11 +286,11 @@ class ProductionHistoryController extends Controller
     {
         try {
             $topProducts = Production::with('productType')
-                                    ->selectRaw('product_type_id, SUM(quantity_produced) as total_quantity, COUNT(*) as total_batches')
-                                    ->groupBy('product_type_id')
-                                    ->orderBy('total_quantity', 'desc')
-                                    ->limit($limit)
-                                    ->get();
+                ->selectRaw('product_type_id, SUM(quantity_produced) as total_quantity, COUNT(*) as total_batches')
+                ->groupBy('product_type_id')
+                ->orderBy('total_quantity', 'desc')
+                ->limit($limit)
+                ->get();
 
             return response()->json([
                 'success' => true,
@@ -315,7 +320,7 @@ class ProductionHistoryController extends Controller
 
         try {
             $production = Production::findOrFail($id);
-            
+
             $production->update([
                 'status' => $request->status,
                 'notes' => $request->notes ? $production->notes . "\n" . $request->notes : $production->notes

@@ -158,7 +158,7 @@
             @foreach ($sales as $index => $sale)
             <tr>
                 <td>{{ $index + 1 }}</td>
-                <td>{{ $sale->customer->nama ?? '-' }}</td>
+                <td>{{ $sale->customer->name ?? '-' }}</td>
                 <td>
                     @foreach ($sale->saleItems as $item)
                     {{ $item->productType->name ?? '-' }} (x{{ $item->quantity }}),

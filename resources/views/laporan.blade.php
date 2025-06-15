@@ -556,9 +556,10 @@
                                     </form>
                                 </div>
                                 <div class="col-lg-4 text-lg-right">
-                                    <button type="button" class="btn btn-danger" onclick="downloadPDF()">
-                                        <i class="fas fa-file-pdf mr-2"></i>Download PDF
-                                    </button>
+                                    <form action="{{ route('download') }}" method="GET" style="display: inline;">
+                                        <input type="hidden" name="download" value="pdf">
+                                        <button type="submit" class="btn btn-danger">Download PDF</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -567,10 +568,12 @@
                     <!-- Bahan Baku Section -->
                     <div class="table-section animate__animated animate__fadeInUp">
                         <div class="section-header">
+
                             <h1><i class="fas fa-boxes mr-3"></i>Laporan Bahan Baku</h1>
                         </div>
                         <div class="table-container">
                             <div class="table-responsive">
+                                @if(count($bahanBakus) > 0)
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
@@ -588,83 +591,39 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @forelse ($bahanBakus as $index => $bahan)
                                         <tr>
-                                            <td class="text-center"><strong>1</strong></td>
-                                            <td><strong>Tepung Terigu</strong></td>
-                                            <td class="text-capitalize text-center">Bahan Utama</td>
-                                            <td class="text-end">150</td>
-                                            <td class="text-center">Kg</td>
-                                            <td class="text-end">50</td>
-                                            <td class="text-center">01-06-2025</td>
-                                            <td class="text-center">01-12-2025</td>
-                                            <td class="text-center">Rp12.500,00</td>
-                                            <td class="text-center">Tepung protein tinggi untuk roti</td>
+                                            <td class="text-center">{{ $bahanBakus->firstItem() + $index }}</td>
+                                            <td>{{ $bahan->nama }}</td>
+                                            <td class="text-capitalize text-center">{{ $bahan->kategori }}</td>
+                                            <td class="text-end">{{ number_format($bahan->stok) }}</td>
+                                            <td class="text-center">{{ $bahan->satuan }}</td>
+                                            <td class="text-end">{{ number_format($bahan->minimum_stok) }}</td>
+                                            <td class="text-center">{{ \Carbon\Carbon::parse($bahan->tanggal_masuk)->format('d-m-Y') }}</td>
+                                            <td class="text-center">{{ \Carbon\Carbon::parse($bahan->tanggal_kedaluwarsa)->format('d-m-Y') }}</td>
+                                            <td class="text-center">Rp{{ number_format($bahan->harga, 2, ',', '.') }}</td>
+                                            <td class="text-center">{{ $bahan->deskripsi }}</td>
                                             <td class="text-center">
-                                                <span class="badge bg-success">Tersedia</span>
+                                                <span class="badge bg-{{ $bahan->status_class }}">
+                                                    {{ $bahan->status }}
+                                                </span>
                                             </td>
                                         </tr>
+                                        @empty
                                         <tr>
-                                            <td class="text-center"><strong>2</strong></td>
-                                            <td><strong>Gula Pasir</strong></td>
-                                            <td class="text-capitalize text-center">Pemanis</td>
-                                            <td class="text-end">80</td>
-                                            <td class="text-center">Kg</td>
-                                            <td class="text-end">25</td>
-                                            <td class="text-center">05-06-2025</td>
-                                            <td class="text-center">05-06-2026</td>
-                                            <td class="text-center">Rp14.000,00</td>
-                                            <td class="text-center">Gula pasir kualitas premium</td>
-                                            <td class="text-center">
-                                                <span class="badge bg-success">Tersedia</span>
+                                            <td colspan="11" class="text-center">
+                                                <div class="alert alert-warning m-0" role="alert">
+                                                    Data tidak dapat ditemukan.
+                                                </div>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td class="text-center"><strong>3</strong></td>
-                                            <td><strong>Mentega</strong></td>
-                                            <td class="text-capitalize text-center">Lemak</td>
-                                            <td class="text-end">30</td>
-                                            <td class="text-center">Kg</td>
-                                            <td class="text-end">40</td>
-                                            <td class="text-center">08-06-2025</td>
-                                            <td class="text-center">08-08-2025</td>
-                                            <td class="text-center">Rp35.000,00</td>
-                                            <td class="text-center">Mentega tawar untuk kue</td>
-                                            <td class="text-center">
-                                                <span class="badge bg-warning">Stok Rendah</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-center"><strong>4</strong></td>
-                                            <td><strong>Telur Ayam</strong></td>
-                                            <td class="text-capitalize text-center">Protein</td>
-                                            <td class="text-end">200</td>
-                                            <td class="text-center">Butir</td>
-                                            <td class="text-end">100</td>
-                                            <td class="text-center">10-06-2025</td>
-                                            <td class="text-center">25-06-2025</td>
-                                            <td class="text-center">Rp2.500,00</td>
-                                            <td class="text-center">Telur segar grade A</td>
-                                            <td class="text-center">
-                                                <span class="badge bg-success">Tersedia</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-center"><strong>5</strong></td>
-                                            <td><strong>Ragi Instant</strong></td>
-                                            <td class="text-capitalize text-center">Pengembang</td>
-                                            <td class="text-end">5</td>
-                                            <td class="text-center">Kg</td>
-                                            <td class="text-end">10</td>
-                                            <td class="text-center">03-06-2025</td>
-                                            <td class="text-center">03-12-2025</td>
-                                            <td class="text-center">Rp25.000,00</td>
-                                            <td class="text-center">Ragi instant untuk roti</td>
-                                            <td class="text-center">
-                                                <span class="badge bg-danger">Stok Habis</span>
-                                            </td>
-                                        </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
+                                @endif
+                                <div class="d-flex justify-content-center">
+                                    {{ $bahanBakus->links() }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -676,6 +635,7 @@
                         </div>
                         <div class="table-container">
                             <div class="table-responsive">
+                                @if(count($stokMovements) > 0)
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
@@ -691,47 +651,37 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @forelse ($stokMovements as $index => $movement)
                                         <tr>
-                                            <td class="text-center"><strong>1</strong></td>
-                                            <td><strong>Tepung Terigu</strong></td>
+                                            <td class="text-center">{{ $stokMovements->firstItem() + $index  }}</td>
+                                            <td>{{ $movement->bahanBaku->nama ?? '-' }}</td>
                                             <td class="text-center text-capitalize">
-                                                <span class="badge bg-success">In</span>
+                                                <span class="badge bg-{{ $movement->movement_type === 'in' ? 'success' : 'danger' }}">
+                                                    {{ $movement->movement_type }}
+                                                </span>
                                             </td>
-                                            <td class="text-end">100.00</td>
-                                            <td class="text-end">150.00</td>
-                                            <td class="text-center">01-06-2025</td>
-                                            <td class="text-center">Pembelian #001</td>
-                                            <td>Pembelian stok bulanan</td>
-                                            <td class="text-center">Admin</td>
+                                            <td class="text-end">{{ number_format($movement->quantity, 2) }}</td>
+                                            <td class="text-end">{{ number_format($movement->remaining_stock, 2) }}</td>
+                                            <td class="text-center">{{ $movement->movement_date->format('d-m-Y') }}</td>
+                                            <td class="text-center">{{ $movement->reference_type ?? '-' }} #{{ $movement->reference_id ?? '-' }}</td>
+                                            <td>{{ $movement->notes ?? '-' }}</td>
+                                            <td class="text-center">{{ $movement->creator->name ?? '-' }}</td>
                                         </tr>
+                                        @empty
                                         <tr>
-                                            <td class="text-center"><strong>2</strong></td>
-                                            <td><strong>Tepung Terigu</strong></td>
-                                            <td class="text-center text-capitalize">
-                                                <span class="badge bg-danger">Out</span>
+                                            <td colspan="11" class="text-center">
+                                                <div class="alert alert-warning m-0" role="alert">
+                                                    Data tidak dapat ditemukan.
+                                                </div>
                                             </td>
-                                            <td class="text-end">20.00</td>
-                                            <td class="text-end">130.00</td>
-                                            <td class="text-center">09-06-2025</td>
-                                            <td class="text-center">Produksi #PRD001</td>
-                                            <td>Produksi roti tawar</td>
-                                            <td class="text-center">Baker</td>
                                         </tr>
-                                        <tr>
-                                            <td class="text-center"><strong>3</strong></td>
-                                            <td><strong>Gula Pasir</strong></td>
-                                            <td class="text-center text-capitalize">
-                                                <span class="badge bg-success">In</span>
-                                            </td>
-                                            <td class="text-end">50.00</td>
-                                            <td class="text-end">80.00</td>
-                                            <td class="text-center">05-06-2025</td>
-                                            <td class="text-center">Pembelian #002</td>
-                                            <td>Restok gula pasir</td>
-                                            <td class="text-center">Admin</td>
-                                        </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
+                                @endif
+                                <div class="d-flex justify-content-center">
+                                    {{ $stokMovements->links() }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -743,6 +693,7 @@
                         </div>
                         <div class="table-container">
                             <div class="table-responsive">
+                                @if(count($productions) > 0)
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
@@ -758,55 +709,47 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @forelse ($productions as $index => $product)
                                         <tr>
-                                            <td class="text-center"><strong>1</strong></td>
-                                            <td class="product-name">Roti Tawar</td>
-                                            <td class="text-center">
-                                                <span class="quantity-badge">50 pcs</span>
-                                            </td>
-                                            <td class="text-center">
-                                                <span class="batch-number">BTH001</span>
-                                            </td>
-                                            <td class="text-center">09-06-2025</td>
-                                            <td class="text-right production-cost">Rp250.000,00</td>
+                                            <td class="text-center">{{ $productions->firstItem() + $index }}</td>
+                                            <td>{{ $product->productType->name ?? '-' }}</td>
+                                            <td class="text-center">{{ $product->quantity_produced }}</td>
+                                            <td class="text-end">{{ $product->batch_number }}</td>
+                                            <td class="text-center">{{ $product->production_date->format('d-m-Y') }}</td>
+                                            <td class="text-end">Rp{{ number_format($product->production_cost, 2, ',', '.') }}</td>
                                             <td class="text-center">
                                                 <ul class="list-unstyled">
-                                                    <li><strong>Tepung Terigu</strong> - 20 Kg</li>
-                                                    <li><strong>Gula Pasir</strong> - 5 Kg</li>
-                                                    <li><strong>Mentega</strong> - 3 Kg</li>
-                                                    <li><strong>Telur Ayam</strong> - 25 Butir</li>
+                                                    @foreach ($product->productType->bahanBaku as $bahan)
+                                                    <li>
+                                                        {{ $bahan->nama }} -
+                                                        {{ $bahan->pivot->quantity_per_unit * $product->quantity_produced }} {{ $bahan->satuan }}
+                                                    </li>
+                                                    @endforeach
                                                 </ul>
                                             </td>
-                                            <td class="text-center">Produksi rutin harian</td>
+                                            <td class="text-center">{{ $product->notes }}</td>
                                             <td class="text-center">
-                                                <span class="badge bg-success">Completed</span>
+                                                <span class="badge bg-{{ $product->status_class }}">
+                                                    {{ $product->status }}
+                                                </span>
                                             </td>
+
                                         </tr>
+                                        @empty
                                         <tr>
-                                            <td class="text-center"><strong>2</strong></td>
-                                            <td class="product-name">Croissant</td>
-                                            <td class="text-center">
-                                                <span class="quantity-badge">30 pcs</span>
-                                            </td>
-                                            <td class="text-center">
-                                                <span class="batch-number">BTH002</span>
-                                            </td>
-                                            <td class="text-center">10-06-2025</td>
-                                            <td class="text-right production-cost">Rp180.000,00</td>
-                                            <td class="text-center">
-                                                <ul class="list-unstyled">
-                                                    <li><strong>Tepung Terigu</strong> - 12 Kg</li>
-                                                    <li><strong>Mentega</strong> - 8 Kg</li>
-                                                    <li><strong>Telur Ayam</strong> - 15 Butir</li>
-                                                </ul>
-                                            </td>
-                                            <td class="text-center">Pesanan khusus</td>
-                                            <td class="text-center">
-                                                <span class="badge bg-warning">Planning</span>
+                                            <td colspan="11" class="text-center">
+                                                <div class="alert alert-warning m-0" role="alert">
+                                                    Data tidak dapat ditemukan.
+                                                </div>
                                             </td>
                                         </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
+                                @endif
+                                <div class="d-flex justify-content-center">
+                                    {{ $productions->links() }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -817,6 +760,7 @@
                             <h1><i class="fas fa-clipboard-list mr-3"></i>Riwayat Produksi</h1>
                         </div>
                         <div class="table-container">
+                            @if(count($productionHistories) > 0)
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
@@ -834,120 +778,190 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @foreach($productionHistories as $index => $production)
                                         <tr>
-                                            <td class="text-center"><strong>1</strong></td>
+                                            <td>{{ $productionHistories->firstItem() + $index }}</td>
                                             <td>
-                                                <span class="product-name">Roti Tawar</span>
+                                                <span class="product-name">{{ $production->productType->name ?? 'N/A' }}</span>
                                             </td>
                                             <td class="text-center">
-                                                <span class="quantity-badge">50 pcs</span>
+                                                <span class="quantity-badge">{{ $production->quantity_produced }} pcs</span>
                                             </td>
                                             <td class="text-center">
-                                                <span class="batch-number">BTH001</span>
+                                                <span class="batch-number">{{ $production->batch_number }}</span>
                                             </td>
-                                            <td class="text-center">09 Jun 2025</td>
+                                            <td class="text-center">{{ $production->production_date->format('d M Y') }}</td>
                                             <td class="text-right">
-                                                <span class="production-cost">Rp 250.000</span>
+                                                <span class="production-cost">Rp {{ number_format($production->production_cost, 0, ',', '.') }}</span>
                                             </td>
                                             <td>
                                                 <div class="bahan-list">
-                                                    <div class="bahan-item">Tepung Terigu - 20 Kg</div>
-                                                    <div class="bahan-item">Gula Pasir - 5 Kg</div>
-                                                    <div class="bahan-item">Mentega - 3 Kg</div>
-                                                    <div class="bahan-item">Telur Ayam - 25 Butir</div>
+                                                    @if(isset($production->productType->bahanBaku))
+                                                    @foreach($production->productType->bahanBaku as $bahan)
+                                                    <div class="bahan-item">
+                                                        <strong>{{ $bahan->nama }}</strong><br>
+                                                        <small>{{ $bahan->pivot->quantity_per_unit * $production->quantity_produced }} {{ $bahan->satuan }}</small>
+                                                    </div>
+                                                    @endforeach
+                                                    @else
+                                                    <small class="text-muted">-</small>
+                                                    @endif
                                                 </div>
                                             </td>
-                                            <td class="text-center">Produksi rutin harian</td>
                                             <td class="text-center">
-                                                <span class="status-badge status-completed">Selesai</span>
+                                                <small>{{ $production->notes ?: '-' }}</small>
                                             </td>
-                                            <td class="text-center">Chef Baker</td>
+                                            <td class="text-center">
+                                                @if($production->status === 'completed')
+                                                <span class="status-badge status-completed">
+                                                    <i class="fas fa-check mr-1"></i>Completed
+                                                </span>
+                                                @elseif($production->status === 'planning')
+                                                <span class="status-badge status-planning">
+                                                    <i class="fas fa-clock mr-1"></i>Planning
+                                                </span>
+                                                @else
+                                                <span class="status-badge status-cancelled">
+                                                    <i class="fas fa-times mr-1"></i>Cancelled
+                                                </span>
+                                                @endif
+                                            </td>
+                                            <td class="text-center">{{ $production->creator->name ?? 'System' }}</td>
                                         </tr>
-                                        <tr>
-                                            <td class="text-center"><strong>2</strong></td>
-                                            <td>
-                                                <span class="product-name">Croissant</span>
-                                            </td>
-                                            <td class="text-center">
-                                                <span class="quantity-badge">30 pcs</span>
-                                            </td>
-                                            <td class="text-center">
-                                                <span class="batch-number">BTH002</span>
-                                            </td>
-                                            <td class="text-center">10 Jun 2025</td>
-                                            <td class="text-right">
-                                                <span class="production-cost">Rp 180.000</span>
-                                            </td>
-                                            <td>
-                                                <div class="bahan-list">
-                                                    <div class="bahan-item">Tepung Terigu - 12 Kg</div>
-                                                    <div class="bahan-item">Mentega - 8 Kg</div>
-                                                    <div class="bahan-item">Telur Ayam - 15 Butir</div>
-                                                </div>
-                                            </td>
-                                            <td class="text-center">Pesanan khusus cafe</td>
-                                            <td class="text-center">
-                                                <span class="status-badge status-planning">Rencana</span>
-                                            </td>
-                                            <td class="text-center">Chef Baker</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-center"><strong>3</strong></td>
-                                            <td>
-                                                <span class="product-name">Donat Coklat</span>
-                                            </td>
-                                            <td class="text-center">
-                                                <span class="quantity-badge">40 pcs</span>
-                                            </td>
-                                            <td class="text-center">
-                                                <span class="batch-number">BTH003</span>
-                                            </td>
-                                            <td class="text-center">08 Jun 2025</td>
-                                            <td class="text-right">
-                                                <span class="production-cost">Rp 200.000</span>
-                                            </td>
-                                            <td>
-                                                <div class="bahan-list">
-                                                    <div class="bahan-item">Tepung Terigu - 15 Kg</div>
-                                                    <div class="bahan-item">Gula Pasir - 8 Kg</div>
-                                                    <div class="bahan-item">Telur Ayam - 20 Butir</div>
-                                                    <div class="bahan-item">Coklat Bubuk - 2 Kg</div>
-                                                </div>
-                                            </td>
-                                            <td class="text-center">Pesanan event ulang tahun</td>
-                                            <td class="text-center">
-                                                <span class="status-badge status-cancelled">Dibatalkan</span>
-                                            </td>
-                                            <td class="text-center">Asisten Baker</td>
-                                        </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
+                                @endif
+                                <div class="d-flex justify-content-center">
+                                    {{ $productionHistories->links() }}
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Footer dengan Pagination -->
-                    <div class="pagination-section p-4 text-center">
-                        <nav aria-label="Page navigation">
-                            <ul class="pagination">
-                                <li class="page-item disabled">
-                                    <span class="page-link">Previous</span>
-                                </li>
-                                <li class="page-item active">
-                                    <span class="page-link">1</span>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">2</a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">3</a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">Next</a>
-                                </li>
-                            </ul>
-                        </nav>
+                    <!-- Laporan Penjualan -->
+                    <div class="table-section animate__animated animate__fadeInUp">
+                        <div class="section-header">
+                            <h1><i class="fas fa-clipboard-list mr-3"></i>Laporan Penjualan</h1>
+                        </div>
+                        <div class="table-container">
+                            @if(count($sales) > 0)
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Nama Pelanggan</th>
+                                            <th>Barang Yang di Beli</th>
+                                            <th>Total Harga</th>
+                                            <th>Tanggal Penjualan</th>
+                                            <th>Catatan</th>
+                                            <th>Nama Kasir</th>
+                                            <th>Metode Pembayaran</th>
+                                            <th>Status Pembayaran</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($sales as $index => $sale)
+                                        <tr>
+                                            <td class="text-center">{{ $sales->firstItem() + $index }}</td>
+
+                                            <td class="text-center">{{ $sale->customer->name ?? '-' }}</td>
+                                            <td>
+                                                <ul class="list-unstyled mb-0">
+                                                    @foreach ($sale->saleItems as $item)
+                                                    <li>{{ $item->productType->name ?? 'Produk tidak ditemukan' }} (x{{ $item->quantity }})</li>
+                                                    @endforeach
+                                                </ul>
+                                            </td>
+
+                                            <td class="text-end">Rp{{ number_format($sale->total_amount, 2, ',', '.') }}</td>
+                                            <td class="text-center">{{ \Carbon\Carbon::parse($sale->sale_date)->format('d-m-Y') }}</td>
+                                            <td class="text-center">{{ $sale->notes ?? '-' }}</td>
+                                            <td class="text-center">{{ $sale->creator->name ?? '-' }}</td>
+                                            <td class="text-center text-capitalize">{{ $sale->payment_method }}</td>
+                                            <td class="text-center">
+                                                <span class="badge bg-{{ $sale->payment_status == 'paid' ? 'success' : ($sale->payment_status == 'pending' ? 'warning' : 'danger') }}">
+                                                    {{ $sale->payment_status }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        @empty
+                                        <tr>
+                                            <td colspan="11" class="text-center">
+                                                <div class="alert alert-warning m-0" role="alert">
+                                                    Data tidak dapat ditemukan.
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                                @endif
+                                <div class="d-flex justify-content-center">
+                                    {{ $sales->links() }}
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    <div class="table-section animate__animated animate__fadeInUp">
+                        <div class="section-header">
+                            <h1><i class="fas fa-clipboard-list mr-3"></i>Laporan Pengeluaran</h1>
+                        </div>
+                        <div class="table-container">
+                            @if(count($expenses) > 0)
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Nama</th>
+                                            <th>Pengeluaran</th>
+                                            <th>Tanggal</th>
+                                            <th>Deskripsi</th>
+                                            <th>Catatan</th>
+                                            <th>Harga</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($expenses as $index => $expense)
+                                        <tr>
+                                            <td>{{ $expenses->firstItem() + $index  }}</td>
+                                            <td>{{ $expense->creator->name ?? '-' }}</td>
+                                            <td>{{ $expense->category->name ?? '-' }}</td>
+                                            <td>{{ $expense->expense_date }}</td>
+                                            <td>{{ $expense->description }}</td>
+                                            <td>{{ $expense->notes }}</td>
+                                            <td>Rp{{ number_format($expense->amount, 2, ',', '.') }}</td>
+                                        </tr>
+
+                                        @empty
+                                        <tr>
+                                            <td colspan="11" class="text-center">
+                                                <div class="alert alert-warning m-0" role="alert">
+                                                    Data tidak dapat ditemukan.
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        @endforelse
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="6" style="text-align: center;"><strong>Total Pengeluaran</strong></td>
+                                            <td><strong>Rp{{ number_format($totalAmount, 2, ',', '.') }}</strong></td>
+                                        </tr>
+                                    </tfoot>
+
+                                    </tbody>
+                                </table>
+                                @endif
+                                <div class="d-flex justify-content-center">
+                                    {{ $expenses->links() }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
 
                 </div>
             </div>
@@ -985,11 +999,14 @@
         }
 
         // Download PDF functionality
-        function downloadPDF() {
-            // Simulate PDF download
+        function downloadPDF(event) {
+            // Buat elemen link
             const link = document.createElement('a');
-            link.href = '#';
+            link.href = '/laporan/download';
             link.download = 'Galaxy_Bakery_Report_' + new Date().toISOString().slice(0, 10) + '.pdf';
+
+            // Tambahkan ke DOM agar bisa diklik
+            document.body.appendChild(link);
 
             // Show loading state
             const btn = event.target.closest('button');
@@ -997,12 +1014,17 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Generating PDF...';
             btn.disabled = true;
 
+            // Jalankan aksi unduh
+            link.click();
+
+            // Bersihkan dan reset tombol
             setTimeout(() => {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
-                alert('PDF akan diunduh segera! (Demo mode - file tidak benar-benar diunduh)');
+                link.remove(); // Hapus elemen link setelah klik
             }, 2000);
         }
+
 
         // Auto search on input
         document.getElementById('searchInput').addEventListener('input', function() {

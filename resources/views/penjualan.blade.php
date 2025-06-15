@@ -162,8 +162,11 @@
                 <div class="container-fluid">
                     <div class="row align-items-center">
                         <div class="col-lg-6 col-md-12">
-                            <h1>Form Penjualan</h1>
-                            <small>Input data penjualan produk Galaxy Bakery</small>
+                            <h1>
+                                <i class="fas fa-receipt mr-3"></i>
+                                Penjualan
+                            </h1>
+                            <small>Kelola transaksi penjualan Galaxy Bakery</small>
                         </div>
                         <div class="col-lg-6 col-md-12">
                             <div class="row mt-3 mt-lg-0">
@@ -203,25 +206,65 @@
                 </div>
                 @endif
 
+                <!-- Action Buttons -->
                 <div class="row animate__animated animate__fadeInUp">
+                    <div class="col-lg-6 col-md-12">
+                        <div class="action-card">
+                            <a href="/form-customers" class="action-btn btn-add-customer">
+                                <div class="action-icon">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div class="action-content">
+                                    <h4>Tambah Customer</h4>
+                                    <p>Daftarkan pelanggan baru</p>
+                                </div>
+                                <div class="action-arrow">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-12">
+                        <div class="action-card">
+                            <button type="button" class="action-btn btn-add-sale" onclick="toggleFormVisibility()">
+                                <div class="action-icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                                <div class="action-content">
+                                    <h4>Input Penjualan</h4>
+                                    <p>Buat transaksi penjualan baru</p>
+                                </div>
+                                <div class="action-arrow">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sales Form -->
+                <div class="row animate__animated animate__fadeInUp" id="salesForm" style="display: none;">
                     <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">
-                                    <i class="fas fa-shopping-cart mr-2"></i>
-                                    Form Input Penjualan
-                                </h3>
-                                <div class="card-tools">
-                                    <a href="/form-customers" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-user-plus mr-1"></i>
-                                        Tambah Customer
-                                    </a>
+                        <div class="data-container">
+                            <div class="data-header">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h3>
+                                            <i class="fas fa-shopping-cart mr-3"></i>
+                                            Form Input Penjualan
+                                        </h3>
+                                        <small>Input data penjualan produk Galaxy Bakery</small>
+                                    </div>
+                                    <button type="button" class="btn btn-secondary btn-sm" onclick="toggleFormVisibility()">
+                                        <i class="fas fa-times mr-1"></i>
+                                        Tutup Form
+                                    </button>
                                 </div>
                             </div>
 
                             <form action="{{ route('sale') }}" method="POST">
                                 @csrf
-                                <div class="card-body">
+                                <div class="form-content">
                                     <!-- Basic Information -->
                                     <div class="row">
                                         <div class="col-md-6">
@@ -317,9 +360,9 @@
                                     </div>
                                 </div>
 
-                                <div class="card-footer">
+                                <div class="form-footer">
                                     <div class="float-right">
-                                        <button type="button" class="btn btn-secondary mr-2">
+                                        <button type="button" class="btn btn-secondary mr-2" onclick="toggleFormVisibility()">
                                             <i class="fas fa-times mr-1"></i>
                                             Batal
                                         </button>
@@ -333,83 +376,124 @@
                             </form>
                         </div>
                     </div>
-                    <h1>Laporan Penjualan</h1>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover align-middle">
-                            <thead class="table-dark text-center">
-                                <tr>
-                                    <th>No</th>
-                                    <th>Nama Pelanggan</th>
-                                    <th>Barang Yang di Beli</th>
-                                    <th>Total Harga</th>
-                                    <th>Tanggal Penjualan</th>
-                                    <th>Catatan</th>
-                                    <th>Nama Kasir</th>
-                                    <th>Metode Pembayaran</th>
-                                    <th>Status Pembayaran</th>
-                                    <th>Aksi</th>
+                </div>
 
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($sales as $index => $sale)
-                                <tr>
-                                    <td class="text-center">{{ $sales->firstItem() + $index }}</td>
+                <!-- Sales Table -->
+                <div class="row animate__animated animate__fadeInUp animate__delay-1s">
+                    <div class="col-12">
+                        <div class="data-container">
+                            <div class="data-header">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h3>
+                                            <i class="fas fa-chart-bar mr-3"></i>
+                                            Laporan Penjualan
+                                        </h3>
+                                        <small>Daftar semua transaksi penjualan</small>
+                                    </div>
+                                    <div class="data-stats">
+                                        <span class="pulse-dot"></span>
+                                        <small class="text-success font-weight-bold">Live Data</small>
+                                    </div>
+                                </div>
+                            </div>
 
-                                    <td class="text-center">{{ $sale->customer->name ?? '-' }}</td>
-                                    <td>
-                                        <ul class="list-unstyled mb-0">
-                                            @foreach ($sale->saleItems as $item)
-                                            <li>{{ $item->productType->name ?? 'Produk tidak ditemukan' }} (x{{ $item->quantity }})</li>
-                                            @endforeach
-                                        </ul>
-                                    </td>
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th width="5%">No</th>
+                                            <th width="12%">Nama Pelanggan</th>
+                                            <th width="15%">Barang Yang di Beli</th>
+                                            <th width="10%">Total Harga</th>
+                                            <th width="10%">Tanggal Penjualan</th>
+                                            <th width="10%">Catatan</th>
+                                            <th width="10%">Nama Kasir</th>
+                                            <th width="8%">Metode Pembayaran</th>
+                                            <th width="10%">Status Pembayaran</th>
+                                            <th width="10%">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($sales as $index => $sale)
+                                        <tr>
+                                            <td class="text-center font-weight-bold">{{ $sales->firstItem() + $index }}</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-user text-primary mr-2"></i>
+                                                    <strong>{{ $sale->customer->name ?? '-' }}</strong>
+                                                </div>
+                                            </td>
+                                            <td class="ingredient-list">
+                                                <ul class="list-unstyled mb-0">
+                                                    @php
+                                                    $warnaIkon = ['text-warning', 'text-info', 'text-danger', 'text-success', 'text-primary'];
+                                                    @endphp
+                                                    @foreach ($sale->saleItems as $itemIndex => $item)
+                                                    <li>
+                                                        <i class="fas fa-circle {{ $warnaIkon[$itemIndex % count($warnaIkon)] }}" style="font-size: 0.4rem;"></i>
+                                                        {{ $item->productType->name ?? 'Produk tidak ditemukan' }} (x{{ $item->quantity }})
+                                                    </li>
+                                                    @endforeach
+                                                </ul>
+                                            </td>
+                                            <td class="text-right">
+                                                <strong class="text-success">Rp{{ number_format($sale->total_amount, 2, ',', '.') }}</strong>
+                                            </td>
+                                            <td class="text-center">{{ \Carbon\Carbon::parse($sale->sale_date)->format('d-m-Y') }}</td>
+                                            <td class="text-center">{{ $sale->notes ?? '-' }}</td>
+                                            <td class="text-center">{{ $sale->creator->name ?? '-' }}</td>
+                                            <td class="text-center">
+                                                <span class="badge badge-info text-capitalize">{{ $sale->payment_method }}</span>
+                                            </td>
+                                            <td class="text-center">
+                                                @if($sale->payment_status == 'paid')
+                                                <span class="badge bg-success">Lunas</span>
+                                                @elseif($sale->payment_status == 'pending')
+                                                <span class="badge bg-warning">Pending</span>
+                                                @elseif($sale->payment_status == 'cancelled')
+                                                <span class="badge bg-danger">Dibatalkan</span>
+                                                @else
+                                                <span class="badge bg-secondary">{{ $sale->payment_status }}</span>
+                                                @endif
+                                            </td>
+                                            <td class="text-center">
+                                                @if ($sale->payment_status == 'pending')
+                                                <div class="btn-group" role="group">
+                                                    <form action="{{ route('karyawan.update', $sale->id) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <button type="submit" name="action" value="paid" class="btn btn-sm btn-success"
+                                                            onclick="return confirm('Tandai sebagai lunas?')">
+                                                            ✅ Lunas
+                                                        </button>
+                                                    </form>
+                                                  
+                                                </div>
+                                                @elseif($sale->payment_status == 'paid')
+                                                <span class="text-success fs-4" title="Lunas">✅ Lunas</span>
+                                                @else
+                                                <span class="text-muted fs-4" title="{{ $sale->payment_status }}">{{ $sale->payment_status }}</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                        @empty
+                                        <tr>
+                                            <td colspan="10" class="text-center text-muted">Data penjualan belum tersedia.</td>
+                                        </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
 
-                                    <td class="text-end">Rp{{ number_format($sale->total_amount, 2, ',', '.') }}</td>
-                                    <td class="text-center">{{ \Carbon\Carbon::parse($sale->sale_date)->format('d-m-Y') }}</td>
-                                    <td class="text-center">{{ $sale->notes ?? '-' }}</td>
-                                    <td class="text-center">{{ $sale->creator->name ?? '-' }}</td>
-                                    <td class="text-center text-capitalize">{{ $sale->payment_method }}</td>
-                                    <td class="text-center">
-                                        <span class="badge bg-{{ $sale->payment_status == 'paid' ? 'success' : ($sale->payment_status == 'pending' ? 'warning' : 'danger') }}">
-                                            {{ $sale->payment_status }}
-                                        </span>
-                                    </td>
-                                    <td class="text-center">
-
-                                        @if ($sale->payment_status == 'pending')
-                                        <form action="{{ route('karyawan.update', $sale->id) }}" method="POST" style="display:inline;">
-                                            @csrf
-                                            @method('PUT')
-                                            <button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('Tandai sebagai lunas?')">
-                                                ✅
-                                            </button>
-                                        </form>
-                                        @endif
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="11" class="text-center">
-                                        <div class="alert alert-warning m-0" role="alert">
-                                            Data tidak dapat ditemukan.
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-
-                        <div class="d-flex justify-content-center">
-                            {{ $sales->links() }}
+                            <div class="d-flex justify-content-center">
+                                {{ $sales->links() }}
+                            </div>
                         </div>
-
                     </div>
                 </div>
             </div>
-
         </div>
-
 
         <!-- Footer -->
         <footer class="main-footer text-center">
@@ -424,6 +508,26 @@
     <script>
         // Set today's date as default
         document.getElementById('sale_date').value = new Date().toISOString().split('T')[0];
+
+        // Toggle form visibility
+        function toggleFormVisibility() {
+            const formContainer = document.getElementById('salesForm');
+            if (formContainer.style.display === 'none' || formContainer.style.display === '') {
+                formContainer.style.display = 'block';
+                formContainer.classList.add('animate__fadeIn');
+                // Scroll to form
+                formContainer.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            } else {
+                formContainer.classList.add('animate__fadeOut');
+                setTimeout(() => {
+                    formContainer.style.display = 'none';
+                    formContainer.classList.remove('animate__fadeOut', 'animate__fadeIn');
+                }, 500);
+            }
+        }
 
         function addRow() {
             const template = document.querySelector('#items-table tbody tr');
@@ -643,6 +747,17 @@
                     }
                 });
             });
+
+            // Enhanced hover effects for action cards
+            document.querySelectorAll('.action-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
         });
 
         //set waktu dan tanggal real time
@@ -671,6 +786,81 @@
         // Jalankan saat pertama kali dan setiap 1 detik
         updateDateTime();
         setInterval(updateDateTime, 1000);
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            // Remove existing notifications
+            const existingNotifications = document.querySelectorAll('.custom-notification');
+            existingNotifications.forEach(notification => notification.remove());
+
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `custom-notification alert alert-${type} animate__animated animate__fadeInRight`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                min-width: 300px;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+                border-radius: 10px;
+                border: none;
+                font-weight: 600;
+            `;
+
+            // Set background based on type
+            const backgrounds = {
+                success: 'linear-gradient(45deg, #10b981, #059669)',
+                warning: 'linear-gradient(45deg, #f59e0b, #d97706)',
+                danger: 'linear-gradient(45deg, #ef4444, #dc2626)',
+                info: 'linear-gradient(45deg, #3b82f6, #1d4ed8)'
+            };
+
+            notification.style.background = backgrounds[type] || backgrounds.info;
+            notification.style.color = 'white';
+
+            // Add icon based on type
+            const icons = {
+                success: '✅',
+                warning: '⚠️',
+                danger: '❌',
+                info: 'ℹ️'
+            };
+
+            notification.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <span class="mr-2" style="font-size: 1.2rem;">${icons[type] || icons.info}</span>
+                    <span>${message}</span>
+                    <button type="button" class="close ml-auto" style="color: white; opacity: 0.8;">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            `;
+
+            // Add to document
+            document.body.appendChild(notification);
+
+            // Handle close button
+            const closeBtn = notification.querySelector('.close');
+            closeBtn.addEventListener('click', () => {
+                notification.classList.add('animate__fadeOutRight');
+                setTimeout(() => notification.remove(), 300);
+            });
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.classList.add('animate__fadeOutRight');
+                    setTimeout(() => notification.remove(), 300);
+                }
+            }, 5000);
+        }
+
+        // Initialize tooltips
+        $('[data-toggle="tooltip"]').tooltip();
+
+        // Add smooth scrolling
+        document.documentElement.style.scrollBehavior = 'smooth';
     </script>
 
 </body>

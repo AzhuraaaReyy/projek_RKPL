@@ -15,7 +15,11 @@ class ProductionsController extends Controller
         $productions = Production::all();
         $productions = Production::with('productType.bahanBaku')->get();
 
-        return view('inputProduksiRoti', compact('productions'));
+        $countCompleted = Production::where('status', 'completed')->count();
+        $countPlanning = Production::where('status', 'planning')->count();
+        $countCancelled = Production::where('status', 'cancelled')->count();
+
+        return view('inputProduksiRoti', compact('productions', 'countCompleted', 'countPlanning', 'countCancelled'));
     }
 
 
@@ -249,5 +253,34 @@ class ProductionsController extends Controller
             'created_by' => auth()->id(),
         ]);
         return redirect()->route('karyawan.produksi')->with('success', 'Data produksi dan relasi bahan baku berhasil disimpan.');
+    }
+
+    public function filterByproduksi(Request $request)
+    {
+        $productionHistories = Production::with(['productType'])
+            ->when($request->product_type_id, function ($q) use ($request) {
+                $q->where('product_type_id', $request->product_type_id);
+            })
+            ->when($request->tanggal_dari, function ($q) use ($request) {
+                $q->whereDate('production_date', '>=', $request->tanggal_dari);
+            })
+            ->when($request->tanggal_sampai, function ($q) use ($request) {
+                $q->whereDate('production_date', '<=', $request->tanggal_sampai);
+            })
+            ->when($request->status, function ($q) use ($request) {
+                $q->where('status', $request->status); // ✅ INI YANG KURANG
+            })
+            ->when($request->search, function ($q) use ($request) {
+                $q->whereHas('productType', function ($q2) use ($request) {
+                    $q2->where('name', 'like', '%' . $request->search . '%');
+                });
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        $productTypes = ProductType::all();
+
+        return view('riwayatProduksiRoti', compact('productionHistories', 'productTypes'));
     }
 }

@@ -340,7 +340,7 @@
                             </span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Penjualan Hari Ini</span>
-                                <span class="info-box-number">{{$totalPenjualan ?? 25}}</span>
+                                <span class="info-box-number">Rp{{ number_format($totalPenjualan ?? 25, 2, ',', '.') }}</span>
                             </div>
                         </div>
                     </div>
