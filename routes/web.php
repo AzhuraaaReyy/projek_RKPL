@@ -133,7 +133,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 Route::middleware(['auth', 'role:karyawan'])->group(function () {
     //dashboard
     Route::get('/dashboard-karyawan', [DashboardController::class, 'dashboardkaryawan'])->name('karyawan');
-    // Route::get('/api/production-stats', [DashboardController::class, 'getProductionStats']);
+    Route::get('/api/production-karyawan', [DashboardController::class, 'getProductionStatskaryawan']);
 
     //bahanbaku
     Route::get('/karyawan-bahanbaku', [MonitoringBahanBakuController::class, 'karyawanbahanBaku'])->name('karyawan.inputbahan');

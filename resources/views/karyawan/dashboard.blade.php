@@ -754,7 +754,7 @@
         }
 
         function fetchDataAndUpdateChart() {
-            axios.get('/api/production-stats').then(res => {
+            axios.get('/api/production-karyawan').then(res => {
                 let labels = res.data.labels;
                 let actual = res.data.actual;
                 let target = res.data.target;

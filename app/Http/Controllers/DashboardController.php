@@ -113,4 +113,30 @@ class DashboardController extends Controller
             'target' => $targetData,
         ]);
     }
+    public function getProductionStatskaryawan(): JsonResponse
+    {
+        $productions = Production::with('productType')
+            ->orderBy('created_at', 'desc')
+            ->take(30)
+            ->get()
+            ->reverse();
+
+        $labels = $productions->map(function ($item) {
+            $date = optional($item->created_at)->format('d M Y');
+            $name = optional($item->productType)->name ?? 'Produk';
+            return "{$date} - {$name}";
+        })->values(); // pastikan jadi array numerik
+
+        $actualData = $productions->pluck('quantity_produced')->values();
+
+        $target = 200;
+        // buat koleksi target dengan jumlah sama dengan jumlah data produksi
+        $targetData = collect()->pad(count($productions), $target)->values();
+
+        return response()->json([
+            'labels' => $labels,
+            'actual' => $actualData,
+            'target' => $targetData,
+        ]);
+    }
 }
