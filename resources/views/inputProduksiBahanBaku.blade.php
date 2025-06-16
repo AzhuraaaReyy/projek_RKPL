@@ -29,132 +29,7 @@
             <i class="fas fa-bars"></i>
         </button>
 
-        <!-- Sidebar -->
-        <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <a href="#" class="brand-link text-center position-relative">
-                <span class="brand-text">🌌 Galaxy Bakery</span>
-                <button class="btn btn-sm position-absolute sidebar-toggle-btn"
-                    data-widget="pushmenu"
-                    style="right: 15px; top: 50%; transform: translateY(-50%);">
-                    <i class="fas fa-chevron-left" id="toggleIcon"></i>
-                </button>
-            </a>
-
-            <div class="sidebar d-flex flex-column" style="height: calc(100vh - 70px);">
-                <!-- User Panel -->
-                <div class="user-panel d-flex align-items-center">
-                    <div class="image">
-                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=6366f1&color=fff&size=128" class="img-circle elevation-2" alt="User Image">
-                    </div>
-                    <div class="info ml-3">
-                        <a href="#" class="d-block">{{ Auth::user()->name }}</a>
-                    </div>
-                </div>
-
-                <!-- Navigation Menu -->
-                <nav class="mt-2" style="flex: 1; overflow-y: auto;">
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-
-                        <li class="nav-item">
-                            <a href="{{ route('production.stats') }}" class="nav-link">
-                                <i class="nav-icon fas fa-home"></i>
-                                <p>Dashboard</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item has-treeview menu-open">
-                            <a href="{{ route('inputbahan') }}" class="nav-link">
-                                <i class="nav-icon fas fa-boxes"></i>
-                                <p>Bahan Baku<i class="right fas fa-angle-left"></i></p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="{{ route('inputbahan') }}" class="nav-link active">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Input Produksi</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="/riwayatBahanBaku" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Riwayat Produksi</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <li class="nav-item has-treeview">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-bread-slice"></i>
-                                <p>Produksi Roti<i class="right fas fa-angle-left"></i></p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="{{ route('productions') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Input Produksi</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="/riwayatProduksiRoti" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Riwayat Produksi</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{ route('laporan.index') }}" class="nav-link">
-                                <i class="nav-icon fas fa-chart-line"></i>
-                                <p>Laporan</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{ route('pengeluaran') }}" class="nav-link">
-                                <i class="nav-icon fas fa-wallet"></i>
-                                <p>Pengeluaran</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="/penjualan" class="nav-link">
-                                <i class="nav-icon fas fa-receipt"></i>
-                                <p>Penjualan</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item has-treeview">
-                            <a href="{{ route('customers') }}" class="nav-link">
-                                <i class="nav-icon fas fa-users-cog"></i>
-                                <p>Manajemen User<i class="right fas fa-angle-left"></i></p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="{{ route('customers') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Hak Akses</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-
-                    </ul>
-                </nav>
-
-                <!-- Logout Button - Always at bottom -->
-                <div class="sidebar-logout mt-auto">
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="btn btn-danger">
-                            <i class="fas fa-sign-out-alt mr-2"></i>
-                            <span>Logout</span>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </aside>
+        @include('sidebar')
 
         <!-- Content Wrapper -->
         <div class="content-wrapper">
@@ -203,7 +78,7 @@
                             </span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Total Input Hari Ini</span>
-                                <span class="info-box-number">{{ $totalInputHariIni ?? 15 }} <small>Transaksi</small></span>
+                                <span class="info-box-number">{{ $countinput ?? 15 }} <small>Transaksi</small></span>
                             </div>
                         </div>
                     </div>
@@ -214,7 +89,7 @@
                             </span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Total Barang Masuk</span>
-                                <span class="info-box-number">{{ $totalBarangMasuk ?? 125 }} <small>Kg</small></span>
+                                <span class="info-box-number">{{ $baranginput ?? 125 }} <small>Kg</small></span>
                             </div>
                         </div>
                     </div>
@@ -225,7 +100,7 @@
                             </span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Total Nilai Pembelian</span>
-                                <span class="info-box-number" style="font-size: 15px;">Rp {{ number_format($totalNilaiPembelian ?? 0, 0, ',', '.') }}</span>
+                                <span class="info-box-number" style="font-size: 15px;">Rp {{ number_format($hargainput ?? 0, 0, ',', '.') }}</span>
                             </div>
                         </div>
                     </div>
@@ -236,7 +111,7 @@
                             </span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Jenis Bahan Aktif</span>
-                                <span class="info-box-number">{{ $totalJenisBahan ?? 8 }} <small>Item</small></span>
+                                <span class="info-box-number">{{ $jumlahAktif ?? 8 }} <small>Item</small></span>
                             </div>
                         </div>
                     </div>
@@ -353,6 +228,7 @@
                                                 <th width="8%">Tanggal Kadaluwarsa</th>
                                                 <th width="12%">Harga/Unit</th>
                                                 <th width="10%">Deskripsi</th>
+                                                <th width="10%">Status</th>
                                                 <th width="10%">Aksi</th>
                                             </tr>
                                         </thead>
@@ -367,6 +243,11 @@
                                                 <td class="text-center">{{ date('d/m/Y', strtotime($input->tanggal_kedaluwarsa ?? $input->created_at ?? now())) }}</td>
                                                 <td class="text-right">Rp {{ number_format($input->harga ?? 0, 0, ',', '.') }}</td>
                                                 <td class="text-center">{{ $input->deskripsi ?? '-' }}</td>
+                                                <td class="text-center">
+                                                    <span class="badge bg-{{ $input->status_class }}">
+                                                        {{ $input->status }}
+                                                    </span>
+                                                </td>
                                                 <td class="text-center">
                                                     <div class="btn-group btn-group-sm">
                                                         <button type="button" class="btn btn-info btn-sm" onclick="showDetail({{ $input->id ?? 1 }})" title="Detail" data-toggle="tooltip">

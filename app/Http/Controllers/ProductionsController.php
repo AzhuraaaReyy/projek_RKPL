@@ -19,6 +19,8 @@ class ProductionsController extends Controller
         $countPlanning = Production::where('status', 'planning')->count();
         $countCancelled = Production::where('status', 'cancelled')->count();
 
+       
+
         return view('inputProduksiRoti', compact('productions', 'countCompleted', 'countPlanning', 'countCancelled'));
     }
 

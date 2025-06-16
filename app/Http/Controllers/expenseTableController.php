@@ -36,12 +36,13 @@ class expenseTableController extends Controller
             ]);
             return $pdf->download('laporan_pengeluaran.pdf');
         }
-
+        $todayTotalAmount = Expense::whereDate('expense_date', now()->toDateString())->sum('amount');
+        $totalcategories = ExpenseCategories::count();
         // Paginate setelah data disalin untuk PDF
         $expenses = $query->paginate(10);
         $categories = ExpenseCategories::all();
 
-        return view('pengeluaran', compact('expenses', 'categories', 'totalAmount'));
+        return view('pengeluaran', compact('expenses', 'categories', 'totalAmount', 'todayTotalAmount', 'totalcategories'));
     }
 
 
@@ -51,6 +52,8 @@ class expenseTableController extends Controller
         $expensesCategories = ExpenseCategories::all(); // pastikan relasi eager loaded
         return view('form.create_pengeluaran', compact('expenses', 'expensesCategories'));
     }
+
+
     public function store(Request $request)
     {
         $request->validate([
@@ -133,12 +136,13 @@ class expenseTableController extends Controller
             ->with('category') // eager load relasi
             ->latest();
 
-
+        $todayTotalAmount = Expense::whereDate('expense_date', now()->toDateString())->sum('amount');
+        $totalcategories = ExpenseCategories::count();
         $expenses = $query->paginate(10);
         $totalAmount = $query->sum('amount');
         $categories = \App\Models\ExpenseCategories::where('is_active', true)->get();
 
-        return view('pengeluaran', compact('expenses', 'categories', 'totalAmount'));
+        return view('pengeluaran', compact('expenses', 'categories', 'totalAmount', 'todayTotalAmount','totalcategories'));
     }
 
 

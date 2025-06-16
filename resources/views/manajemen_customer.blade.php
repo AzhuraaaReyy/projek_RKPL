@@ -32,131 +32,7 @@
         </button>
 
         <!-- Sidebar -->
-        <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <a href="#" class="brand-link text-center position-relative">
-                <span class="brand-text">🌌 Galaxy Bakery</span>
-                <button class="btn btn-sm position-absolute sidebar-toggle-btn"
-                    data-widget="pushmenu"
-                    style="right: 15px; top: 50%; transform: translateY(-50%);">
-                    <i class="fas fa-chevron-left" id="toggleIcon"></i>
-                </button>
-            </a>
-
-            <div class="sidebar d-flex flex-column" style="height: calc(100vh - 70px);">
-                <!-- User Panel -->
-                <div class="user-panel d-flex align-items-center">
-                    <div class="image">
-                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=6366f1&color=fff&size=128" class="img-circle elevation-2" alt="User Image">
-                    </div>
-                    <div class="info ml-3">
-                        <a href="#" class="d-block">{{ Auth::user()->name }}</a>
-                    </div>
-                </div>
-
-                <!-- Navigation Menu -->
-                <nav class="mt-2" style="flex: 1; overflow-y: auto;">
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-
-                        <li class="nav-item">
-                            <a href="/dashboard" class="nav-link">
-                                <i class="nav-icon fas fa-home"></i>
-                                <p>Dashboard</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item has-treeview">
-                            <a href="/monitoring" class="nav-link">
-                                <i class="nav-icon fas fa-boxes"></i>
-                                <p>Bahan Baku<i class="right fas fa-angle-left"></i></p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="/bahanbaku" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Input Produksi</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="/riwayatBahanBaku" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Riwayat Produksi</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <li class="nav-item has-treeview">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-bread-slice"></i>
-                                <p>Produksi Roti<i class="right fas fa-angle-left"></i></p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="/produksiRoti" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Input Produksi</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="/riwayatProduksiRoti" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Riwayat Produksi</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="/laporan" class="nav-link">
-                                <i class="nav-icon fas fa-chart-line"></i>
-                                <p>Laporan</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="/pengeluaran" class="nav-link">
-                                <i class="nav-icon fas fa-wallet"></i>
-                                <p>Pengeluaran</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="/penjualan" class="nav-link">
-                                <i class="nav-icon fas fa-receipt"></i>
-                                <p>Penjualan</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item has-treeview menu-open">
-                            <a href="{{ route('customers') }}" class="nav-link active">
-                                <i class="nav-icon fas fa-users-cog"></i>
-                                <p>Manajemen User<i class="right fas fa-angle-left"></i></p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="{{ route('customers') }}" class="nav-link active">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Hak Akses</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-
-                    </ul>
-                </nav>
-
-                <!-- Logout Button - Always at bottom -->
-                <div class="sidebar-logout mt-auto">
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="btn btn-danger">
-                            <i class="fas fa-sign-out-alt mr-2"></i>
-                            <span>Logout</span>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </aside>
+       @include('sidebar')
 
         <!-- Content Wrapper -->
         <div class="content-wrapper">
@@ -262,68 +138,65 @@
                                         <i class="fas fa-search mr-1"></i>
                                         Filter Pelanggan
                                     </h3>
-                                    <div class="card-tools">
-                                        <button class="btn btn-secondary btn-sm mr-2" onclick="clearFilters()">
-                                            <i class="fas fa-times mr-1"></i>Reset Filter
-                                        </button>
-                                        <a href="" class="btn btn-primary btn-sm">
-                                            <i class="fas fa-plus mr-1"></i>Tambah Pelanggan
-                                        </a>
-                                    </div>
+                                  
                                 </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="search">Cari Pelanggan</label>
-                                                <input type="text" class="form-control" id="search" placeholder="Nama, telepon, alamat, atau produk favorit...">
+                               <form action="{{ route('customers.filter') }}" method="GET">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="search">Cari Pelanggan</label>
+                                                    <input type="text" name="keyword" value="{{ request('keyword') }}" class="form-control" placeholder="Nama, telepon, alamat...">
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="filter">Filter Status</label>
-                                                <select class="form-control" id="filter">
-                                                    <option value="">Semua</option>
-                                                    <option value="active">Aktif</option>
-                                                    <option value="inactive">Tidak Aktif</option>
-                                                </select>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="filter">Filter Status</label>
+                                                    <select name="filter" class="form-control">
+                                                        <option value="">Semua</option>
+                                                        <option value="active" {{ request('filter') == 'active' ? 'selected' : '' }}>Aktif</option>
+                                                        <option value="inactive" {{ request('filter') == 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
+                                                    </select>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="filterProduct">Filter Produk</label>
-                                                <select class="form-control" id="filterProduct">
-                                                    <option value="">Semua Produk</option>
-                                                    <option value="Roti Tawar">Roti Tawar</option>
-                                                    <option value="Croissant">Croissant</option>
-                                                    <option value="Donat">Donat</option>
-                                                    <option value="Bagel">Bagel</option>
-                                                    <option value="Muffin">Muffin</option>
-                                                </select>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="filterProduct">Filter Produk</label>
+                                                    <select name="filterProduct" class="form-control">
+                                                        <option value="">Semua Produk</option>
+                                                        @foreach(['Roti Tawar', 'Croissant', 'Donat', 'Bagel', 'Muffin'] as $produk)
+                                                            <option value="{{ $produk }}" {{ request('filterProduct') == $produk ? 'selected' : '' }}>
+                                                                {{ $produk }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="filterSpent">Filter Pembelian</label>
-                                                <select class="form-control" id="filterSpent">
-                                                    <option value="">Semua</option>
-                                                    <option value="high">> Rp 1.000.000</option>
-                                                    <option value="medium">Rp 500.000 - 1.000.000</option>
-                                                    <option value="low">
-                                                        < Rp 500.000</option>
-                                                </select>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="filterSpent">Filter Pembelian</label>
+                                                    <select name="filterSpent" class="form-control">
+                                                        <option value="">Semua</option>
+                                                        <option value="high" {{ request('filterSpent') == 'high' ? 'selected' : '' }}>> Rp 1.000.000</option>
+                                                        <option value="medium" {{ request('filterSpent') == 'medium' ? 'selected' : '' }}>Rp 500.000 - 1.000.000</option>
+                                                        <option value="low" {{ request('filterSpent') == 'low' ? 'selected' : '' }}>< Rp 500.000</option>
+                                                    </select>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>&nbsp;</label>
-                                                <button class="btn btn-info form-control" onclick="filterTable()">
-                                                    <i class="fas fa-search mr-1"></i>Cari & Filter
-                                                </button>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label>&nbsp;</label>
+                                                    <button type="submit" class="btn btn-info form-control">
+                                                        <i class="fas fa-search mr-1"></i>Cari & Filter
+                                                    </button>
+                                                   <a href="{{ route('customers') }}" class="btn btn-secondary ml-2">Reset</a>
+
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                               </form>
+</form>
                             </div>
                         </div>
                     </div>
@@ -405,7 +278,7 @@
                                                         <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#detailModal{{ $customer->id }}">
                                                             <i class="fas fa-eye"></i>
                                                         </button>
-                                                        <a href="" class="btn btn-sm btn-warning">
+                                                        <a href="{{ route('customers.edit', $customer->id) }}" class="btn btn-sm btn-warning">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
                                                         <form method="POST" action="" style="display: inline-block;">

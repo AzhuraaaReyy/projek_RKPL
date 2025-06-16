@@ -19,6 +19,12 @@ use App\Http\Controllers\ProductionHistoryController;
 Route::get('/', function () {
     return view('login-view');
 });
+Route::get('/main', function () {
+    return view('main');
+});
+Route::get('/sidebar', function () {
+    return view('sidebar');
+});
 
 Route::get('/laporanstok', function () {
     return view('laporanStok');
@@ -103,7 +109,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::get('/riwayatBahanBaku', [stokMovementsController::class, 'index']);
 
-    
+
 
     Route::get('/customer', [CustomersController::class, 'index']);
     Route::get('/customer', [CustomersController::class, 'index'])->name('customers');
@@ -111,6 +117,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/customer', [CustomersController::class, 'addCustomer'])->name('customers');
     Route::put('/customer/{id}', [CustomersController::class, 'update'])->name('customers.update');
     Route::delete('/customer/{id}', [CustomersController::class, 'destroy'])->name('customers.delete');
+    Route::get('/customer/{id}/edit', [CustomersController::class, 'editcustomer'])->name('customers.edit');
+    Route::get('/customers/filter', [CustomersController::class, 'filterByCustomer'])->name('customers.filter');
+
+
+
 
     // API Routes untuk Production History
     Route::get('/api/production-history/stats', [ProductionHistoryController::class, 'getStats'])->name('productionHistory.stats');
@@ -140,17 +151,17 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
     Route::get('/karyawan-laporan/download', [LaporanController::class, 'downloadPDF'])->name('laporan.download');
 
     //pengeluaran
-    Route::get('/karyawan-pengeluaran', [expenseTableController::class, 'karyawanpengeluaran'])->name(('pengeluaran'));
+    Route::get('/karyawan-pengeluaran', [expenseTableController::class, 'karyawanpengeluaran'])->name(('karyawan.pengeluaran'));
     Route::get('/karyawan-formpengeluaran', [expenseTableController::class, 'form'])->name('formPengeluaran');
-    Route::get('/pengeluaranByfilter', [expenseTableController::class, 'filterBy'])->name('filterBy');
-    Route::post('/pengeluaran', [expenseTableController::class, 'store'])->name('expenses.store');
-    Route::put('/pengeluaran/{id}', [expenseTableController::class, 'update'])->name('expenses.update');
-    Route::delete('/pengeluaran/{id}', [expenseTableController::class, 'destroy'])->name('expenses.delete');
+    Route::get('/karyawan-pengeluaranByfilter', [expenseTableController::class, 'filterBy'])->name('filterBykaryawan');
+    Route::post('/karyawan-pengeluaran', [expenseTableController::class, 'store'])->name('karyawan.expense.store');
+    Route::put('/karyawan-pengeluaran/{id}', [expenseTableController::class, 'update'])->name('expenses.update');
+    Route::delete('/karyawan-pengeluaran/{id}', [expenseTableController::class, 'destroy'])->name('expenses.delete');
 
     Route::get('/karyawan-categoriespengeluaran', [expenseCategoriesController::class, 'karyawancategories'])->name(('karyawan.categories'));
-    Route::post('/categories-pengeluaran', [expenseCategoriesController::class, 'store'])->name(('categories.store'));
-    Route::put('/categories-pengeluaran/{id}', [expenseCategoriesController::class, 'update'])->name(('categories.update'));
-    Route::delete('/categories-pengeluaran/{id}', [expenseCategoriesController::class, 'destroy'])->name(('categories.delete'));
+    Route::post('/karyawan-categoriespengeluaran', [expenseCategoriesController::class, 'store'])->name(('karyawan.store'));
+    Route::put('/karyawan-categoriespengeluaran/{id}', [expenseCategoriesController::class, 'update'])->name(('karyawancategories.update'));
+    Route::delete('/karyawan-categoriespengeluaran/{id}', [expenseCategoriesController::class, 'destroy'])->name(('karyawancategories.delete'));
 
     Route::get('/karyawan-penjualan', [SalesTableController::class, 'karyawanpenjualan']);
     Route::get('/karyawan-penjualan', [SalesTableController::class, 'karyawanpenjualan'])->name('karyawanpenjualan');

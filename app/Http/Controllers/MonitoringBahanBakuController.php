@@ -11,8 +11,15 @@ class MonitoringBahanBakuController extends Controller
     public function index()
     {
 
+        $allBahanBaku = BahanBaku::all();
         $bahanBakus = BahanBaku::all(); //ambil semua bahan baku
-        return view('inputProduksiBahanBaku', compact('bahanBakus')); //arahkan ke view
+        $countinput = BahanBaku::whereDate('created_at', now()->toDateString())->count();
+        $baranginput = BahanBaku::count();
+        $hargainput = BahanBaku::sum('harga');
+        $jumlahAktif = $allBahanBaku->filter(function ($item) {
+            return $item->status === 'Aktif';
+        })->count();
+        return view('inputProduksiBahanBaku', compact('bahanBakus', 'countinput', 'baranginput', 'hargainput', 'jumlahAktif')); //arahkan ke view
     }
     public function karyawanbahanBaku()
     {

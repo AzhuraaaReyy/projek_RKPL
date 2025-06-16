@@ -53,14 +53,38 @@ class DashboardController extends Controller
 
     public function dashboardkaryawan()
     {
+        $today = Carbon::today();
+
+        $jumlahStokRendah = BahanBaku::whereColumn('stok', '<', 'minimum_stok')->count();
+        $stokHabis = BahanBaku::where('stok', 0)->get();
+
+        $produksi = \App\Models\Production::with('productType', 'creator')
+            ->whereDate('created_at', now()->toDateString())
+            ->latest()
+            ->first();
+
+        $penjualan = Sale::with('productType', 'creator', 'saleItems', 'customer',)
+            ->whereDate('created_at', now()->toDateString())
+            ->latest()
+            ->first();
+        $jumlahTransaksi = Sale::count();
+        $bahan = BahanBaku::with('stokMovements')->latest()->first();
+
+        $bulanIni = Carbon::now()->month;
+        $tahunIni = Carbon::now()->year;
+
+        $totalPenjualanBulanIni = Sale::whereMonth('created_at', $bulanIni)
+            ->whereYear('created_at', $tahunIni)
+            ->sum('total_amount');
+
         // Ambil total produksi hari ini
-        $totalProduksi = Production::whereDate('created_at', now()->toDateString())
+        $totalProduksiHariIni = Production::whereDate('created_at', now()->toDateString())
             ->sum('quantity_produced'); // sesuaikan nama kolom
-        $totalbahan = BahanBaku::whereNotNull('tanggal_masuk')->sum('stok');
+        $totalbahanbaku = BahanBaku::whereNotNull('tanggal_masuk')->sum('stok');
 
-        $totalsale = Sale::whereDate('sale_date', now()->toDateString())->sum('total_amount');
+        $totalPenjualan = Sale::whereDate('sale_date', now()->toDateString())->sum('total_amount');
 
-        return view('karyawan.dashboard', compact('totalProduksi', 'totalbahan', 'totalsale'));
+        return view('karyawan.dashboard', compact('totalProduksiHariIni', 'totalbahanbaku', 'totalPenjualan', 'today', 'produksi', 'bahan', 'jumlahStokRendah', 'stokHabis', 'penjualan', 'jumlahTransaksi', 'totalPenjualanBulanIni'));
     }
 
     public function getProductionStats(): JsonResponse

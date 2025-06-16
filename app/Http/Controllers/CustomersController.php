@@ -12,7 +12,20 @@ class CustomersController extends Controller
      */
     public function index()
     {
-        $customers = Customers::orderBy('name')->get();
+        // Load semua relasi yang diperlukan untuk menampilkan data lengkap
+        $customers = Customers::with([
+            'sale' => function ($query) {
+                $query->with(['saleItems.productType'])->orderBy('sale_date', 'desc');
+            }
+        ])
+            ->withCount('sale as total_transactions')
+            ->withSum('sale as total_spent', 'total_amount')
+            ->orderBy('name')
+            ->get();
+
+        // Tidak perlu loop lagi karena sudah menggunakan accessor di model
+        // Accessor akan otomatis dipanggil saat mengakses $customer->favorite_products_list
+
         return view('manajemen_customer', compact('customers'));
     }
 
@@ -40,14 +53,6 @@ class CustomersController extends Controller
             'phone' => $request->phone,
             'address' => $request->address,
             'is_active' => false,
-            // Initialize additional fields
-            'total_items' => 0,
-            'total_spent' => 0,
-            'total_transactions' => 0,
-            'favorite_products' => null,
-            'purchase_history' => null,
-            'last_purchase' => null,
-            'avg_visit_frequency' => null,
         ]);
 
         return redirect()->route('sale')->with('success', 'Data pelanggan berhasil ditambahkan');
@@ -58,7 +63,12 @@ class CustomersController extends Controller
      */
     public function show($id)
     {
-        $customer = Customers::findOrFail($id);
+        $customer = Customers::with([
+            'sale' => function ($query) {
+                $query->with(['saleItems.productType'])->orderBy('sale_date', 'desc');
+            }
+        ])->findOrFail($id);
+
         return view('customer.show', compact('customer'));
     }
 
@@ -89,7 +99,7 @@ class CustomersController extends Controller
             'name' => $request->name,
             'phone' => $request->phone,
             'address' => $request->address,
-            'is_active' => $request->has('is_active') ? $request->is_active : $customer->is_active,
+            'is_active' => $request->has('is_active') ? $request->is_active : 0,
         ]);
 
         return redirect()->route('customers')->with('success', 'Data pelanggan berhasil diperbarui');
@@ -121,40 +131,10 @@ class CustomersController extends Controller
         $customer = Customers::find($customerId);
         if (!$customer) return false;
 
-        // Update total items and spent
-        $customer->total_items += $productData['quantity'];
-        $customer->total_spent += $productData['total_price'];
-        $customer->total_transactions += 1;
-        $customer->last_purchase = now();
         $customer->is_active = true;
-
-        // Update favorite products
-        $currentFavorites = $customer->favorite_products ?
-            (is_array($customer->favorite_products) ? $customer->favorite_products : json_decode($customer->favorite_products, true)) : [];
-
-        if (!in_array($productData['product_name'], $currentFavorites)) {
-            $currentFavorites[] = $productData['product_name'];
-            // Keep only top 5 favorites
-            $customer->favorite_products = array_slice($currentFavorites, -5);
-        }
-
-        // Update purchase history
-        $currentHistory = $customer->purchase_history ?
-            (is_array($customer->purchase_history) ? $customer->purchase_history : json_decode($customer->purchase_history, true)) : [];
-
-        $currentHistory[] = [
-            'product_name' => $productData['product_name'],
-            'category' => $productData['category'] ?? 'Roti',
-            'quantity' => $productData['quantity'],
-            'price' => $productData['unit_price'],
-            'last_bought' => now()->toDateString(),
-            'total' => $productData['total_price']
-        ];
-
-        // Keep only last 20 purchases
-        $customer->purchase_history = array_slice($currentHistory, -20);
-
+        $customer->last_purchase_date = now();
         $customer->save();
+
         return true;
     }
 
@@ -168,8 +148,8 @@ class CustomersController extends Controller
             'active_customers' => Customers::where('is_active', true)->count(),
             'inactive_customers' => Customers::where('is_active', false)->count(),
             'new_customers' => Customers::where('created_at', '>=', now()->subDays(30))->count(),
-            'total_revenue' => Customers::sum('total_spent'),
-            'avg_customer_value' => Customers::avg('total_spent'),
+            'total_revenue' => Customers::join('sales', 'customers.id', '=', 'sales.customer_id')->sum('total_amount'),
+            'avg_customer_value' => Customers::join('sales', 'customers.id', '=', 'sales.customer_id')->avg('total_amount'),
         ];
 
         return response()->json($stats);
@@ -181,7 +161,16 @@ class CustomersController extends Controller
      */
     public function karyawanIndex()
     {
-        $customers = Customers::orderBy('name')->get();
+        $customers = Customers::with([
+            'sale' => function ($query) {
+                $query->with(['saleItems.productType'])->orderBy('sale_date', 'desc');
+            }
+        ])
+            ->withCount('sale as total_transactions')
+            ->withSum('sale as total_spent', 'total_amount')
+            ->orderBy('name')
+            ->get();
+
         return view('karyawan.manajemen_customer', compact('customers'));
     }
 
@@ -209,13 +198,6 @@ class CustomersController extends Controller
             'phone' => $request->phone,
             'address' => $request->address,
             'is_active' => false,
-            'total_items' => 0,
-            'total_spent' => 0,
-            'total_transactions' => 0,
-            'favorite_products' => null,
-            'purchase_history' => null,
-            'last_purchase' => null,
-            'avg_visit_frequency' => null,
         ]);
 
         return redirect()->route('karyawan.customers')->with('success', 'Data pelanggan berhasil ditambahkan');
@@ -250,5 +232,65 @@ class CustomersController extends Controller
         ]);
 
         return redirect()->route('karyawan.customers')->with('success', 'Data pelanggan berhasil diperbarui');
+    }
+
+    public function editcustomer($id)
+    {
+        $customer = Customers::find($id);
+
+        if (!$customer) {
+            return redirect()->route('customers')->with('error', 'Data pelanggan tidak ditemukan.');
+        }
+
+        return view('form.edit_customer', compact('customer'));
+    }
+
+    public function filterByCustomer(Request $request)
+    {
+        $query = Customers::query();
+
+        // Cari berdasarkan keyword (nama, telepon, alamat, atau produk favorit)
+        if ($request->filled('keyword')) {
+            $keyword = $request->keyword;
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', "%$keyword%")
+                    ->orWhere('phone', 'like', "%$keyword%")
+                    ->orWhere('address', 'like', "%$keyword%");
+            });
+        }
+
+        // Filter berdasarkan status aktif/tidak
+        if ($request->filled('filter')) {
+            $query->where('is_active', $request->filter === 'active' ? true : false);
+        }
+
+        // Filter berdasarkan produk favorit
+        if ($request->filled('filterProduct')) {
+            $query->whereHas('sale.saleItems.productType', function ($q) use ($request) {
+                $q->where('name', $request->filterProduct);
+            });
+        }
+
+        // Filter berdasarkan total pembelian
+        if ($request->filled('filterSpent')) {
+            $query->withSum('sale as total_spent', 'total_amount');
+
+            $query->havingRaw(match ($request->filterSpent) {
+                'high' => 'total_spent > 1000000',
+                'medium' => 'total_spent BETWEEN 500000 AND 1000000',
+                'low' => 'total_spent < 500000',
+                default => '1=1',
+            });
+        }
+
+        $customers = $query
+            ->with([
+                'sale' => fn($q) => $q->with('saleItems.productType')->orderBy('sale_date', 'desc')
+            ])
+            ->withCount('sale as total_transactions')
+            ->orderBy('name')
+            ->get();
+
+        return view('manajemen_customer', compact('customers'));
     }
 }

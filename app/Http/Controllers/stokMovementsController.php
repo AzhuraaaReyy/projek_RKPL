@@ -11,7 +11,7 @@ class stokMovementsController extends Controller
     //
     public function index()
     {
-        $stokMovements = StokMovements::all();
+        $stokMovements = StokMovements::with('bahanBaku')->get();
         $bahanBakus = BahanBaku::select('id', 'nama')->get();
         return view('riwayatProduksiBahanBaku', compact('stokMovements', 'bahanBakus'));
     }
@@ -101,4 +101,6 @@ class stokMovementsController extends Controller
 
         return response()->json($data);
     }
+
+    
 }

@@ -29,131 +29,7 @@
         </button>
 
         <!-- Sidebar -->
-        <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <a href="#" class="brand-link text-center position-relative">
-                <span class="brand-text">🌌 Galaxy Bakery</span>
-                <button class="btn btn-sm position-absolute sidebar-toggle-btn"
-                    data-widget="pushmenu"
-                    style="right: 15px; top: 50%; transform: translateY(-50%);">
-                    <i class="fas fa-chevron-left" id="toggleIcon"></i>
-                </button>
-            </a>
-
-            <div class="sidebar d-flex flex-column" style="height: calc(100vh - 70px);">
-                <!-- User Panel -->
-                <div class="user-panel d-flex align-items-center">
-                    <div class="image">
-                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=6366f1&color=fff&size=128" class="img-circle elevation-2" alt="User Image">
-                    </div>
-                    <div class="info ml-3">
-                        <a href="#" class="d-block">{{ Auth::user()->name }}</a>
-                    </div>
-                </div>
-
-                <!-- Navigation Menu -->
-                <nav class="mt-2" style="flex: 1; overflow-y: auto;">
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-
-                        <li class="nav-item">
-                            <a href="/dashboard" class="nav-link">
-                                <i class="nav-icon fas fa-home"></i>
-                                <p>Dashboard</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item has-treeview">
-                            <a href="/#" class="nav-link">
-                                <i class="nav-icon fas fa-boxes"></i>
-                                <p>Bahan Baku<i class="right fas fa-angle-left"></i></p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="/bahanbaku" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Input Produksi</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="/riwayatBahanBaku" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Riwayat Produksi</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <li class="nav-item has-treeview">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-bread-slice"></i>
-                                <p>Produksi Roti<i class="right fas fa-angle-left"></i></p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="/produksiRoti" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Input Produksi</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="/riwayatProduksiRoti" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Riwayat Produksi</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="/laporan" class="nav-link">
-                                <i class="nav-icon fas fa-chart-line"></i>
-                                <p>Laporan</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="/pengeluaran" class="nav-link active">
-                                <i class="nav-icon fas fa-wallet"></i>
-                                <p>Pengeluaran</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="/penjualan" class="nav-link">
-                                <i class="nav-icon fas fa-receipt"></i>
-                                <p>Penjualan</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item has-treeview">
-                            <a href="/customer" class="nav-link">
-                                <i class="nav-icon fas fa-users-cog"></i>
-                                <p>Manajemen User<i class="right fas fa-angle-left"></i></p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="/customer" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Hak Akses</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-
-                    </ul>
-                </nav>
-
-                <!-- Logout Button - Always at bottom -->
-                <div class="sidebar-logout mt-auto">
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="btn btn-danger">
-                            <i class="fas fa-sign-out-alt mr-2"></i>
-                            <span>Logout</span>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </aside>
+     @include('sidebar')
 
         <!-- Content Wrapper -->
         <div class="content-wrapper">
@@ -202,7 +78,7 @@
                             </span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Total Pengeluaran Hari Ini</span>
-                                <span class="info-box-number">Rp 850.000 <small>IDR</small></span>
+                                <span class="info-box-number">Rp{{ number_format($todayTotalAmount ?? 0, 2, ',', '.') }} <small>IDR</small></span>
                             </div>
                         </div>
                     </div>
@@ -213,7 +89,7 @@
                             </span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Pengeluaran Bulan Ini</span>
-                                <span class="info-box-number">Rp 12.500.000 <small>IDR</small></span>
+                                <span class="info-box-number">Rp{{ number_format($totalAmount ?? 0, 2, ',', '.') }} <small>IDR</small></span>
                             </div>
                         </div>
                     </div>
@@ -224,7 +100,7 @@
                             </span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Kategori Pengeluaran</span>
-                                <span class="info-box-number">8 <small>Kategori</small></span>
+                                <span class="info-box-number">{{$totalcategories}} <small>Kategori</small></span>
                             </div>
                         </div>
                     </div>
@@ -251,7 +127,7 @@
                                     Data Pengeluaran
                                 </h3>
                                 <div class="card-tools">
-                                    <a href="/categories" class="btn btn-success btn-sm mr-2">
+                                    <a href="/categories-pengeluaran" class="btn btn-success btn-sm mr-2">
                                         <i class="fas fa-tags mr-1"></i>
                                         Tambah Kategori
                                     </a>
@@ -263,42 +139,46 @@
                             </div>
 
                             <div class="card-body">
-                                <!-- Filter Form -->
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="filter_date">Filter Tanggal:</label>
-                                            <input type="date" id="filter_date" class="form-control" />
+                               <!-- Filter Form -->
+                                <form action="{{ route('filterBy') }}" method="GET">
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="expense_date">Filter Tanggal:</label>
+                                                <input type="date" id="expense_date" name="expense_date" class="form-control"
+                                                    value="{{ request('expense_date') }}" />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-4">
+                                        <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="filter_category">Filter Kategori:</label>
-                                            <select id="filter_category" class="form-control">
-                                                <option value="">-- Semua Kategori --</option>
-                                                <option value="bahan_baku">Bahan Baku</option>
-                                                <option value="operasional">Operasional</option>
-                                                <option value="marketing">Marketing</option>
-                                                <option value="maintenance">Maintenance</option>
-                                            </select>
+                                                <label for="expense_category_id">Filter Kategori:</label>
+                                                <select id="expense_category_id" name="expense_category_id" class="form-control">
+                                                    <option value="">-- Semua Kategori --</option>
+                                                    @foreach ($categories as $category)
+                                                        <option value="{{ $category->id }}"
+                                                            {{ request('expense_category_id') == $category->id ? 'selected' : '' }}>
+                                                            {{ $category->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>&nbsp;</label>
-                                            <div class="d-block">
-                                                <button type="button" class="btn btn-info mr-2" onclick="applyFilter()">
-                                                    <i class="fas fa-search mr-1"></i>
-                                                    Filter
-                                                </button>
-                                                <button type="button" class="btn btn-secondary" onclick="resetFilter()">
-                                                    <i class="fas fa-undo mr-1"></i>
-                                                    Reset
-                                                </button>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>&nbsp;</label>
+                                                <div class="d-block">
+                                                    <button type="submit" class="btn btn-info mr-2">
+                                                        <i class="fas fa-search mr-1"></i> Filter
+                                                    </button>
+                                                    <a href="{{ route('filterBy') }}" class="btn btn-secondary">
+                                                        <i class="fas fa-undo mr-1"></i> Reset
+                                                    </a>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </form>
+
 
                                 <!-- Table -->
                                 <div class="table-responsive">
