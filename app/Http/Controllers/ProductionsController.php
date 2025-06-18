@@ -6,20 +6,21 @@ use App\Models\BahanBaku;
 use App\Models\Production;
 use App\Models\ProductType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductionsController extends Controller
 {
     //
     public function index()
     {
-        $productions = Production::all();
-        $productions = Production::with('productType.bahanBaku')->get();
+
+        $productions = Production::with('productType.bahanBaku')->paginate(10);
 
         $countCompleted = Production::where('status', 'completed')->count();
         $countPlanning = Production::where('status', 'planning')->count();
         $countCancelled = Production::where('status', 'cancelled')->count();
 
-       
+
 
         return view('inputProduksiRoti', compact('productions', 'countCompleted', 'countPlanning', 'countCancelled'));
     }
@@ -50,6 +51,7 @@ class ProductionsController extends Controller
             'batch_number' => 'required|string',
             'production_cost' => 'required|numeric',
             'notes' => 'nullable|string',
+            'status' => 'required',
 
         ]);
 
@@ -75,7 +77,7 @@ class ProductionsController extends Controller
             'batch_number' => $request->batch_number,
             'production_cost' => $request->production_cost,
             'notes' => $request->notes,
-            'status' => 'in_progress',
+            'status' => $request->status,
             'created_by' => auth()->id(),
         ]);
         return redirect()->route('productions')->with('success', 'Data produksi dan relasi bahan baku berhasil disimpan.');
@@ -114,6 +116,40 @@ class ProductionsController extends Controller
         ]);
 
         return redirect()->route('productions')->with('success', 'Data produksi berhasil diperbarui.');
+    }
+
+    public function Karyawanupdate(Request $request, $id)
+    {
+        $action = $request->input('action');
+
+        $production = Production::findOrFail($id);
+
+        // Kalau hanya ingin update status
+        if (in_array($action, ['completed', 'cancelled'])) {
+            $production->update(['status' => $action]);
+            return redirect()->route('karyawan.produksi')->with('success', 'Status produksi berhasil diperbarui.');
+        }
+
+        // Kalau update data lengkap (misalnya dari form edit)
+        $request->validate([
+            'production_date' => 'required|date',
+            'product_type_id' => 'required|integer|exists:product_types,id',
+            'quantity_produced' => 'required|numeric',
+            'batch_number' => 'required|string',
+            'production_cost' => 'required|numeric',
+            'notes' => 'nullable|string',
+        ]);
+
+        $production->update([
+            'production_date' => $request->production_date,
+            'product_type_id' => $request->product_type_id,
+            'quantity_produced' => $request->quantity_produced,
+            'batch_number' => $request->batch_number,
+            'production_cost' => $request->production_cost,
+            'notes' => $request->notes,
+        ]);
+
+        return redirect()->route('karyawan.produksi')->with('success', 'Data produksi berhasil diperbarui.');
     }
 
 
@@ -168,8 +204,8 @@ class ProductionsController extends Controller
     //untuk karyawan
     public function karyawanproduksi()
     {
-        $productions = Production::all();
-        $productions = Production::with('productType.bahanBaku')->get();
+
+        $productions = Production::with('productType.bahanBaku')->paginate(10);
 
         return view('karyawan.inputProduksiRoti', compact('productions'));
     }
@@ -226,6 +262,7 @@ class ProductionsController extends Controller
             'batch_number' => 'required|string',
             'production_cost' => 'required|numeric',
             'notes' => 'nullable|string',
+            'status' => 'required',
 
         ]);
 
@@ -251,7 +288,7 @@ class ProductionsController extends Controller
             'batch_number' => $request->batch_number,
             'production_cost' => $request->production_cost,
             'notes' => $request->notes,
-            'status' => 'in_progress',
+            'status' => $request->status,
             'created_by' => auth()->id(),
         ]);
         return redirect()->route('karyawan.produksi')->with('success', 'Data produksi dan relasi bahan baku berhasil disimpan.');
@@ -282,7 +319,50 @@ class ProductionsController extends Controller
             ->withQueryString();
 
         $productTypes = ProductType::all();
+        $statusCounts = Production::select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status');
+        $countCompleted = $statusCounts['completed'] ?? 0;
+        $countPlanning = $statusCounts['planning'] ?? 0;
+        $countCancelled = $statusCounts['cancelled'] ?? 0;
+        $countProgress = $statusCounts['in_progress'] ?? 0;
+        $totals = Production::count();
+        return view('riwayatProduksiRoti', compact('productionHistories', 'productTypes', 'totals', 'countCancelled', 'countPlanning', 'countCompleted', 'countProgress'));
+    }
 
-        return view('riwayatProduksiRoti', compact('productionHistories', 'productTypes'));
+    public function filterBykaryawanproduksi(Request $request)
+    {
+        $productionHistories = Production::with(['productType'])
+            ->when($request->product_type_id, function ($q) use ($request) {
+                $q->where('product_type_id', $request->product_type_id);
+            })
+            ->when($request->tanggal_dari, function ($q) use ($request) {
+                $q->whereDate('production_date', '>=', $request->tanggal_dari);
+            })
+            ->when($request->tanggal_sampai, function ($q) use ($request) {
+                $q->whereDate('production_date', '<=', $request->tanggal_sampai);
+            })
+            ->when($request->status, function ($q) use ($request) {
+                $q->where('status', $request->status); // ✅ INI YANG KURANG
+            })
+            ->when($request->search, function ($q) use ($request) {
+                $q->whereHas('productType', function ($q2) use ($request) {
+                    $q2->where('name', 'like', '%' . $request->search . '%');
+                });
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        $productTypes = ProductType::all();
+        $statusCounts = Production::select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status');
+        $countCompleted = $statusCounts['completed'] ?? 0;
+        $countPlanning = $statusCounts['planning'] ?? 0;
+        $countCancelled = $statusCounts['cancelled'] ?? 0;
+        $countProgress = $statusCounts['in_progress'] ?? 0;
+        $totals = Production::count();
+        return view('karyawan.riwayatProduksiRoti', compact('productionHistories', 'productTypes', 'totals', 'countCancelled', 'countPlanning', 'countCompleted', 'countProgress'));
     }
 }

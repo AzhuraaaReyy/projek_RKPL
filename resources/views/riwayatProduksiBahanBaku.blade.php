@@ -534,7 +534,7 @@
         </button>
 
         <!-- Sidebar -->
-     @include('sidebar')
+        @include('sidebar')
 
         <!-- Content Wrapper -->
         <div class="content-wrapper">
@@ -574,57 +574,43 @@
                     </div>
 
                     <!-- Filter Section -->
-                    <div class="filter-section">
-                        <div class="filter-card">
-                            <form method="GET" id="filterForm">
+                    <!-- Filter Section -->
+                    <div class="filter-section mb-4">
+                        <div class="card p-3 shadow-sm">
+                            <form method="GET" action="{{ route('filter.stok') }}" id="filterForm">
                                 <div class="row">
-                                    <div class="col-lg-3 col-md-6 mb-3">
-                                        <label class="form-label font-weight-bold">
-                                            <i class="fas fa-calendar-alt mr-1"></i>Tanggal Mulai
-                                        </label>
-                                        <input type="date" class="form-control" name="start_date" id="startDate" value="{{ request('start_date') }}">
+                                    <div class="col-md-3">
+                                        <label><strong><i class="fas fa-calendar-alt mr-1"></i>Tanggal</strong></label>
+                                        <input type="date" class="form-control" name="movement_date" value="{{ request('movement_date') }}">
+
                                     </div>
-                                    <div class="col-lg-3 col-md-6 mb-3">
-                                        <label class="form-label font-weight-bold">
-                                            <i class="fas fa-calendar-alt mr-1"></i>Tanggal Akhir
-                                        </label>
-                                        <input type="date" class="form-control" name="end_date" id="endDate" value="{{ request('end_date') }}">
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 mb-3">
-                                        <label class="form-label font-weight-bold">
-                                            <i class="fas fa-exchange-alt mr-1"></i>Jenis Pergerakan
-                                        </label>
-                                        <select class="form-control" name="movement_type" id="movementType">
+                                    <div class="col-md-3">
+                                        <label><strong><i class="fas fa-exchange-alt mr-1"></i>Jenis Pergerakan</strong></label>
+                                        <select name="movement_type" class="form-control">
                                             <option value="">Semua Jenis</option>
                                             <option value="in" {{ request('movement_type') == 'in' ? 'selected' : '' }}>Masuk</option>
                                             <option value="out" {{ request('movement_type') == 'out' ? 'selected' : '' }}>Keluar</option>
-                                            <option value="adjustment" {{ request('movement_type') == 'adjustment' ? 'selected' : '' }}>Penyesuaian</option>
                                         </select>
                                     </div>
-                                    <div class="col-lg-3 col-md-6 mb-3">
-                                        <label class="form-label font-weight-bold">
-                                            <i class="fas fa-cube mr-1"></i>Bahan Baku
-                                        </label>
-                                        <select class="form-control" name="bahan_baku_id" id="bahanBakuId">
+                                    <div class="col-md-3">
+                                        <label><strong><i class="fas fa-cube mr-1"></i>Bahan Baku</strong></label>
+                                        <select name="bahan_baku_id" class="form-control">
                                             <option value="">Semua Bahan</option>
-                                            <!-- Data ini akan diisi dari controller -->
-                                            <option value="1">Tepung Terigu</option>
-                                            <option value="2">Gula Pasir</option>
-                                            <option value="3">Telur</option>
-                                            <option value="4">Mentega</option>
-                                            <option value="5">Ragi</option>
+                                            @foreach ($bahanBakus as $bahan)
+                                            <option value="{{ $bahan->id }}" {{ request('bahan_baku_id') == $bahan->id ? 'selected' : '' }}>
+                                                {{ $bahan->nama }}
+                                            </option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <button type="submit" class="btn btn-filter mr-2">
-                                            <i class="fas fa-search mr-2"></i>Filter Data
-                                        </button>
-                                        <a href="/riwayatBahanBaku" class="btn btn-reset">
-                                            <i class="fas fa-refresh mr-2"></i>Reset Filter
-                                        </a>
-                                    </div>
+                                <div class="mt-3">
+                                    <button type="submit" class="btn btn-primary mr-2">
+                                        <i class="fas fa-search"></i> Filter
+                                    </button>
+                                    <a href="{{ route('karyawan.riwayatbahan') }}" class="btn btn-secondary">
+                                        <i class="fas fa-sync-alt"></i> Reset
+                                    </a>
                                 </div>
                             </form>
                         </div>
@@ -690,11 +676,11 @@
                                         <td><strong>{{ number_format($movement->remaining_stock ) }} {{ $movement->bahanBaku->satuan ?? 'kg' }}</strong></td>
                                         <td>{{ $movement->reference_type }}</td>
                                         <td class="notes-cell" title="{{ $movement->notes }}">{{ $movement->notes }}</td>
-                                          <td class="text-center">
-                                                    <span class="badge bg-{{ $movement->bahanBaku->status_class }}">
-                                                        {{ $movement->bahanBaku->status }}
-                                                    </span>
-                                                </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-{{ $movement->bahanBaku->status_class }}">
+                                                {{ $movement->bahanBaku->status }}
+                                            </span>
+                                        </td>
                                         <td>{{ $movement->creator->name ?? 'System' }}</td>
                                         <td>
                                             <div class="action-buttons">
@@ -720,6 +706,10 @@
                                 </tbody>
                             </table>
                         </div>
+                        {{-- Pagination --}}
+                        <div class="d-flex justify-content-center mt-3">
+                            {{ $stokMovements->links('pagination::bootstrap-4') }}
+                        </div>
                         @else
                         <!-- Empty State -->
                         <div class="empty-state">
@@ -729,6 +719,7 @@
                         </div>
                         @endif
                     </div>
+
                 </div>
             </div>
         </div>
@@ -1059,6 +1050,8 @@
                         text: 'Data bahan baku berhasil diupdate.',
                         showConfirmButton: false,
                         timer: 2000
+                    }).then(() => {
+                        location.reload(); // ✅ Refresh setelah update berhasil
                     });
 
                     // Update row jika kamu punya fungsinya

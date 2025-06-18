@@ -52,6 +52,12 @@ class expenseTableController extends Controller
         $expensesCategories = ExpenseCategories::all(); // pastikan relasi eager loaded
         return view('form.create_pengeluaran', compact('expenses', 'expensesCategories'));
     }
+    public function karyawanform()
+    {
+        $expenses = Expense::all();
+        $expensesCategories = ExpenseCategories::all(); // pastikan relasi eager loaded
+        return view('karyawan.form.create_pengeluaran', compact('expenses', 'expensesCategories'));
+    }
 
 
     public function store(Request $request)
@@ -74,6 +80,27 @@ class expenseTableController extends Controller
             'created_by' => auth()->id(),
         ]);
         return redirect()->route('pengeluaran')->with('success', 'Data berhasil Ditambahkan');
+    }
+    public function karyawanpengeluaranstore(Request $request)
+    {
+        $request->validate([
+            'expense_category_id' => 'required|integer|exists:expense_categories,id',
+            'description' => 'required|string',
+            'amount' => 'required|numeric',
+            'expense_date' => 'required|date',
+
+            'notes' => 'required|',
+        ]);
+        Expense::create([
+            'expense_category_id' => $request->expense_category_id,
+            'description' => $request->description,
+            'amount' => $request->amount,
+            'expense_date' => $request->expense_date,
+
+            'notes' => $request->notes,
+            'created_by' => auth()->id(),
+        ]);
+        return redirect()->route('karyawan.pengeluaran')->with('success', 'Data berhasil Ditambahkan');
     }
 
     public function update(Request $request, $id)
@@ -117,14 +144,16 @@ class expenseTableController extends Controller
     }
 
 
+   
+
     public function show($id)
     {
-        $expenses = Expense::with('creator', 'category')->findOrFail($id);
-
-        if (!$expenses) {
+        $data = Expense::with('creator', 'category')->find($id);
+        if (!$data) {
             return response()->json(['message' => 'Data tidak ditemukan'], 404);
         }
-        return response()->json($expenses);
+
+        return response()->json($data);
     }
 
 
@@ -142,7 +171,23 @@ class expenseTableController extends Controller
         $totalAmount = $query->sum('amount');
         $categories = \App\Models\ExpenseCategories::where('is_active', true)->get();
 
-        return view('pengeluaran', compact('expenses', 'categories', 'totalAmount', 'todayTotalAmount','totalcategories'));
+        return view('pengeluaran', compact('expenses', 'categories', 'totalAmount', 'todayTotalAmount', 'totalcategories'));
+    }
+    public function filterBykaryawanpengeluaran(Request $request)
+    {
+        $query = Expense::query()
+            ->when($request->expense_date, fn($q) => $q->whereDate('expense_date', $request->expense_date))
+            ->when($request->expense_category_id, fn($q) => $q->where('expense_category_id', $request->expense_category_id))
+            ->with('category') // eager load relasi
+            ->latest();
+
+        $todayTotalAmount = Expense::whereDate('expense_date', now()->toDateString())->sum('amount');
+        $totalcategories = ExpenseCategories::count();
+        $expenses = $query->paginate(10);
+        $totalAmount = $query->sum('amount');
+        $categories = \App\Models\ExpenseCategories::where('is_active', true)->get();
+
+        return view('karyawan.pengeluaran', compact('expenses', 'categories', 'totalAmount', 'todayTotalAmount', 'totalcategories'));
     }
 
 
@@ -174,11 +219,12 @@ class expenseTableController extends Controller
             ]);
             return $pdf->download('laporan_pengeluaran.pdf');
         }
-
+        $todayTotalAmount = Expense::whereDate('expense_date', now()->toDateString())->sum('amount');
+        $totalcategories = ExpenseCategories::count();
         // Paginate setelah data disalin untuk PDF
         $expenses = $query->paginate(10);
         $categories = ExpenseCategories::all();
 
-        return view('karyawan.pengeluaran', compact('expenses', 'categories', 'totalAmount'));
+        return view('karyawan.pengeluaran', compact('expenses', 'categories', 'totalAmount', 'todayTotalAmount', 'totalcategories'));
     }
 }

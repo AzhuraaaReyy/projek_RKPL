@@ -21,12 +21,13 @@ class CustomersController extends Controller
             ->withCount('sale as total_transactions')
             ->withSum('sale as total_spent', 'total_amount')
             ->orderBy('name')
-            ->get();
+            ->paginate(10);
+        $total = Customers::count();
 
         // Tidak perlu loop lagi karena sudah menggunakan accessor di model
         // Accessor akan otomatis dipanggil saat mengakses $customer->favorite_products_list
 
-        return view('manajemen_customer', compact('customers'));
+        return view('manajemen_customer', compact('customers','total'));
     }
 
     /**
@@ -122,6 +123,20 @@ class CustomersController extends Controller
             return redirect()->route('customers')->with('error', 'Terjadi kesalahan saat menghapus data');
         }
     }
+    public function karyawandestroy($id)
+    {
+        try {
+            $customer = Customers::findOrFail($id);
+            $customerName = $customer->name;
+            $customer->delete();
+
+            return redirect()->route('karyawan.customers')->with('success', "Data pelanggan {$customerName} berhasil dihapus");
+        } catch (\Illuminate\Database\QueryException $e) {
+            return redirect()->route('customers')->with('error', 'Data gagal dihapus karena masih terdapat data terkait');
+        } catch (\Exception $e) {
+            return redirect()->route('karyawan.customers')->with('error', 'Terjadi kesalahan saat menghapus data');
+        }
+    }
 
     /**
      * Update customer purchase data
@@ -169,9 +184,9 @@ class CustomersController extends Controller
             ->withCount('sale as total_transactions')
             ->withSum('sale as total_spent', 'total_amount')
             ->orderBy('name')
-            ->get();
-
-        return view('karyawan.manajemen_customer', compact('customers'));
+            ->paginate(10);
+        $total = Customers::count();
+        return view('karyawan.manajemen_customer', compact('customers','total'));
     }
 
     /**
@@ -200,7 +215,7 @@ class CustomersController extends Controller
             'is_active' => false,
         ]);
 
-        return redirect()->route('karyawan.customers')->with('success', 'Data pelanggan berhasil ditambahkan');
+        return redirect()->route('karyawanpenjualan')->with('success', 'Data pelanggan berhasil ditambahkan');
     }
 
     /**
@@ -292,5 +307,53 @@ class CustomersController extends Controller
             ->get();
 
         return view('manajemen_customer', compact('customers'));
+    }
+    public function filterBykaryawanCustomer(Request $request)
+    {
+        $query = Customers::query();
+
+        // Cari berdasarkan keyword (nama, telepon, alamat, atau produk favorit)
+        if ($request->filled('keyword')) {
+            $keyword = $request->keyword;
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', "%$keyword%")
+                    ->orWhere('phone', 'like', "%$keyword%")
+                    ->orWhere('address', 'like', "%$keyword%");
+            });
+        }
+
+        // Filter berdasarkan status aktif/tidak
+        if ($request->filled('filter')) {
+            $query->where('is_active', $request->filter === 'active' ? true : false);
+        }
+
+        // Filter berdasarkan produk favorit
+        if ($request->filled('filterProduct')) {
+            $query->whereHas('sale.saleItems.productType', function ($q) use ($request) {
+                $q->where('name', $request->filterProduct);
+            });
+        }
+
+        // Filter berdasarkan total pembelian
+        if ($request->filled('filterSpent')) {
+            $query->withSum('sale as total_spent', 'total_amount');
+
+            $query->havingRaw(match ($request->filterSpent) {
+                'high' => 'total_spent > 1000000',
+                'medium' => 'total_spent BETWEEN 500000 AND 1000000',
+                'low' => 'total_spent < 500000',
+                default => '1=1',
+            });
+        }
+
+        $customers = $query
+            ->with([
+                'sale' => fn($q) => $q->with('saleItems.productType')->orderBy('sale_date', 'desc')
+            ])
+            ->withCount('sale as total_transactions')
+            ->orderBy('name')
+            ->get();
+
+        return view('karyawan.manajemen_customer', compact('customers'));
     }
 }

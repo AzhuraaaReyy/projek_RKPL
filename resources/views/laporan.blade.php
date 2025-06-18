@@ -498,7 +498,7 @@
                                 </table>
                                 @endif
                                 <div class="d-flex justify-content-center">
-                                    {{ $bahanBakus->links() }}
+                                    {{ $bahanBakus->links('pagination::bootstrap-4') }}
                                 </div>
                             </div>
                         </div>
@@ -556,7 +556,7 @@
                                 </table>
                                 @endif
                                 <div class="d-flex justify-content-center">
-                                    {{ $stokMovements->links() }}
+                                    {{ $stokMovements->links('pagination::bootstrap-4') }}
                                 </div>
                             </div>
                         </div>
@@ -624,7 +624,7 @@
                                 </table>
                                 @endif
                                 <div class="d-flex justify-content-center">
-                                    {{ $productions->links() }}
+                                    {{ $productions->links('pagination::bootstrap-4') }}
                                 </div>
                             </div>
                         </div>
@@ -709,7 +709,7 @@
                                 </table>
                                 @endif
                                 <div class="d-flex justify-content-center">
-                                    {{ $productionHistories->links() }}
+                                    {{ $productionHistories->links('pagination::bootstrap-4') }}
                                 </div>
                             </div>
                         </div>
@@ -776,7 +776,7 @@
                                 </table>
                                 @endif
                                 <div class="d-flex justify-content-center">
-                                    {{ $sales->links() }}
+                                    {{ $sales->links('pagination::bootstrap-4') }}
                                 </div>
                             </div>
                         </div>
@@ -832,7 +832,7 @@
                                 </table>
                                 @endif
                                 <div class="d-flex justify-content-center">
-                                    {{ $expenses->links() }}
+                                    {{ $expenses->links('pagination::bootstrap-4') }}
                                 </div>
                             </div>
                         </div>

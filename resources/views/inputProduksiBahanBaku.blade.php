@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -29,306 +30,321 @@
             <i class="fas fa-bars"></i>
         </button>
 
-        @include('sidebar')
+        <!-- Sidebar -->
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <a href="#" class="brand-link text-center position-relative">
+                <span class="brand-text">🌌 Galaxy Bakery</span>
+                <button class="btn btn-sm position-absolute sidebar-toggle-btn"
+                    data-widget="pushmenu"
+                    style="right: 15px; top: 50%; transform: translateY(-50%);">
+                    <i class="fas fa-chevron-left" id="toggleIcon"></i>
+                </button>
+            </a>
 
-        <!-- Content Wrapper -->
-        <div class="content-wrapper">
-            <!-- Content Header -->
-            <div class="content-header animate__animated animate__fadeInDown">
-                <div class="container-fluid">
-                    <div class="row align-items-center">
-                        <div class="col-lg-6 col-md-12">
-                            <h1>Input Produksi Bahan Baku</h1>
-                            <small>Kelola input dan stok bahan baku untuk produksi</small>
-                        </div>
-                        <div class="col-lg-6 col-md-12">
-                            <div class="row mt-3 mt-lg-0">
-                                <div class="col-12 mb-2">
-                                    <div class="header-info-box text-center">
-                                        <i class="fas fa-user-circle mr-2"></i>
-                                        <span class="font-weight-bold">{{ Auth::user()->name }}</span>
+            @include('sidebar')
+
+            <!-- Content Wrapper -->
+            <div class="content-wrapper">
+                <!-- Content Header -->
+                <div class="content-header animate__animated animate__fadeInDown">
+                    <div class="container-fluid">
+                        <div class="row align-items-center">
+                            <div class="col-lg-6 col-md-12">
+                                <h1>Input Produksi Bahan Baku</h1>
+                                <small>Kelola input dan stok bahan baku untuk produksi</small>
+                            </div>
+                            <div class="col-lg-6 col-md-12">
+                                <div class="row mt-3 mt-lg-0">
+                                    <div class="col-12 mb-2">
+                                        <div class="header-info-box text-center">
+                                            <i class="fas fa-user-circle mr-2"></i>
+                                            <span class="font-weight-bold">{{ Auth::user()->name }}</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="header-info-box text-center">
-                                        <i class="fas fa-clock mr-2"></i>
-                                        <div class="font-weight-bold" id="currentTime"></div>
+                                    <div class="col-6">
+                                        <div class="header-info-box text-center">
+                                            <i class="fas fa-clock mr-2"></i>
+                                            <div class="font-weight-bold" id="currentTime"></div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="header-info-box text-center">
-                                        <i class="fas fa-calendar-alt mr-2"></i>
-                                        <div class="small" id="currentDate"></div>
+                                    <div class="col-6">
+                                        <div class="header-info-box text-center">
+                                            <i class="fas fa-calendar-alt mr-2"></i>
+                                            <div class="small" id="currentDate"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Main Content -->
-            <div class="content">
-                <!-- Info Boxes -->
-                <div class="row animate__animated animate__fadeInUp">
-                    <div class="col-lg-3 col-md-6 col-sm-12">
-                        <div class="info-box bg-primary">
-                            <span class="info-box-icon">
-                                <i class="fas fa-boxes"></i>
-                            </span>
-                            <div class="info-box-content">
-                                <span class="info-box-text">Total Input Hari Ini</span>
-                                <span class="info-box-number">{{ $countinput ?? 15 }} <small>Transaksi</small></span>
+                <!-- Main Content -->
+                <div class="content">
+                    <!-- Info Boxes -->
+                    <div class="row animate__animated animate__fadeInUp">
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="info-box bg-primary">
+                                <span class="info-box-icon">
+                                    <i class="fas fa-boxes"></i>
+                                </span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Total Input Hari Ini</span>
+                                    <span class="info-box-number">{{ $countinput ?? 15 }} <small>Transaksi</small></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="info-box bg-success">
+                                <span class="info-box-icon">
+                                    <i class="fas fa-plus-circle"></i>
+                                </span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Total Barang Masuk</span>
+                                    <span class="info-box-number">{{ $baranginput ?? 125 }} <small>Kg</small></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="info-box bg-warning">
+                                <span class="info-box-icon">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Total Harga Bahan</span>
+                                    <span class="info-box-number" style="font-size: 15px;">Rp {{ number_format($hargainput ?? 0, 0, ',', '.') }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="info-box bg-info">
+                                <span class="info-box-icon">
+                                    <i class="fas fa-archive"></i>
+                                </span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Total Bahan Aktif</span>
+                                    <span class="info-box-number">{{ $jumlahAktif ?? 8 }} <small>Item</small></span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6 col-sm-12">
-                        <div class="info-box bg-success">
-                            <span class="info-box-icon">
-                                <i class="fas fa-plus-circle"></i>
-                            </span>
-                            <div class="info-box-content">
-                                <span class="info-box-text">Total Barang Masuk</span>
-                                <span class="info-box-number">{{ $baranginput ?? 125 }} <small>Kg</small></span>
+
+
+
+                    <!-- Filter and Search Section -->
+                    <div class="row animate__animated animate__fadeInUp animate__delay-2s">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">
+                                        <i class="fas fa-filter mr-2"></i>
+                                        Filter & Pencarian Data
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+                                    <form method="GET" action="{{ route('filter.bahan') }} " onsubmit="return validateFilterForm()">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label>Kategori</label>
+                                                    <select name="kategori" class="form-control">
+                                                        <option value="">-- Semua Kategori --</option>
+                                                        @foreach($bahanBakus as $category)
+                                                        <option value="{{ $category->kategori }}" {{ request('kategori') == $category->id ? 'selected' : '' }}>
+                                                            {{ $category->kategori }}
+                                                        </option>
+                                                        @endforeach
+                                                    </select>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label>Tanggal Dari</label>
+                                                    <input type="date" name="tanggal_dari" class="form-control" value="{{ request('tanggal_dari') }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label>Tanggal Sampai</label>
+                                                    <input type="date" name="tanggal_sampai" class="form-control" value="{{ request('tanggal_sampai') }}">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Cari Bahan</label>
+                                                    <input type="text" name="search" class="form-control" placeholder="Nama bahan..." value="{{ request('search') }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <div class="form-group">
+                                                    <label>&nbsp;</label>
+                                                    <button type="submit" class="btn btn-primary btn-block">
+                                                        <i class="fas fa-search"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6 col-sm-12">
-                        <div class="info-box bg-warning">
-                            <span class="info-box-icon">
-                                <i class="fas fa-dollar-sign"></i>
-                            </span>
-                            <div class="info-box-content">
-                                <span class="info-box-text">Total Nilai Pembelian</span>
-                                <span class="info-box-number" style="font-size: 15px;">Rp {{ number_format($hargainput ?? 0, 0, ',', '.') }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-sm-12">
-                        <div class="info-box bg-info">
-                            <span class="info-box-icon">
-                                <i class="fas fa-archive"></i>
-                            </span>
-                            <div class="info-box-content">
-                                <span class="info-box-text">Jenis Bahan Aktif</span>
-                                <span class="info-box-number">{{ $jumlahAktif ?? 8 }} <small>Item</small></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-
-
-                <!-- Filter and Search Section -->
-                <div class="row animate__animated animate__fadeInUp animate__delay-2s">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">
-                                    <i class="fas fa-filter mr-2"></i>
-                                    Filter & Pencarian Data
-                                </h3>
-                            </div>
-                            <div class="card-body">
-                                <form method="GET" action="{{ route('filter.bahan') }} " onsubmit="return validateFilterForm()">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>Kategori</label>
-                                                <select name="kategori" class="form-control">
-                                                    <option value="">-- Semua Kategori --</option>
-                                                    @foreach($bahanBakus as $category)
-                                                    <option value="{{ $category->kategori }}" {{ request('kategori') == $category->id ? 'selected' : '' }}>
-                                                        {{ $category->kategori }}
-                                                    </option>
-                                                    @endforeach
-                                                </select>
-
-                                            </div>
+                    <!-- Data Table -->
+                    <div class="row animate__animated animate__fadeInUp animate__delay-3s">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6">
+                                            <h3 class="card-title">
+                                                <i class="fas fa-list mr-2"></i>
+                                                Riwayat Input Bahan Baku
+                                            </h3>
                                         </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label>Tanggal Dari</label>
-                                                <input type="date" name="tanggal_dari" class="form-control" value="{{ request('tanggal_dari') }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label>Tanggal Sampai</label>
-                                                <input type="date" name="tanggal_sampai" class="form-control" value="{{ request('tanggal_sampai') }}">
-                                            </div>
-                                        </div>
+                                        <div class="col-md-6 text-right">
+                                            <div class="btn-group">
+                                                <a href="{{route('inputbahan')}}">
+                                                    <button type="button" class="btn btn-success btn-sm">
+                                                        <i class="fas fa-sync-alt mr-1"></i> Refresh
+                                                    </button>
+                                                </a>
+                                                <form id="downloadForm" action="{{ route('laporanbahan.download') }}" method="GET">
+                                                    <button type="submit" id="exportBtn" class="btn btn-info btn-sm">
+                                                        <i class="fas fa-download mr-1"></i> Export
+                                                    </button>
+                                                </form>
+                                                <a href="{{route('bahan')}}">
+                                                    <button type="button" class="btn btn-primary btn-sm">
+                                                        <i class="fas fa-plus mr-1"></i> Input Baru
+                                                    </button>
+                                                </a>
 
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Cari Bahan</label>
-                                                <input type="text" name="search" class="form-control" placeholder="Nama bahan..." value="{{ request('search') }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-1">
-                                            <div class="form-group">
-                                                <label>&nbsp;</label>
-                                                <button type="submit" class="btn btn-primary btn-block">
-                                                    <i class="fas fa-search"></i>
-                                                </button>
                                             </div>
                                         </div>
                                     </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                                </div>
 
-                <!-- Data Table -->
-                <div class="row animate__animated animate__fadeInUp animate__delay-3s">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="row align-items-center">
-                                    <div class="col-md-6">
-                                        <h3 class="card-title">
-                                            <i class="fas fa-list mr-2"></i>
-                                            Riwayat Input Bahan Baku
-                                        </h3>
-                                    </div>
-                                    <div class="col-md-6 text-right">
-                                        <div class="btn-group">
-                                            <a href="{{route('inputbahan')}}">
-                                                <button type="button" class="btn btn-success btn-sm">
-                                                    <i class="fas fa-sync-alt mr-1"></i> Refresh
-                                                </button>
-                                            </a>
-                                            <form id="downloadForm" action="{{ route('laporanbahan.download') }}" method="GET">
-                                                <button type="submit" id="exportBtn" class="btn btn-info btn-sm">
-                                                    <i class="fas fa-download mr-1"></i> Export
-                                                </button>
-                                            </form>
-                                            <a href="{{route('bahan')}}">
-                                                <button type="button" class="btn btn-primary btn-sm">
-                                                    <i class="fas fa-plus mr-1"></i> Input Baru
-                                                </button>
-                                            </a>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+
+                                        <table class="table table-bordered table-striped table-hover" id="inputBahanTable">
+                                            <thead class="thead-dark">
+                                                <tr>
+                                                    <th width="5%">No</th>
+                                                    <th width="15%">Tanggal</th>
+                                                    <th width="20%">Nama Bahan</th>
+                                                    <th width="10%">Kategori</th>
+                                                    <th width="10%">Jumlah Stok</th>
+                                                    <th width="8%">Tanggal Kadaluwarsa</th>
+                                                    <th width="12%">Harga/Unit</th>
+                                                    <th width="10%">Deskripsi</th>
+                                                    <th width="10%">Status</th>
+                                                    <th width="10%">Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @forelse($bahanBakus as $index => $input)
+                                                <tr>
+                                                    <td>{{ $index + 1 }}</td>
+                                                    <td>{{ date('d/m/Y', strtotime($input->tanggal_masuk ?? $input->created_at ?? now())) }}</td>
+                                                    <td><strong>{{ $input->nama ?? '-' }}</strong></td>
+                                                    <td><span class="badge badge-info">{{ ucfirst($input->kategori ?? '-') }}</span></td>
+                                                    <td class="text-center">{{ number_format($input->stok ?? 0) }} {{ $input->satuan ?? '-' }}</td>
+                                                    <td class="text-center">{{ date('d/m/Y', strtotime($input->tanggal_kedaluwarsa ?? $input->created_at ?? now())) }}</td>
+                                                    <td class="text-right">Rp {{ number_format($input->harga ?? 0, 0, ',', '.') }}</td>
+                                                    <td class="text-center">{{ $input->deskripsi ?? '-' }}</td>
+                                                    <td class="text-center">
+                                                        <span class="badge bg-{{ $input->status_class }}">
+                                                            {{ $input->status }}
+                                                        </span>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <div class="btn-group btn-group-sm">
+                                                            <button type="button" class="btn btn-info btn-sm" onclick="showDetail({{ $input->id ?? 1 }})" title="Detail" data-toggle="tooltip">
+                                                                <i class="fas fa-eye"></i>
+                                                            </button>
+                                                            <button type="button" class="btn btn-warning btn-sm" onclick="editData({{ $input->id ?? 1 }})" title="Edit" data-toggle="tooltip">
+                                                                <i class="fas fa-edit"></i>
+                                                            </button>
+                                                            <button type="button"
+                                                                class="btn btn-danger btn-sm"
+                                                                onclick="deletedata({{ $input->id ?? 1 }})"
+                                                                title="Hapus"
+                                                                data-toggle="tooltip">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                @empty
+                                                <tr>
+                                                    <td colspan="9" class="text-center">Data tidak ditemukan.</td>
+                                                </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
+                                        <div class="d-flex justify-content-center">
 
                                         </div>
                                     </div>
-                                </div>
-                            </div>
 
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-striped table-hover" id="inputBahanTable">
-                                        <thead class="thead-dark">
-                                            <tr>
-                                                <th width="5%">No</th>
-                                                <th width="15%">Tanggal</th>
-                                                <th width="20%">Nama Bahan</th>
-                                                <th width="10%">Kategori</th>
-                                                <th width="10%">Jumlah Stok</th>
-                                                <th width="8%">Tanggal Kadaluwarsa</th>
-                                                <th width="12%">Harga/Unit</th>
-                                                <th width="10%">Deskripsi</th>
-                                                <th width="10%">Status</th>
-                                                <th width="10%">Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse($bahanBakus as $index => $input)
-                                            <tr>
-                                                <td>{{ $index + 1 }}</td>
-                                                <td>{{ date('d/m/Y', strtotime($input->tanggal_masuk ?? $input->created_at ?? now())) }}</td>
-                                                <td><strong>{{ $input->nama ?? '-' }}</strong></td>
-                                                <td><span class="badge badge-info">{{ ucfirst($input->kategori ?? '-') }}</span></td>
-                                                <td class="text-center">{{ number_format($input->stok ?? 0) }} {{ $input->satuan ?? '-' }}</td>
-                                                <td class="text-center">{{ date('d/m/Y', strtotime($input->tanggal_kedaluwarsa ?? $input->created_at ?? now())) }}</td>
-                                                <td class="text-right">Rp {{ number_format($input->harga ?? 0, 0, ',', '.') }}</td>
-                                                <td class="text-center">{{ $input->deskripsi ?? '-' }}</td>
-                                                <td class="text-center">
-                                                    <span class="badge bg-{{ $input->status_class }}">
-                                                        {{ $input->status }}
-                                                    </span>
-                                                </td>
-                                                <td class="text-center">
-                                                    <div class="btn-group btn-group-sm">
-                                                        <button type="button" class="btn btn-info btn-sm" onclick="showDetail({{ $input->id ?? 1 }})" title="Detail" data-toggle="tooltip">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-warning btn-sm" onclick="editData({{ $input->id ?? 1 }})" title="Edit" data-toggle="tooltip">
-                                                            <i class="fas fa-edit"></i>
-                                                        </button>
-                                                        <button type="button"
-                                                            class="btn btn-danger btn-sm"
-                                                            onclick="deletedata({{ $input->id ?? 1 }})"
-                                                            title="Hapus"
-                                                            data-toggle="tooltip">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            @empty
-                                            <tr>
-                                                <td colspan="9" class="text-center">Data tidak ditemukan.</td>
-                                            </tr>
-                                            @endforelse
-                                        </tbody>
-                                    </table>
+                                    {{-- Pagination --}}
+                                    @if(isset($bahanBakus) && method_exists($bahanBakus, 'links'))
+                                    <div class="d-flex justify-content-center mt-3">
+                                        {{ $bahanBakus->links('pagination::bootstrap-4') }}
+                                    </div>
+                                    @endif
                                 </div>
-
-                                {{-- Pagination --}}
-                                @if(isset($bahanBakus) && method_exists($bahanBakus, 'links'))
-                                <div class="d-flex justify-content-center mt-3">
-                                    {{ $bahanBakus->links() }}
-                                </div>
-                                @endif
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header bg-info text-white">
-                                <h5 class="modal-title" id="detailModalLabel">Detail Bahan Baku</h5>
-                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Tutup">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body" id="detailContent">
-                                <!-- Konten detail akan dimuat di sini oleh JavaScript -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal fade" id="editModal" tabindex="-1" role="dialog">
-                    <div class="modal-dialog modal-lg" role="document">
-                        <form id="editBahanForm" method="POST">
-                            @csrf
-                            @method('PUT')
+                    <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
                             <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Edit Bahan Baku</h5>
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <div class="modal-header bg-info text-white">
+                                    <h5 class="modal-title" id="detailModalLabel">Detail Bahan Baku</h5>
+                                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Tutup">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
                                 </div>
-                                <div class="modal-body" id="editContent">
-                                    <!-- Form dinamis akan dimasukkan di sini -->
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary">Simpan</button>
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                <div class="modal-body" id="detailContent">
+                                    <!-- Konten detail akan dimuat di sini oleh JavaScript -->
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
+                    <div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <form id="editBahanForm" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Edit Bahan Baku</h5>
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+                                    <div class="modal-body" id="editContent">
+                                        <!-- Form dinamis akan dimasukkan di sini -->
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary">Simpan</button>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
                 </div>
-
             </div>
-        </div>
 
-        <!-- Footer -->
-        <footer class="main-footer text-center">
-            <strong>&copy; 2025 Galaxy Bakery</strong> - All rights reserved.
-        </footer>
+            <!-- Footer -->
+            <footer class="main-footer text-center">
+                <strong>&copy; 2025 Galaxy Bakery</strong> - All rights reserved.
+            </footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 

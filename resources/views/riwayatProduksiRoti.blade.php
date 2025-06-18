@@ -440,7 +440,7 @@
             </button>
 
             <!-- Sidebar -->
-           @include('sidebar')
+            @include('sidebar')
 
             <!-- Content Wrapper -->
             <div class="content-wrapper">
@@ -700,6 +700,10 @@
                                         @endforeach
                                     </tbody>
                                 </table>
+                            </div>
+                            {{-- Pagination --}}
+                            <div class="d-flex justify-content-center mt-3">
+                                {{ $productionHistories->links('pagination::bootstrap-4') }}
                             </div>
                             @else
                             <!-- Empty State -->

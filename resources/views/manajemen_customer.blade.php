@@ -32,7 +32,7 @@
         </button>
 
         <!-- Sidebar -->
-       @include('sidebar')
+        @include('sidebar')
 
         <!-- Content Wrapper -->
         <div class="content-wrapper">
@@ -138,9 +138,9 @@
                                         <i class="fas fa-search mr-1"></i>
                                         Filter Pelanggan
                                     </h3>
-                                  
+
                                 </div>
-                               <form action="{{ route('customers.filter') }}" method="GET">
+                                <form action="{{ route('customers.filter') }}" method="GET">
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-md-3">
@@ -165,9 +165,9 @@
                                                     <select name="filterProduct" class="form-control">
                                                         <option value="">Semua Produk</option>
                                                         @foreach(['Roti Tawar', 'Croissant', 'Donat', 'Bagel', 'Muffin'] as $produk)
-                                                            <option value="{{ $produk }}" {{ request('filterProduct') == $produk ? 'selected' : '' }}>
-                                                                {{ $produk }}
-                                                            </option>
+                                                        <option value="{{ $produk }}" {{ request('filterProduct') == $produk ? 'selected' : '' }}>
+                                                            {{ $produk }}
+                                                        </option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -179,24 +179,30 @@
                                                         <option value="">Semua</option>
                                                         <option value="high" {{ request('filterSpent') == 'high' ? 'selected' : '' }}>> Rp 1.000.000</option>
                                                         <option value="medium" {{ request('filterSpent') == 'medium' ? 'selected' : '' }}>Rp 500.000 - 1.000.000</option>
-                                                        <option value="low" {{ request('filterSpent') == 'low' ? 'selected' : '' }}>< Rp 500.000</option>
+                                                        <option value="low" {{ request('filterSpent') == 'low' ? 'selected' : '' }}>
+                                                            < Rp 500.000</option>
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label>&nbsp;</label>
                                                     <button type="submit" class="btn btn-info form-control">
                                                         <i class="fas fa-search mr-1"></i>Cari & Filter
                                                     </button>
-                                                   <a href="{{ route('customers') }}" class="btn btn-secondary ml-2">Reset</a>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label>&nbsp;</label>
+                                                    <a href="{{ route('customers') }}" class="btn btn-secondary ml-2">Reset</a>
 
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                               </form>
-</form>
+                                </form>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -281,7 +287,7 @@
                                                         <a href="{{ route('customers.edit', $customer->id) }}" class="btn btn-sm btn-warning">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
-                                                        <form method="POST" action="" style="display: inline-block;">
+                                                        <form method="POST" action="{{ route('customers.delete', $customer->id) }}" style="display: inline-block;">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus pelanggan {{ $customer->name }}?')">
@@ -294,6 +300,12 @@
                                             </tbody>
                                         </table>
                                     </div>
+                                    {{-- Pagination --}}
+                                    @if(isset($customers) && method_exists($customers, 'links'))
+                                    <div class="d-flex justify-content-center mt-3">
+                                        {{ $customers->links('pagination::bootstrap-4') }}
+                                    </div>
+                                    @endif
                                     @else
                                     <div class="text-center py-5">
                                         <i class="fas fa-users fa-5x text-muted mb-3"></i>
@@ -413,12 +425,6 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                    <a href="" class="btn btn-primary">
-                        <i class="fas fa-edit mr-1"></i>Edit Data
-                    </a>
-                    <a href="" class="btn btn-success">
-                        <i class="fas fa-plus mr-1"></i>Buat Transaksi
-                    </a>
                 </div>
             </div>
         </div>

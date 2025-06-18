@@ -7,6 +7,7 @@ use App\Models\ProductType;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ProductionHistoryController extends Controller
 {
@@ -47,8 +48,52 @@ class ProductionHistoryController extends Controller
         $countCompleted = Production::where('status', 'completed')->count();
         $countPlanning = Production::where('status', 'planning')->count();
         $countCancelled = Production::where('status', 'cancelled')->count();
+        $totals = Production::count();
+        return view('riwayatProduksiRoti', compact('productionHistories', 'productTypes', 'countCompleted', 'countPlanning', 'countCancelled','totals' ));
+    }
+    public function karyawanproduksihistory(Request $request)
+    {
+        // Base query dengan relasi sesuai model existing
+        $query = Production::with(['productType', 'productType.bahanBaku', 'creator']);
 
-        return view('riwayatProduksiRoti', compact('productionHistories', 'productTypes', 'countCompleted', 'countPlanning', 'countCancelled'));
+        // Filter berdasarkan tanggal mulai
+        if ($request->filled('start_date')) {
+            $query->whereDate('production_date', '>=', $request->start_date);
+        }
+
+        // Filter berdasarkan tanggal akhir
+        if ($request->filled('end_date')) {
+            $query->whereDate('production_date', '<=', $request->end_date);
+        }
+
+        // Filter berdasarkan status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter berdasarkan tipe produk
+        if ($request->filled('product_type_id')) {
+            $query->where('product_type_id', $request->product_type_id);
+        }
+
+        // Urutkan berdasarkan tanggal produksi terbaru
+        $productionHistories = $query->orderBy('production_date', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+
+
+        // Ambil semua tipe produk untuk dropdown filter
+        $productTypes = ProductType::select('id', 'name')->where('is_active', true)->orderBy('name')->get();
+        $statusCounts = Production::select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status');
+        $countCompleted = $statusCounts['completed'] ?? 0;
+        $countPlanning = $statusCounts['planning'] ?? 0;
+        $countCancelled = $statusCounts['cancelled'] ?? 0;
+        $countProgress = $statusCounts['in_progress'] ?? 0;
+        $totals = Production::count();
+        return view('karyawan.riwayatProduksiRoti', compact('productionHistories', 'productTypes', 'countCancelled', 'countPlanning', 'countCompleted', 'countProgress', 'totals'));
     }
 
     public function show($id)

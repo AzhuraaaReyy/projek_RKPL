@@ -28,7 +28,7 @@
             <i class="fas fa-bars"></i>
         </button>
 
-       @include('sidebar')
+        @include('sidebar')
 
         <!-- Content Wrapper -->
         <div class="content-wrapper">
@@ -219,6 +219,12 @@
                                     </tbody>
                                 </table>
                             </div>
+                            {{-- Pagination --}}
+                            @if(isset($productions) && method_exists($productions, 'links'))
+                            <div class="d-flex justify-content-center mt-3">
+                                {{ $productions->links('pagination::bootstrap-4') }}
+                            </div>
+                            @endif
                         </div>
                     </div>
                 </div>

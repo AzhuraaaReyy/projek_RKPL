@@ -28,6 +28,20 @@ class expenseCategoriesController extends Controller
         ]);
         return redirect()->route('pengeluaran')->with('Success', 'Data berhasil Ditambahkan');
     }
+    public function karyawanstorecategories(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string',
+            'description' => 'required|string',
+        ]);
+        ExpenseCategories::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'is_active' => true,
+
+        ]);
+        return redirect()->route('karyawan.pengeluaran')->with('Success', 'Data berhasil Ditambahkan');
+    }
 
     public function update(Request $request, $id)
     {

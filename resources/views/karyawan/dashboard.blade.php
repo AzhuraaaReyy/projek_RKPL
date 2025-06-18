@@ -144,7 +144,7 @@
             <i class="fas fa-bars"></i>
         </button>
 
-       @include('sidebar')
+        @include('sidebar')
 
         <!-- Content Wrapper -->
         <div class="content-wrapper">

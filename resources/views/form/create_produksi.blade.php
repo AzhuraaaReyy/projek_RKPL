@@ -259,7 +259,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <form action="{{route('store.produksi')}}" method="POST" class="futuristic-form">
                                 @csrf
 
@@ -280,7 +280,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="section-content">
                                         <div class="row">
                                             <div class="col-md-6">
@@ -290,21 +290,21 @@
                                                             <i class="fas fa-calendar-alt input-icon"></i>
                                                             Tanggal Produksi
                                                         </label>
-                                                        <input type="date" name="production_date" id="production_date" 
-                                                               class="futuristic-input @error('production_date') is-invalid @enderror" 
-                                                               value="{{ old('production_date', date('Y-m-d')) }}">
+                                                        <input type="date" name="production_date" id="production_date"
+                                                            class="futuristic-input @error('production_date') is-invalid @enderror"
+                                                            value="{{ old('production_date', date('Y-m-d')) }}">
                                                         <div class="input-border-effect"></div>
                                                         <div class="input-glow"></div>
-                                                        @error('production_date') 
+                                                        @error('production_date')
                                                         <div class="futuristic-error">
                                                             <i class="fas fa-exclamation-triangle"></i>
                                                             {{ $message }}
-                                                        </div> 
+                                                        </div>
                                                         @enderror
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="col-md-6">
                                                 <div class="futuristic-input-group">
                                                     <div class="input-wrapper">
@@ -312,20 +312,20 @@
                                                             <i class="fas fa-barcode input-icon"></i>
                                                             Nomor Batch
                                                         </label>
-                                                        <input type="text" name="batch_number" id="batch_number" 
-                                                               class="futuristic-input @error('batch_number') is-invalid @enderror" 
-                                                               value="{{ old('batch_number') }}" 
-                                                               placeholder="BTH-001">
+                                                        <input type="text" name="batch_number" id="batch_number"
+                                                            class="futuristic-input @error('batch_number') is-invalid @enderror"
+                                                            value="{{ old('batch_number') }}"
+                                                            placeholder="BTH-001">
                                                         <button type="button" class="batch-generator-btn" id="generateBatchBtn">
                                                             <i class="fas fa-sync"></i>
                                                         </button>
                                                         <div class="input-border-effect"></div>
                                                         <div class="input-glow"></div>
-                                                        @error('batch_number') 
+                                                        @error('batch_number')
                                                         <div class="futuristic-error">
                                                             <i class="fas fa-exclamation-triangle"></i>
                                                             {{ $message }}
-                                                        </div> 
+                                                        </div>
                                                         @enderror
                                                     </div>
                                                 </div>
@@ -340,8 +340,8 @@
                                                             <i class="fas fa-bread-slice input-icon"></i>
                                                             Jenis Produk
                                                         </label>
-                                                        <select name="product_type_id" id="product_type_id" 
-                                                                class="futuristic-select @error('product_type_id') is-invalid @enderror">
+                                                        <select name="product_type_id" id="product_type_id"
+                                                            class="futuristic-select @error('product_type_id') is-invalid @enderror">
                                                             <option value="">Pilih jenis produk</option>
                                                             @foreach($producType as $type)
                                                             <option value="{{ $type->id }}" {{ old('product_type_id') == $type->id ? 'selected' : '' }}>
@@ -354,11 +354,11 @@
                                                         </div>
                                                         <div class="input-border-effect"></div>
                                                         <div class="input-glow"></div>
-                                                        @error('product_type_id') 
+                                                        @error('product_type_id')
                                                         <div class="futuristic-error">
                                                             <i class="fas fa-exclamation-triangle"></i>
                                                             {{ $message }}
-                                                        </div> 
+                                                        </div>
                                                         @enderror
                                                     </div>
                                                 </div>
@@ -371,18 +371,18 @@
                                                             <i class="fas fa-sort-numeric-up input-icon"></i>
                                                             Jumlah Produksi
                                                         </label>
-                                                        <input type="number" name="quantity_produced" id="quantity_produced" 
-                                                               class="futuristic-input @error('quantity_produced') is-invalid @enderror" 
-                                                               value="{{ old('quantity_produced') }}" 
-                                                               placeholder="100" min="1">
+                                                        <input type="number" name="quantity_produced" id="quantity_produced"
+                                                            class="futuristic-input @error('quantity_produced') is-invalid @enderror"
+                                                            value="{{ old('quantity_produced') }}"
+                                                            placeholder="100" min="1">
                                                         <div class="input-suffix-modern">pcs</div>
                                                         <div class="input-border-effect"></div>
                                                         <div class="input-glow"></div>
-                                                        @error('quantity_produced') 
+                                                        @error('quantity_produced')
                                                         <div class="futuristic-error">
                                                             <i class="fas fa-exclamation-triangle"></i>
                                                             {{ $message }}
-                                                        </div> 
+                                                        </div>
                                                         @enderror
                                                     </div>
                                                 </div>
@@ -408,7 +408,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="section-content">
                                         <div class="row">
                                             <div class="col-md-6">
@@ -418,21 +418,21 @@
                                                             <i class="fas fa-dollar-sign input-icon"></i>
                                                             Biaya Produksi
                                                         </label>
-                                                        <input type="number" step="0.01" name="production_cost" id="production_cost" 
-                                                               class="futuristic-input @error('production_cost') is-invalid @enderror" 
-                                                               value="{{ old('production_cost', 0) }}" 
-                                                               placeholder="750000">
+                                                        <input type="number" step="0.01" name="production_cost" id="production_cost"
+                                                            class="futuristic-input @error('production_cost') is-invalid @enderror"
+                                                            value="{{ old('production_cost', 0) }}"
+                                                            placeholder="750000">
                                                         <div class="input-prefix-modern">Rp</div>
                                                         <button type="button" class="cost-calculator-btn" id="calculateCostBtn">
                                                             <i class="fas fa-calculator"></i>
                                                         </button>
                                                         <div class="input-border-effect"></div>
                                                         <div class="input-glow"></div>
-                                                        @error('production_cost') 
+                                                        @error('production_cost')
                                                         <div class="futuristic-error">
                                                             <i class="fas fa-exclamation-triangle"></i>
                                                             {{ $message }}
-                                                        </div> 
+                                                        </div>
                                                         @enderror
                                                     </div>
                                                 </div>
@@ -445,31 +445,26 @@
                                                             <i class="fas fa-flag input-icon"></i>
                                                             Status Produksi
                                                         </label>
-                                                        <select name="status" id="status" 
-                                                                class="futuristic-select @error('status') is-invalid @enderror">
+                                                        <select name="status" id="status"
+                                                            class="futuristic-select @error('status') is-invalid @enderror">
                                                             <option value="planning" {{ old('status') == 'planning' ? 'selected' : '' }}>
                                                                 🎯 Perencanaan
                                                             </option>
                                                             <option value="in_progress" {{ old('status') == 'in_progress' ? 'selected' : '' }}>
                                                                 ⚡ Sedang Diproses
                                                             </option>
-                                                            <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>
-                                                                ✅ Selesai
-                                                            </option>
-                                                            <option value="cancelled" {{ old('status') == 'cancelled' ? 'selected' : '' }}>
-                                                                ❌ Dibatalkan
-                                                            </option>
+
                                                         </select>
                                                         <div class="select-arrow-modern">
                                                             <i class="fas fa-chevron-down"></i>
                                                         </div>
                                                         <div class="input-border-effect"></div>
                                                         <div class="input-glow"></div>
-                                                        @error('status') 
+                                                        @error('status')
                                                         <div class="futuristic-error">
                                                             <i class="fas fa-exclamation-triangle"></i>
                                                             {{ $message }}
-                                                        </div> 
+                                                        </div>
                                                         @enderror
                                                     </div>
                                                 </div>
@@ -482,17 +477,17 @@
                                                     <i class="fas fa-sticky-note input-icon"></i>
                                                     Catatan Produksi
                                                 </label>
-                                                <textarea name="notes" id="notes" 
-                                                          class="futuristic-textarea @error('notes') is-invalid @enderror" 
-                                                          rows="4" 
-                                                          placeholder="Catatan khusus untuk batch produksi ini...">{{ old('notes') }}</textarea>
+                                                <textarea name="notes" id="notes"
+                                                    class="futuristic-textarea @error('notes') is-invalid @enderror"
+                                                    rows="4"
+                                                    placeholder="Catatan khusus untuk batch produksi ini...">{{ old('notes') }}</textarea>
                                                 <div class="input-border-effect"></div>
                                                 <div class="input-glow"></div>
-                                                @error('notes') 
+                                                @error('notes')
                                                 <div class="futuristic-error">
                                                     <i class="fas fa-exclamation-triangle"></i>
                                                     {{ $message }}
-                                                </div> 
+                                                </div>
                                                 @enderror
                                             </div>
                                         </div>
@@ -676,23 +671,23 @@
         // Date and Time Display - Same as dashboard
         function updateDateTime() {
             const now = new Date();
-            
+
             const time = now.toLocaleTimeString('id-ID', {
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit'
             });
-            
+
             const date = now.toLocaleDateString('id-ID', {
                 weekday: 'long',
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric'
             });
-            
+
             const dateElement = document.getElementById('currentDate');
             const timeElement = document.getElementById('currentTime');
-            
+
             if (dateElement) dateElement.textContent = date;
             if (timeElement) timeElement.textContent = time;
         }
@@ -710,12 +705,12 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize form state
             initializeFuturisticForm();
-            
+
             // Form input animations and floating labels
             const inputs = document.querySelectorAll('.futuristic-input, .futuristic-textarea, .futuristic-select');
             inputs.forEach(input => {
                 const wrapper = input.closest('.input-wrapper');
-                
+
                 // Check initial state
                 if (input.value !== '') {
                     wrapper.classList.add('has-value');
@@ -750,7 +745,7 @@
                 generateBatchBtn.addEventListener('click', function() {
                     const batchInput = document.getElementById('batch_number');
                     const newBatch = generateAdvancedBatchNumber();
-                    
+
                     // Animate the generation
                     this.style.transform = 'translateY(-50%) rotate(360deg)';
                     setTimeout(() => {
@@ -770,7 +765,7 @@
                     const quantityInput = document.getElementById('quantity_produced');
                     const costInput = document.getElementById('production_cost');
                     const productSelect = document.getElementById('product_type_id');
-                    
+
                     if (!quantityInput.value || !productSelect.value) {
                         showFuturisticNotification('Pilih produk dan masukkan jumlah terlebih dahulu! ⚠️', 'warning');
                         return;
@@ -804,7 +799,7 @@
                 submitBtn.querySelector('.btn-particles').style.animation = 'particles 0.5s ease-in-out infinite';
                 submitBtn.querySelector('.btn-loader').style.display = 'inline-block';
                 submitBtn.querySelector('.btn-icon:not(.fa-spinner)').style.display = 'none';
-                
+
                 // Add launch effect
                 setTimeout(() => {
                     showFuturisticNotification('Meluncurkan batch produksi baru... 🚀', 'info');
@@ -828,7 +823,7 @@
                 quantityInput.addEventListener('input', debounce(function() {
                     const costInput = document.getElementById('production_cost');
                     const productSelect = document.getElementById('product_type_id');
-                    
+
                     if (this.value && productSelect.value && !costInput.value) {
                         const estimatedCost = calculateSmartCost(this.value, productSelect.value);
                         costInput.value = estimatedCost;
@@ -846,7 +841,7 @@
         function initializeFuturisticForm() {
             // Add space theme background sounds (optional)
             // playAmbientSound();
-            
+
             // Initialize floating labels for pre-filled inputs
             document.querySelectorAll('.futuristic-input, .futuristic-textarea, .futuristic-select').forEach(input => {
                 if (input.value) {
@@ -862,7 +857,7 @@
             const day = String(date.getDate()).padStart(2, '0');
             const hour = String(date.getHours()).padStart(2, '0');
             const minute = String(date.getMinutes()).padStart(2, '0');
-            
+
             return `BTH-${year}${month}${day}-${hour}${minute}`;
         }
 
@@ -874,22 +869,34 @@
                 '3': 6000, // Roti Burger
                 'default': 5000
             };
-            
+
             const baseCost = baseCosts[productType] || baseCosts.default;
             const totalCost = quantity * baseCost;
-            
+
             // Add complexity bonus for large batches
             const complexityMultiplier = quantity > 200 ? 1.1 : quantity > 100 ? 1.05 : 1;
-            
+
             return Math.round(totalCost * complexityMultiplier);
         }
 
         function validateFuturisticForm() {
-            const requiredFields = [
-                { id: 'product_type_id', message: 'Pilih jenis produk terlebih dahulu! 🍞' },
-                { id: 'quantity_produced', message: 'Masukkan jumlah produksi! 📊', min: 1 },
-                { id: 'production_date', message: 'Tentukan tanggal produksi! 📅' },
-                { id: 'batch_number', message: 'Nomor batch diperlukan! 🏷️' }
+            const requiredFields = [{
+                    id: 'product_type_id',
+                    message: 'Pilih jenis produk terlebih dahulu! 🍞'
+                },
+                {
+                    id: 'quantity_produced',
+                    message: 'Masukkan jumlah produksi! 📊',
+                    min: 1
+                },
+                {
+                    id: 'production_date',
+                    message: 'Tentukan tanggal produksi! 📅'
+                },
+                {
+                    id: 'batch_number',
+                    message: 'Nomor batch diperlukan! 🏷️'
+                }
             ];
 
             for (let field of requiredFields) {
@@ -901,7 +908,7 @@
                     shakeElement(input.closest('.input-wrapper'));
                     return false;
                 }
-                
+
                 if (field.min && input.value < field.min) {
                     showFuturisticNotification(`${field.message} (minimum: ${field.min})`, 'warning');
                     input.focus();
@@ -909,7 +916,7 @@
                     return false;
                 }
             }
-            
+
             return true;
         }
 
@@ -928,9 +935,9 @@
                 pointer-events: none;
                 z-index: 1;
             `;
-            
+
             wrapper.appendChild(ripple);
-            
+
             const style = document.createElement('style');
             style.textContent = `
                 @keyframes ripple-expand {
@@ -939,7 +946,7 @@
                 }
             `;
             document.head.appendChild(style);
-            
+
             setTimeout(() => {
                 ripple.remove();
                 style.remove();
@@ -961,9 +968,9 @@
                     z-index: 100;
                     animation: particle-burst-${i} 1s ease-out forwards;
                 `;
-                
+
                 element.appendChild(particle);
-                
+
                 const style = document.createElement('style');
                 style.textContent = `
                     @keyframes particle-burst-${i} {
@@ -978,7 +985,7 @@
                     }
                 `;
                 document.head.appendChild(style);
-                
+
                 setTimeout(() => {
                     particle.remove();
                     style.remove();
@@ -999,9 +1006,9 @@
                 animation: rocket-launch 2s ease-out forwards;
                 pointer-events: none;
             `;
-            
+
             button.appendChild(rocket);
-            
+
             const style = document.createElement('style');
             style.textContent = `
                 @keyframes rocket-launch {
@@ -1016,7 +1023,7 @@
                 }
             `;
             document.head.appendChild(style);
-            
+
             setTimeout(() => {
                 rocket.remove();
                 style.remove();
@@ -1025,7 +1032,7 @@
 
         function shakeElement(element) {
             element.style.animation = 'shake 0.5s ease-in-out';
-            
+
             const style = document.createElement('style');
             style.textContent = `
                 @keyframes shake {
@@ -1035,7 +1042,7 @@
                 }
             `;
             document.head.appendChild(style);
-            
+
             setTimeout(() => {
                 element.style.animation = '';
                 style.remove();
@@ -1068,35 +1075,35 @@
         function showFuturisticNotification(message, type = 'info') {
             const existingNotifications = document.querySelectorAll('.futuristic-notification');
             existingNotifications.forEach(notification => notification.remove());
-            
+
             const notification = document.createElement('div');
             notification.className = `futuristic-notification animate__animated animate__fadeInRight`;
-            
+
             const typeConfig = {
-                success: { 
-                    bg: 'linear-gradient(45deg, #10b981, #059669)', 
+                success: {
+                    bg: 'linear-gradient(45deg, #10b981, #059669)',
                     icon: '🚀',
                     glow: '0 0 30px rgba(16, 185, 129, 0.5)'
                 },
-                warning: { 
-                    bg: 'linear-gradient(45deg, #f59e0b, #d97706)', 
+                warning: {
+                    bg: 'linear-gradient(45deg, #f59e0b, #d97706)',
                     icon: '⚠️',
                     glow: '0 0 30px rgba(245, 158, 11, 0.5)'
                 },
-                danger: { 
-                    bg: 'linear-gradient(45deg, #ef4444, #dc2626)', 
+                danger: {
+                    bg: 'linear-gradient(45deg, #ef4444, #dc2626)',
                     icon: '❌',
                     glow: '0 0 30px rgba(239, 68, 68, 0.5)'
                 },
-                info: { 
-                    bg: 'linear-gradient(45deg, #3b82f6, #1d4ed8)', 
+                info: {
+                    bg: 'linear-gradient(45deg, #3b82f6, #1d4ed8)',
                     icon: '💡',
                     glow: '0 0 30px rgba(59, 130, 246, 0.5)'
                 }
             };
-            
+
             const config = typeConfig[type] || typeConfig.info;
-            
+
             notification.style.cssText = `
                 position: fixed;
                 top: 30px;
@@ -1115,7 +1122,7 @@
                 transform: translateX(100%);
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             `;
-            
+
             notification.innerHTML = `
                 <div style="display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center;">
@@ -1138,31 +1145,31 @@
                     ">×</button>
                 </div>
             `;
-            
+
             document.body.appendChild(notification);
-            
+
             // Slide in
             requestAnimationFrame(() => {
                 notification.style.transform = 'translateX(0)';
             });
-            
+
             // Close button
             const closeBtn = notification.querySelector('.futuristic-close');
             closeBtn.addEventListener('click', () => {
                 notification.style.transform = 'translateX(100%)';
                 setTimeout(() => notification.remove(), 400);
             });
-            
+
             closeBtn.addEventListener('mouseenter', () => {
                 closeBtn.style.background = 'rgba(255, 255, 255, 0.3)';
                 closeBtn.style.transform = 'scale(1.1)';
             });
-            
+
             closeBtn.addEventListener('mouseleave', () => {
                 closeBtn.style.background = 'rgba(255, 255, 255, 0.2)';
                 closeBtn.style.transform = 'scale(1)';
             });
-            
+
             // Auto remove
             setTimeout(() => {
                 if (notification.parentNode) {
@@ -1894,4 +1901,5 @@
         }
     </script>
 </body>
+
 </html>

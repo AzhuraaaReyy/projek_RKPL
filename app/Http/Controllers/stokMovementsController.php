@@ -11,9 +11,15 @@ class stokMovementsController extends Controller
     //
     public function index()
     {
-        $stokMovements = StokMovements::with('bahanBaku')->get();
+        $stokMovements = StokMovements::with('bahanBaku')->paginate(10);
         $bahanBakus = BahanBaku::select('id', 'nama')->get();
         return view('riwayatProduksiBahanBaku', compact('stokMovements', 'bahanBakus'));
+    }
+    public function karyawanstokMovements()
+    {
+        $stokMovements = StokMovements::with('bahanBaku')->paginate(10);
+        $bahanBakus = BahanBaku::select('id', 'nama')->get();
+        return view('karyawan.riwayatProduksiBahanBaku', compact('stokMovements', 'bahanBakus'));
     }
 
     public function store(Request $request)
@@ -102,5 +108,44 @@ class stokMovementsController extends Controller
         return response()->json($data);
     }
 
-    
+    public function filterBystok(Request $request)
+    {
+        $stokMovements = StokMovements::with('bahanBaku')
+            ->when($request->filled('movement_type'), function ($q) use ($request) {
+                $q->where('movement_type', $request->movement_type);
+            })
+            ->when($request->filled('movement_date'), function ($q) use ($request) {
+                $q->whereDate('movement_date', $request->movement_date); // hanya cocokkan tanggal persis
+            })
+            ->when($request->filled('bahan_baku_id'), function ($q) use ($request) {
+                $q->where('bahan_baku_id', $request->bahan_baku_id);
+            })
+            ->latest()
+            ->paginate(10)
+            ->appends($request->query());
+
+        $bahanBakus = BahanBaku::select('id', 'nama')->get();
+
+        return view('riwayatProduksiBahanBaku', compact('stokMovements', 'bahanBakus'));
+    }
+    public function filterBykaryawanstok(Request $request)
+    {
+        $stokMovements = StokMovements::with('bahanBaku')
+            ->when($request->filled('movement_type'), function ($q) use ($request) {
+                $q->where('movement_type', $request->movement_type);
+            })
+            ->when($request->filled('movement_date'), function ($q) use ($request) {
+                $q->whereDate('movement_date', $request->movement_date); // hanya cocokkan tanggal persis
+            })
+            ->when($request->filled('bahan_baku_id'), function ($q) use ($request) {
+                $q->where('bahan_baku_id', $request->bahan_baku_id);
+            })
+            ->latest()
+            ->paginate(10)
+            ->appends($request->query());
+
+        $bahanBakus = BahanBaku::select('id', 'nama')->get();
+
+        return view('karyawan.riwayatProduksiBahanBaku', compact('stokMovements', 'bahanBakus'));
+    }
 }

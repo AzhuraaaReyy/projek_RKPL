@@ -29,7 +29,7 @@
         </button>
 
         <!-- Sidebar -->
-     @include('sidebar')
+        @include('sidebar')
 
         <!-- Content Wrapper -->
         <div class="content-wrapper">
@@ -139,7 +139,7 @@
                             </div>
 
                             <div class="card-body">
-                               <!-- Filter Form -->
+                                <!-- Filter Form -->
                                 <form action="{{ route('filterBy') }}" method="GET">
                                     <div class="row mb-3">
                                         <div class="col-md-4">
@@ -150,15 +150,15 @@
                                             </div>
                                         </div>
                                         <div class="col-md-4">
-                                        <div class="form-group">
+                                            <div class="form-group">
                                                 <label for="expense_category_id">Filter Kategori:</label>
                                                 <select id="expense_category_id" name="expense_category_id" class="form-control">
                                                     <option value="">-- Semua Kategori --</option>
                                                     @foreach ($categories as $category)
-                                                        <option value="{{ $category->id }}"
-                                                            {{ request('expense_category_id') == $category->id ? 'selected' : '' }}>
-                                                            {{ $category->name }}
-                                                        </option>
+                                                    <option value="{{ $category->id }}"
+                                                        {{ request('expense_category_id') == $category->id ? 'selected' : '' }}>
+                                                        {{ $category->name }}
+                                                    </option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -207,10 +207,10 @@
                                                 <td>Rp{{ number_format($expense->amount, 2, ',', '.') }}</td>
                                                 <td class="text-center">
                                                     <div class="btn-group btn-group-sm">
-                                                        <button type="button" class="btn btn-info btn-sm" onclick="showDetail({{ $input->id ?? 1 }})" title="Detail" data-toggle="tooltip">
+                                                        <button type="button" class="btn btn-info btn-sm" onclick="showDetail({{ $expense->id ?? 1 }})" title="Detail" data-toggle="tooltip">
                                                             <i class="fas fa-eye"></i>
                                                         </button>
-                                                        <button type="button" class="btn btn-warning btn-sm" onclick="editData({{ $input->id ?? 1 }})" title="Edit" data-toggle="tooltip">
+                                                        <button type="button" class="btn btn-warning btn-sm" onclick="editData({{ $expense->id ?? 1 }})" title="Edit" data-toggle="tooltip">
                                                             <i class="fas fa-edit"></i>
                                                         </button>
                                                         <button type="button"
@@ -243,30 +243,15 @@
                                         </tbody>
 
                                     </table>
+                                    {{-- Pagination --}}
+                                    @if(isset($expenses) && method_exists($expenses, 'links'))
+                                    <div class="d-flex justify-content-center mt-3">
+                                        {{ $expenses->links('pagination::bootstrap-4') }}
+                                    </div>
+                                    @endif
                                 </div>
 
-                                <!-- Pagination -->
-                                <div class="d-flex justify-content-center mt-3">
-                                    <nav aria-label="Page navigation">
-                                        <ul class="pagination">
-                                            <li class="page-item disabled">
-                                                <a class="page-link" href="#" tabindex="-1">Previous</a>
-                                            </li>
-                                            <li class="page-item active">
-                                                <a class="page-link" href="#">1</a>
-                                            </li>
-                                            <li class="page-item">
-                                                <a class="page-link" href="#">2</a>
-                                            </li>
-                                            <li class="page-item">
-                                                <a class="page-link" href="#">3</a>
-                                            </li>
-                                            <li class="page-item">
-                                                <a class="page-link" href="#">Next</a>
-                                            </li>
-                                        </ul>
-                                    </nav>
-                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -326,6 +311,85 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
+        function showDetail(id) {
+            axios.get(`/api/peng/${id}`)
+                .then(response => {
+                    const data = response.data;
+                    const tanggal = new Date(data.expense_date).toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                    const detailHtml = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Nama Penginput:</strong> ${data.creator?.name ?? '-'}</p>
+                        <p><strong>Kategori:</strong> ${data.category?.name ?? '-'}</p>
+                       <p><strong>Tanggal:</strong> ${tanggal}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Deskripsi:</strong> ${data.description}</p>
+                        <p><strong>Catatan:</strong> ${data.notes ?? '-'}</p>
+                        <p><strong>Jumlah:</strong> Rp${Number(data.amount).toLocaleString('id-ID', { minimumFractionDigits: 2 })}</p>
+                    </div>
+                </div>
+            `;
+
+                    document.getElementById('detailContent').innerHTML = detailHtml;
+                    $('#detailModal').modal('show');
+                })
+                .catch(error => {
+                    let message = 'Terjadi kesalahan tak dikenal.';
+                    if (error.response) {
+                        message = `Gagal mengambil data. Status: ${error.response.status} - ${error.response.statusText}`;
+                        console.error('Detail error:', error.response.data);
+                    } else if (error.request) {
+                        message = 'Tidak ada respons dari server. Cek koneksi atau endpoint.';
+                        console.error('Permintaan:', error.request);
+                    } else {
+                        message = `Error saat menyiapkan permintaan: ${error.message}`;
+                    }
+                    Swal.fire('Gagal', message, 'error');
+                });
+        }
+        //set waktu dan tanggal real time
+        function updateDateTime() {
+            const now = new Date();
+
+            // Format waktu (jam:menit:detik)
+            const time = now.toLocaleTimeString('id-ID', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+
+            // Format tanggal (Hari, tanggal bulan tahun)
+            const date = now.toLocaleDateString('id-ID', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+
+            document.getElementById('currentTime').textContent = time;
+            document.getElementById('currentDate').textContent = date;
+        }
+
+        // Jalankan saat pertama kali dan setiap 1 detik
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+
+        // Add hover effects to table rows
+        document.querySelectorAll('.table tbody tr').forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.backgroundColor = '#f8f9fa';
+            });
+
+            row.addEventListener('mouseleave', function() {
+                this.style.backgroundColor = '';
+            });
+        });
+
         function deletedata(id) {
             fetch(`/api/pengeluaran/${id}`, {
                     method: 'DELETE',
@@ -388,47 +452,6 @@
 
         const kategoriList = @json($categories);
 
-        function showDetail(id) {
-            axios.get(`/api/pengeluaran/${id}`)
-                .then(response => {
-                    const data = response.data;
-                    const tanggal = new Date(data.expense_date).toLocaleDateString('id-ID', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric'
-                    });
-                    const detailHtml = `
-                <div class="row">
-                    <div class="col-md-6">
-                        <p><strong>Nama Penginput:</strong> ${data.creator?.name ?? '-'}</p>
-                        <p><strong>Kategori:</strong> ${data.category?.name ?? '-'}</p>
-                       <p><strong>Tanggal:</strong> ${tanggal}</p>
-                    </div>
-                    <div class="col-md-6">
-                        <p><strong>Deskripsi:</strong> ${data.description}</p>
-                        <p><strong>Catatan:</strong> ${data.notes ?? '-'}</p>
-                        <p><strong>Jumlah:</strong> Rp${Number(data.amount).toLocaleString('id-ID', { minimumFractionDigits: 2 })}</p>
-                    </div>
-                </div>
-            `;
-
-                    document.getElementById('detailContent').innerHTML = detailHtml;
-                    $('#detailModal').modal('show');
-                })
-                .catch(error => {
-                    let message = 'Terjadi kesalahan tak dikenal.';
-                    if (error.response) {
-                        message = `Gagal mengambil data. Status: ${error.response.status} - ${error.response.statusText}`;
-                        console.error('Detail error:', error.response.data);
-                    } else if (error.request) {
-                        message = 'Tidak ada respons dari server. Cek koneksi atau endpoint.';
-                        console.error('Permintaan:', error.request);
-                    } else {
-                        message = `Error saat menyiapkan permintaan: ${error.message}`;
-                    }
-                    Swal.fire('Gagal', message, 'error');
-                });
-        }
 
 
         function editData(id) {
@@ -854,43 +877,6 @@
             });
         });
 
-        //set waktu dan tanggal real time
-        function updateDateTime() {
-            const now = new Date();
-
-            // Format waktu (jam:menit:detik)
-            const time = now.toLocaleTimeString('id-ID', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-
-            // Format tanggal (Hari, tanggal bulan tahun)
-            const date = now.toLocaleDateString('id-ID', {
-                weekday: 'long',
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            });
-
-            document.getElementById('currentTime').textContent = time;
-            document.getElementById('currentDate').textContent = date;
-        }
-
-        // Jalankan saat pertama kali dan setiap 1 detik
-        updateDateTime();
-        setInterval(updateDateTime, 1000);
-
-        // Add hover effects to table rows
-        document.querySelectorAll('.table tbody tr').forEach(row => {
-            row.addEventListener('mouseenter', function() {
-                this.style.backgroundColor = '#f8f9fa';
-            });
-
-            row.addEventListener('mouseleave', function() {
-                this.style.backgroundColor = '';
-            });
-        });
 
         // Add click animation to action buttons
         document.querySelectorAll('.btn').forEach(btn => {

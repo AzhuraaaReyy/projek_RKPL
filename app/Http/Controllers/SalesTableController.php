@@ -137,7 +137,6 @@ class SalesTableController extends Controller
             'unit_price' => 'required|array',
             'unit_price.*' => 'numeric|min:0',
             'payment_method' => 'required|string',
-            'payment_status' => 'required|string',
             'notes' => 'required|string',
         ]);
 
@@ -154,7 +153,7 @@ class SalesTableController extends Controller
             'customer_id' => $request->customer_id,
             'total_amount' => $totalAmount,
             'payment_method' => $request->payment_method,
-            'payment_status' => $request->payment_status,
+            'payment_status' => 'pending',
             'notes' => $request->notes,
             'created_by' => auth()->id(),
         ]);

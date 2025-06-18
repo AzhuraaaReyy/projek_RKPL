@@ -29,7 +29,7 @@
         </button>
 
         <!-- Sidebar -->
-       @include('sidebar')
+        @include('sidebar')
 
         <!-- Content Wrapper -->
         <div class="content-wrapper">
@@ -209,6 +209,8 @@
                                         </table>
                                     </div>
 
+
+
                                     <button type="button" class="btn btn-success mb-3" onclick="addRow()">
                                         <i class="fas fa-plus mr-1"></i>
                                         Tambah Produk
@@ -344,7 +346,7 @@
                                                             ✅ Lunas
                                                         </button>
                                                     </form>
-                                                  
+
                                                 </div>
                                                 @elseif($sale->payment_status == 'paid')
                                                 <span class="text-success fs-4" title="Lunas">✅ Lunas</span>
@@ -362,9 +364,12 @@
                                 </table>
                             </div>
 
-                            <div class="d-flex justify-content-center">
-                                {{ $sales->links() }}
+                            {{-- Pagination --}}
+                            @if(isset($sales) && method_exists($sales, 'links'))
+                            <div class="d-flex justify-content-center mt-3">
+                                {{ $sales->links('pagination::bootstrap-4') }}
                             </div>
+                            @endif
                         </div>
                     </div>
                 </div>

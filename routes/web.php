@@ -40,10 +40,11 @@ Route::post('/login', [LoginController::class, 'login']);
 
 // Logout
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
 
-    Route::resource('bahanbaku', MonitoringBahanBakuController::class);
+
     Route::get('/bahanbaku', [MonitoringBahanBakuController::class, 'index'])->name('inputbahan');
     Route::get('/form-bahanbaku', [MonitoringBahanBakuController::class, 'formBahanBaku'])->name('bahan');
     Route::get('/filterByBahanBaku', [MonitoringBahanBakuController::class, 'filterBybahanBaku'])->name('filter.bahan');
@@ -57,6 +58,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::put('/api/stokMovements/{id}', [stokMovementsController::class, 'update'])->name('update.stokmovements');
     Route::get('/api/stokMovements/{id}', [stokMovementsController::class, 'show']);
     Route::delete('/api/stokMovements/{id}', [stokMovementsController::class, 'destroy']);
+    Route::get('/filterBystok', [stokMovementsController::class, 'filterBystok'])->name('filter.stok');
+    Route::get('/stok', [stokMovementsController::class, 'index'])->name('stok.index');
 
     Route::put('/api/riwayatproduksi/{id}', [ProductionHistoryController::class, 'update'])->name('update.stokmovements');
     Route::get('/api/riwayatproduksi/{id}', [ProductionHistoryController::class, 'show']);
@@ -86,8 +89,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/pengeluaranByfilter', [expenseTableController::class, 'filterBy'])->name('filterBy');
     Route::post('/pengeluaran', [expenseTableController::class, 'store'])->name('expenses.store');
     Route::put('/api/pengeluaran/{id}', [expenseTableController::class, 'update'])->name('expenses.update');
-    Route::delete('/pengeluaran/{id}', [expenseTableController::class, 'destroy'])->name('expenses.delete');
-    Route::get('/api/pengeluaran/{id}', [expenseTableController::class, 'show']);
+
+    Route::get('/api/peng/{id}', [expenseTableController::class, 'show']);
     Route::delete('/api/pengeluaran/{id}', [expenseTableController::class, 'destroy']);
 
     Route::get('/categories-pengeluaran', [expenseCategoriesController::class, 'index'])->name(('index'));
@@ -123,6 +126,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 
 
+
     // API Routes untuk Production History
     Route::get('/api/production-history/stats', [ProductionHistoryController::class, 'getStats'])->name('productionHistory.stats');
     Route::get('/api/production-history/export', [ProductionHistoryController::class, 'export'])->name('productionHistory.export');
@@ -137,14 +141,31 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
 
     //bahanbaku
     Route::get('/karyawan-bahanbaku', [MonitoringBahanBakuController::class, 'karyawanbahanBaku'])->name('karyawan.inputbahan');
-    Route::get('/karyawan-riwayatbahanbaku', [MonitoringBahanBakuController::class, 'karyawanbahanBaku'])->name('karyawan.inputbahan');
+    Route::get('/karyawan-riwayatbahanbaku', [stokMovementsController::class, 'karyawanstokMovements'])->name('karyawan.riwayatbahan');
+    Route::get('/filterByBahanBakukaryawan', [MonitoringBahanBakuController::class, 'filterBybahanBakukaryawan'])->name('filter.karyawan.bahan');
+    Route::get('/karyawan-bahanbaku/download', [MonitoringBahanBakuController::class, 'downlod_pdf'])->name('karyawan.download');
+    Route::get('/karyawan-formbahanbaku', [MonitoringBahanBakuController::class, 'formkaryawanBahanBaku'])->name('karyawan.formbahanbaku');
+    Route::post('/karyawan-bahanbaku', [MonitoringBahanBakuController::class, 'Karyawanaddbahan'])->name('karyawan.bahanBakus');
+    Route::get('/api/karyawan-baku/{id}', [MonitoringBahanBakuController::class, 'show']);
+    Route::delete('/api/karyawan-baku/{id}', [MonitoringBahanBakuController::class, 'destroy']);
+    Route::get('/filterBystokkaryawan', [stokMovementsController::class, 'filterBykaryawanstok'])->name('filter.stokkaryawan');
+    Route::delete('/api/karyawan-stokMovements/{id}', [stokMovementsController::class, 'destroy']);
 
     //produksi
     Route::get('/karyawan-produksiRoti', [ProductionsController::class, 'karyawanproduksi'])->name('karyawan.produksi');
     Route::get('/karyawan-formproduksi', [ProductionsController::class, 'karyawanformproduksi'])->name('karyawan.formproduksi');
-    Route::get('/karyawan-formproduk', [ProductionsController::class, 'karyawanformproduk']);
+    Route::get('/karyawan-formproduk', [ProductionsController::class, 'karyawanformproduk'])->name('karyawan.formproduk');
     Route::Post('/karyawan-tambahproduksi', [ProductionsController::class, 'pivotStorekaryawan'])->name('karyawan.storetambah');
     Route::Post('/karyawan-produksiRoti', [ProductionsController::class, 'karyawanstore'])->name('karyawan.storeproduksi');
+    Route::patch('/karyawan-produksiRoti/{id}', [ProductionsController::class, 'Karyawanupdate'])->name('karyawan.productions.update');
+
+
+
+    Route::get('/karyawanriwayatProduksiRoti', [ProductionHistoryController::class, 'karyawanproduksihistory']);
+    Route::get('/filterBykaryawanProduksi', [ProductionsController::class, 'filterBykaryawanproduksi'])->name('filterBykaryawanroduksi');
+
+
+
 
     //laporan
     Route::get('/karyawan-laporan', [LaporanController::class, 'karyawanlaporan'])->name('karyawan.laporan');
@@ -152,14 +173,17 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
 
     //pengeluaran
     Route::get('/karyawan-pengeluaran', [expenseTableController::class, 'karyawanpengeluaran'])->name(('karyawan.pengeluaran'));
-    Route::get('/karyawan-formpengeluaran', [expenseTableController::class, 'form'])->name('formPengeluaran');
-    Route::get('/karyawan-pengeluaranByfilter', [expenseTableController::class, 'filterBy'])->name('filterBykaryawan');
-    Route::post('/karyawan-pengeluaran', [expenseTableController::class, 'store'])->name('karyawan.expense.store');
-    Route::put('/karyawan-pengeluaran/{id}', [expenseTableController::class, 'update'])->name('expenses.update');
-    Route::delete('/karyawan-pengeluaran/{id}', [expenseTableController::class, 'destroy'])->name('expenses.delete');
+    Route::get('/karyawanformpengeluaran', [expenseTableController::class, 'karyawanform'])->name('karyawan.formPengeluaran');
+    Route::get('/karyawan-pengeluaranByfilter', [expenseTableController::class, 'filterBykaryawanpengeluaran'])->name('filterBykaryawan');
+    Route::post('/karyawan-pengeluaran', [expenseTableController::class, 'karyawanpengeluaranstore'])->name('karyawan.pengeluaran.store');
+
+    Route::get('/api/karpe/{id}', [expenseTableController::class, 'show']);
+    Route::delete('/api/karyawan-pengeluaran/{id}', [expenseTableController::class, 'destroy']);
+
+
 
     Route::get('/karyawan-categoriespengeluaran', [expenseCategoriesController::class, 'karyawancategories'])->name(('karyawan.categories'));
-    Route::post('/karyawan-categoriespengeluaran', [expenseCategoriesController::class, 'store'])->name(('karyawan.store'));
+    Route::post('/karyawan-categoriespengeluaran', [expenseCategoriesController::class, 'karyawanstorecategories'])->name(('karyawan.storecategories'));
     Route::put('/karyawan-categoriespengeluaran/{id}', [expenseCategoriesController::class, 'update'])->name(('karyawancategories.update'));
     Route::delete('/karyawan-categoriespengeluaran/{id}', [expenseCategoriesController::class, 'destroy'])->name(('karyawancategories.delete'));
 
@@ -170,7 +194,9 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
 
 
     Route::get('/karyawan-customer', [CustomersController::class, 'index']);
-    Route::get('/karyawan-customer', [CustomersController::class, 'index'])->name('karyawan.customers');
-    Route::get('/karyawan-formcustomers', [CustomersController::class, 'karyawanformcustomers'])->name('karyawan.customers');
-    Route::post('/karyawan-customer', [CustomersController::class, 'karyawanaddCustomer'])->name('karyawan.customers');
+    Route::get('/karyawan-customer', [CustomersController::class, 'karyawanIndex'])->name('karyawan.customers');
+    Route::get('/karyawan-formcustomers', [CustomersController::class, 'karyawanformcustomers'])->name('karyawan.formcustomers');
+    Route::post('/karyawan-customer', [CustomersController::class, 'karyawanaddCustomer'])->name('karyawan.addcustomers');
+    Route::get('/karyawan/customers/filter', [CustomersController::class, 'filterBykaryawanCustomer'])->name('customers.karyawanfilter');
+    Route::delete('/karyawan/customer/{id}', [CustomersController::class, 'karyawandestroy'])->name('customers.karyawandelete');
 });
