@@ -179,7 +179,6 @@
                                     </div>
                                 </form>
 
-
                                 <!-- Table -->
                                 <div class="table-responsive">
                                     <table class="table table-bordered table-striped">
@@ -207,15 +206,15 @@
                                                 <td>Rp{{ number_format($expense->amount, 2, ',', '.') }}</td>
                                                 <td class="text-center">
                                                     <div class="btn-group btn-group-sm">
-                                                        <button type="button" class="btn btn-info btn-sm" onclick="showDetail({{ $expense->id ?? 1 }})" title="Detail" data-toggle="tooltip">
+                                                        <button type="button" class="btn btn-info btn-sm" onclick="showDetail({{ $expense->id }})" title="Detail" data-toggle="tooltip">
                                                             <i class="fas fa-eye"></i>
                                                         </button>
-                                                        <button type="button" class="btn btn-warning btn-sm" onclick="editData({{ $expense->id ?? 1 }})" title="Edit" data-toggle="tooltip">
+                                                        <button type="button" class="btn btn-warning btn-sm" onclick="editData({{ $expense->id }})" title="Edit" data-toggle="tooltip">
                                                             <i class="fas fa-edit"></i>
                                                         </button>
                                                         <button type="button"
                                                             class="btn btn-danger btn-sm"
-                                                            onclick="deletedata({{ $input->id ?? 1 }})"
+                                                            onclick="deletedata({{ $expense->id }})"
                                                             title="Hapus"
                                                             data-toggle="tooltip">
                                                             <i class="fas fa-trash"></i>
@@ -223,25 +222,23 @@
                                                     </div>
                                                 </td>
                                             </tr>
-
                                             @empty
                                             <tr>
-                                                <td colspan="11" class="text-center">
+                                                <td colspan="8" class="text-center">
                                                     <div class="alert alert-warning m-0" role="alert">
                                                         Data tidak dapat ditemukan.
                                                     </div>
                                                 </td>
                                             </tr>
                                             @endforelse
+                                        </tbody>
                                         <tfoot>
                                             <tr>
                                                 <td colspan="6" style="text-align: center;"><strong>Total Pengeluaran</strong></td>
-                                                <td><strong>Rp{{ number_format($totalAmount, 2, ',', '.') }}</strong></td>
+                                                <td><strong>Rp{{ number_format($totalAmount ?? 0, 2, ',', '.') }}</strong></td>
+                                                <td></td>
                                             </tr>
                                         </tfoot>
-
-                                        </tbody>
-
                                     </table>
                                     {{-- Pagination --}}
                                     @if(isset($expenses) && method_exists($expenses, 'links'))
@@ -250,17 +247,17 @@
                                     </div>
                                     @endif
                                 </div>
-
-
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Detail Modal -->
                 <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
                             <div class="modal-header bg-info text-white">
-                                <h5 class="modal-title" id="detailModalLabel">Detail Bahan Baku</h5>
+                                <h5 class="modal-title" id="detailModalLabel">Detail Pengeluaran</h5>
                                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Tutup">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -271,30 +268,31 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Edit Modal -->
                 <div class="modal fade" id="editModal" tabindex="-1" role="dialog">
                     <div class="modal-dialog modal-lg" role="document">
-                        <form id="editBahanForm" method="POST">
-                            @csrf
-                            @method('PUT')
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Edit Bahan Baku</h5>
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                </div>
-                                <div class="modal-body" id="editContent">
-                                    <!-- Form dinamis akan dimasukkan di sini -->
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary">Simpan</button>
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                </div>
+                        <div class="modal-content">
+                            <div class="modal-header bg-warning text-white">
+                                <h5 class="modal-title">Edit Pengeluaran</h5>
+                                <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
                             </div>
-                        </form>
+                            <div class="modal-body" id="editContent">
+                                <!-- Form dinamis akan dimasukkan di sini -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" id="saveExpenseBtn" class="btn btn-primary">
+                                    <i class="fas fa-save mr-1"></i>Simpan
+                                </button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                    <i class="fas fa-times mr-1"></i>Tutup
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
 
         <!-- Footer -->
         <footer class="main-footer text-center">
@@ -311,59 +309,356 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
+        // Global variables
+        const kategoriList = @json($categories ?? []);
+        let currentEditId = null;
+
+        // Setup axios defaults
+        $(document).ready(function() {
+            // Setup CSRF token untuk semua request axios
+            const token = $('meta[name="csrf-token"]').attr('content');
+            if (token) {
+                axios.defaults.headers.common['X-CSRF-TOKEN'] = token;
+            }
+            
+            // Initialize tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+            
+            console.log('Page loaded, CSRF token set:', token);
+            console.log('Categories loaded:', kategoriList.length);
+        });
+
+        // Function untuk menampilkan detail
         function showDetail(id) {
-            axios.get(`/api/peng/${id}`)
-                .then(response => {
-                    const data = response.data;
+            console.log('Showing detail for ID:', id);
+            
+            // Coba menggunakan route yang berbeda
+            const possibleRoutes = [
+                `/api/peng/${id}`,
+                `/api/pengeluaran/${id}`,
+                `/pengeluaran/${id}/detail`
+            ];
+            
+            tryMultipleRoutes(possibleRoutes, 'GET')
+                .then(data => {
                     const tanggal = new Date(data.expense_date).toLocaleDateString('id-ID', {
                         day: 'numeric',
                         month: 'long',
                         year: 'numeric'
                     });
+                    
                     const detailHtml = `
-                <div class="row">
-                    <div class="col-md-6">
-                        <p><strong>Nama Penginput:</strong> ${data.creator?.name ?? '-'}</p>
-                        <p><strong>Kategori:</strong> ${data.category?.name ?? '-'}</p>
-                       <p><strong>Tanggal:</strong> ${tanggal}</p>
-                    </div>
-                    <div class="col-md-6">
-                        <p><strong>Deskripsi:</strong> ${data.description}</p>
-                        <p><strong>Catatan:</strong> ${data.notes ?? '-'}</p>
-                        <p><strong>Jumlah:</strong> Rp${Number(data.amount).toLocaleString('id-ID', { minimumFractionDigits: 2 })}</p>
-                    </div>
-                </div>
-            `;
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Nama Penginput:</strong> ${data.creator?.name ?? '-'}</p>
+                                <p><strong>Kategori:</strong> ${data.category?.name ?? '-'}</p>
+                                <p><strong>Tanggal:</strong> ${tanggal}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Deskripsi:</strong> ${data.description ?? '-'}</p>
+                                <p><strong>Catatan:</strong> ${data.notes ?? '-'}</p>
+                                <p><strong>Jumlah:</strong> Rp${Number(data.amount).toLocaleString('id-ID', { minimumFractionDigits: 2 })}</p>
+                            </div>
+                        </div>
+                    `;
 
                     document.getElementById('detailContent').innerHTML = detailHtml;
                     $('#detailModal').modal('show');
                 })
                 .catch(error => {
-                    let message = 'Terjadi kesalahan tak dikenal.';
-                    if (error.response) {
-                        message = `Gagal mengambil data. Status: ${error.response.status} - ${error.response.statusText}`;
-                        console.error('Detail error:', error.response.data);
-                    } else if (error.request) {
-                        message = 'Tidak ada respons dari server. Cek koneksi atau endpoint.';
-                        console.error('Permintaan:', error.request);
-                    } else {
-                        message = `Error saat menyiapkan permintaan: ${error.message}`;
-                    }
-                    Swal.fire('Gagal', message, 'error');
+                    console.error('Error showing detail:', error);
+                    handleError(error, 'Gagal mengambil detail data');
                 });
         }
-        //set waktu dan tanggal real time
+
+        // Function untuk edit data
+        function editData(id) {
+            console.log('Editing data for ID:', id);
+            currentEditId = id;
+            
+            // Show loading state
+            Swal.fire({
+                title: 'Memuat data...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // Coba beberapa route yang mungkin
+            const possibleRoutes = [
+                `/api/pengeluaran/${id}`,
+                `/api/peng/${id}`,
+                `/pengeluaran/${id}/edit`
+            ];
+            
+            tryMultipleRoutes(possibleRoutes, 'GET')
+                .then(data => {
+                    Swal.close();
+                    console.log('Data loaded for edit:', data);
+                    
+                    // Buat options untuk kategori
+                    let kategoriOptions = `<option value="">-- Pilih Kategori --</option>`;
+                    kategoriList.forEach(kategori => {
+                        const selected = data.expense_category_id === kategori.id ? 'selected' : '';
+                        kategoriOptions += `<option value="${kategori.id}" ${selected}>${kategori.name}</option>`;
+                    });
+
+                    const tanggal = new Date(data.expense_date).toISOString().split('T')[0];
+
+                    const editHtml = `
+                        <form id="editExpenseForm">
+                            <input type="hidden" name="id" value="${data.id}">
+                            
+                            <div class="form-group">
+                                <label for="creator">Nama Penginput <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="creator" value="${data.creator?.name ?? '-'}" readonly>
+                                <small class="form-text text-muted">Field ini tidak dapat diubah</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="expense_date">Tanggal <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" name="expense_date" value="${tanggal}" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="expense_category_id">Kategori <span class="text-danger">*</span></label>
+                                <select name="expense_category_id" class="form-control" required>
+                                    ${kategoriOptions}
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="amount">Jumlah (Rp) <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" name="amount" value="${data.amount}" min="0" step="1" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="description">Deskripsi</label>
+                                <textarea class="form-control" name="description" rows="3">${data.description ?? ''}</textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="notes">Catatan</label>
+                                <textarea class="form-control" name="notes" rows="3">${data.notes ?? ''}</textarea>
+                            </div>
+                        </form>
+                    `;
+
+                    document.getElementById('editContent').innerHTML = editHtml;
+                    $('#editModal').modal('show');
+                })
+                .catch(error => {
+                    Swal.close();
+                    console.error('Error loading edit data:', error);
+                    handleError(error, 'Gagal mengambil data untuk edit');
+                });
+        }
+
+        // Handle save button click
+        $(document).on('click', '#saveExpenseBtn', function() {
+            const form = document.getElementById('editExpenseForm');
+            if (!form) {
+                Swal.fire('Error', 'Form tidak ditemukan', 'error');
+                return;
+            }
+
+            const formData = new FormData(form);
+            const data = {};
+            
+            // Convert FormData to object
+            for (let [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+            
+            console.log('Saving data:', data);
+
+            const submitBtn = $(this);
+            const originalHtml = submitBtn.html();
+            submitBtn.html('<i class="fas fa-spinner fa-spin mr-1"></i>Menyimpan...').prop('disabled', true);
+
+            // Coba beberapa route untuk update
+            const possibleRoutes = [
+                `/api/pengeluaran/${currentEditId}`,
+                `/pengeluaran/${currentEditId}/update`,
+                `/pengeluaran/${currentEditId}`
+            ];
+            
+            tryMultipleRoutes(possibleRoutes, 'PUT', data)
+                .then(response => {
+                    submitBtn.html(originalHtml).prop('disabled', false);
+                    $('#editModal').modal('hide');
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: 'Data pengeluaran berhasil diupdate.',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+
+                    // Reload halaman setelah 2 detik
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                })
+                .catch(error => {
+                    submitBtn.html(originalHtml).prop('disabled', false);
+                    console.error('Error saving data:', error);
+                    handleError(error, 'Gagal mengupdate data');
+                });
+        });
+
+        // Function untuk delete data
+        function deletedata(id) {
+            console.log('Deleting data for ID:', id);
+            
+            Swal.fire({
+                title: 'Konfirmasi Hapus',
+                text: 'Apakah Anda yakin ingin menghapus data ini?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Coba beberapa route untuk delete
+                    const possibleRoutes = [
+                        `/api/pengeluaran/${id}`,
+                        `/pengeluaran/${id}/delete`,
+                        `/pengeluaran/${id}`
+                    ];
+                    
+                    tryMultipleRoutes(possibleRoutes, 'DELETE')
+                        .then(response => {
+                            const row = document.querySelector(`tr[data-id="${id}"]`);
+                            if (row) {
+                                row.classList.add('animate__animated', 'animate__fadeOut');
+                                setTimeout(() => {
+                                    row.remove();
+                                }, 500);
+                            }
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Terhapus!',
+                                text: 'Data berhasil dihapus.',
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
+
+                            setTimeout(() => {
+                                location.reload();
+                            }, 2000);
+                        })
+                        .catch(error => {
+                            console.error('Error deleting data:', error);
+                            handleError(error, 'Gagal menghapus data');
+                        });
+                }
+            });
+        }
+
+        // Function untuk mencoba beberapa route
+        function tryMultipleRoutes(routes, method, data = null) {
+            return new Promise((resolve, reject) => {
+                let currentRouteIndex = 0;
+                
+                function tryNextRoute() {
+                    if (currentRouteIndex >= routes.length) {
+                        reject(new Error('Semua route gagal'));
+                        return;
+                    }
+                    
+                    const route = routes[currentRouteIndex];
+                    console.log(`Trying route ${currentRouteIndex + 1}/${routes.length}: ${method} ${route}`);
+                    
+                    let promise;
+                    
+                    switch(method.toLowerCase()) {
+                        case 'get':
+                            promise = axios.get(route);
+                            break;
+                        case 'put':
+                            promise = axios.put(route, data);
+                            break;
+                        case 'delete':
+                            promise = axios.delete(route);
+                            break;
+                        case 'post':
+                            promise = axios.post(route, data);
+                            break;
+                        default:
+                            promise = axios.get(route);
+                    }
+                    
+                    promise
+                        .then(response => {
+                            console.log(`Route ${route} berhasil:`, response.data);
+                            resolve(response.data);
+                        })
+                        .catch(error => {
+                            console.log(`Route ${route} gagal:`, error.response?.status || error.message);
+                            currentRouteIndex++;
+                            tryNextRoute();
+                        });
+                }
+                
+                tryNextRoute();
+            });
+        }
+
+        // Function untuk handle error
+        function handleError(error, defaultMessage) {
+            let message = defaultMessage;
+            
+            if (error.response) {
+                // Server merespons dengan status error
+                switch(error.response.status) {
+                    case 404:
+                        message = 'Data tidak ditemukan atau route tidak tersedia';
+                        break;
+                    case 403:
+                        message = 'Anda tidak memiliki akses untuk melakukan tindakan ini';
+                        break;
+                    case 422:
+                        message = 'Data yang dikirim tidak valid';
+                        if (error.response.data.errors) {
+                            const errors = Object.values(error.response.data.errors).flat();
+                            message += ': ' + errors.join(', ');
+                        }
+                        break;
+                    case 500:
+                        message = 'Terjadi kesalahan server internal';
+                        break;
+                    default:
+                        message = `${defaultMessage} (Status: ${error.response.status})`;
+                }
+                
+                console.error('Response error:', error.response.data);
+            } else if (error.request) {
+                message = 'Tidak ada respons dari server. Periksa koneksi internet atau route backend.';
+                console.error('Request error:', error.request);
+            } else {
+                message = `Error: ${error.message}`;
+                console.error('General error:', error.message);
+            }
+            
+            Swal.fire('Error', message, 'error');
+        }
+
+        // Set waktu dan tanggal real time
         function updateDateTime() {
             const now = new Date();
 
-            // Format waktu (jam:menit:detik)
             const time = now.toLocaleTimeString('id-ID', {
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit'
             });
 
-            // Format tanggal (Hari, tanggal bulan tahun)
             const date = now.toLocaleDateString('id-ID', {
                 weekday: 'long',
                 day: 'numeric',
@@ -371,8 +666,11 @@
                 year: 'numeric'
             });
 
-            document.getElementById('currentTime').textContent = time;
-            document.getElementById('currentDate').textContent = date;
+            const timeEl = document.getElementById('currentTime');
+            const dateEl = document.getElementById('currentDate');
+            
+            if (timeEl) timeEl.textContent = time;
+            if (dateEl) dateEl.textContent = date;
         }
 
         // Jalankan saat pertama kali dan setiap 1 detik
@@ -390,578 +688,16 @@
             });
         });
 
-        function deletedata(id) {
-            fetch(`/api/pengeluaran/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Gagal menghapus data');
-                    }
-                    return response.json();
-                })
-                .then(() => {
-                    const row = document.querySelector(`tr[data-id="${id}"]`);
-                    if (row) {
-                        row.classList.add('animate__animated', 'animate__fadeOut');
-                        setTimeout(() => {
-                            row.remove();
-                        }, 500);
-                    }
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Terhapus!',
-                        text: 'Data berhasil dihapus.',
-                        showConfirmButton: false,
-                        timer: 2000
-                    });
-                    location.reload();
-                })
-                .catch(error => {
-                    let message = 'Gagal mengupdate data.';
-
-                    if (error.response) {
-                        message += ` (${error.response.status} - ${error.response.statusText})`;
-                        console.error(error.response.data);
-                    }
-
-                    if (error.response) {
-                        // Server merespons dengan status di luar 2xx
-                        message = `Gagal mengambil data. Status: ${error.response.status} - ${error.response.statusText}`;
-                        console.error('Detail error:', error.response.data);
-                    } else if (error.request) {
-                        // Permintaan dikirim tapi tidak ada respons
-                        message = 'Tidak ada respons dari server. Cek koneksi atau endpoint.';
-                        console.error('Permintaan:', error.request);
-                    } else {
-                        // Terjadi kesalahan saat men-setup request
-                        message = `Error saat menyiapkan permintaan: ${error.message}`;
-                    }
-                    Swal.fire('Error', message, 'error');
-                    console.error('Error detail:', error);
-                });
-        }
-
-
-        const kategoriList = @json($categories);
-
-
-
-        function editData(id) {
-            axios.get(`/api/pengeluaran/${id}`)
-                .then(response => {
-                    const data = response.data;
-
-                    // Buat <option> untuk kategori dari kategoriList
-                    let kategoriOptions = `<option value="">-- Pilih Kategori --</option>`;
-                    kategoriList.forEach(kategori => {
-                        const selected = data.expense_category_id === kategori.id ? 'selected' : '';
-                        kategoriOptions += `<option value="${kategori.id}" ${selected}>${kategori.name}</option>`;
-                    });
-
-                    const tanggal = new Date(data.expense_date).toISOString().split('T')[0];
-
-                    const editHtml = `
-                <input type="hidden" name="id" value="${data.id}">
-               <div class="form-group">
-    <label for="creator">Nama <span class="text-danger">*</span></label>
-    <input type="text" class="form-control" name="creator" value="${data.creator?.name ?? '-'}" readonly>
-</div>
-
-                <div class="form-group">
-                    <label for="edit_tanggal">Tanggal <span class="text-danger">*</span></label>
-                    <input type="date" class="form-control" name="expense_date" value="${tanggal}" required>
-                </div>
-                <div class="form-group">
-                    <label for="edit_kategori">Kategori <span class="text-danger">*</span></label>
-                    <select name="expense_category_id" class="form-control" required>
-                        ${kategoriOptions}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="edit_amount">Jumlah (Rp) <span class="text-danger">*</span></label>
-                    <input type="number" class="form-control" name="amount" value="${data.amount}" min="0" step="1" required>
-                </div>
-                <div class="form-group">
-                    <label for="edit_deskripsi">Deskripsi</label>
-                    <textarea class="form-control" name="description" rows="2">${data.description ?? ''}</textarea>
-                </div>
-                <div class="form-group">
-                    <label for="edit_catatan">Catatan</label>
-                    <textarea class="form-control" name="notes" rows="2">${data.notes ?? ''}</textarea>
-                </div>
-            `;
-
-                    document.getElementById('editContent').innerHTML = editHtml;
-                    document.getElementById('editBahanForm').action = `/api/pengeluaran/${id}`;
-                    $('#editModal').modal('show');
-                })
-                .catch(error => {
-                    let message = 'Terjadi kesalahan tak dikenal.';
-                    if (error.response) {
-                        message = `Gagal mengambil data. Status: ${error.response.status} - ${error.response.statusText}`;
-                        console.error('Detail error:', error.response.data);
-                    } else if (error.request) {
-                        message = 'Tidak ada respons dari server. Cek koneksi atau endpoint.';
-                        console.error('Permintaan:', error.request);
-                    } else {
-                        message = `Error saat menyiapkan permintaan: ${error.message}`;
-                    }
-
-                    Swal.fire('Gagal', message, 'error');
-                });
-        }
-
-        $('#editBahanForm').on('submit', function(e) {
-            e.preventDefault();
-
-            const submitBtn = $(this).find('button[type="submit"]');
-            const originalHtml = submitBtn.html();
-            submitBtn.html('<i class="fas fa-spinner fa-spin mr-1"></i> Updating...').prop('disabled', true);
-
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData.entries()); // Convert FormData to plain object
-            const id = data.id;
-
-            axios.put(`/api/pengeluaran/${id}`, data)
-                .then(response => {
-                    submitBtn.html(originalHtml).prop('disabled', false);
-                    $('#editModal').modal('hide');
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil!',
-                        text: 'Data bahan baku berhasil diupdate.',
-                        showConfirmButton: false,
-                        timer: 2000
-                    });
-
-                    // Update row jika kamu punya fungsinya
-                    updateTableRow(id, response.data);
-                })
-                .catch(error => {
-                    submitBtn.html(originalHtml).prop('disabled', false);
-                    let message = 'Gagal mengupdate data.';
-
-                    if (error.response) {
-                        message += ` (${error.response.status} - ${error.response.statusText})`;
-                        console.error(error.response.data);
-                    }
-
-                    if (error.response) {
-                        // Server merespons dengan status di luar 2xx
-                        message = `Gagal mengambil data. Status: ${error.response.status} - ${error.response.statusText}`;
-                        console.error('Detail error:', error.response.data);
-                    } else if (error.request) {
-                        // Permintaan dikirim tapi tidak ada respons
-                        message = 'Tidak ada respons dari server. Cek koneksi atau endpoint.';
-                        console.error('Permintaan:', error.request);
-                    } else {
-                        // Terjadi kesalahan saat men-setup request
-                        message = `Error saat menyiapkan permintaan: ${error.message}`;
-                    }
-                    Swal.fire('Error', message, 'error');
-                });
-        });
-
-
-        function updateTableRow(id, data) {
-            const row = document.querySelector(`tr[data-id="${id}"]`);
-            if (row) {
-                const tanggal = new Date(data.expense_date).toLocaleDateString('id-ID', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
-                });
-
-                row.innerHTML = `
-            <td>${data.id}</td>
-            <td>${data.creator?.name ?? '-'}</td>
-            <td>${data.category?.name ?? '-'}</td>
-            <td>${tanggal}</td>
-            <td>${data.description ?? '-'}</td>
-            <td>${data.notes ?? '-'}</td>
-            <td>Rp${Number(data.amount).toLocaleString('id-ID', { minimumFractionDigits: 2 })}</td>
-            <td class="text-center">
-                <div class="btn-group btn-group-sm">
-                    <button type="button" class="btn btn-info btn-sm" onclick="showDetail(${data.id})" title="Detail" data-toggle="tooltip">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button type="button" class="btn btn-warning btn-sm" onclick="editData(${data.id})" title="Edit" data-toggle="tooltip">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteData(${data.id})" title="Hapus" data-toggle="tooltip">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            </td>
-        `;
-
-                // Re-init tooltip
-                $('[data-toggle="tooltip"]').tooltip();
-            }
-        }
-
-
-
-
-
-
-        function showInputModal() {
-            // Reset form
-            document.getElementById('inputBahanForm').reset();
-            document.getElementById('tanggal_masuk').value = '{{ date("Y-m-d") }}';
-            document.getElementById('stok_minimum').value = '10';
-            document.getElementById('totalNilai').textContent = 'Rp 0';
-
-            // Show modal
-            $('#inputBahanModal').modal('show');
-        }
-
-        $('#inputBahanForm').on('submit', function(e) {
-            e.preventDefault();
-
-            // Show loading state
-            const submitBtn = $(this).find('button[type="submit"]');
-            const originalHtml = submitBtn.html();
-            submitBtn.html('<i class="fas fa-spinner fa-spin mr-1"></i> Menyimpan...').prop('disabled', true);
-
-            // Get form data
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData);
-
-            // Simulate API call
-            setTimeout(() => {
-                // Reset button
-                submitBtn.html(originalHtml).prop('disabled', false);
-
-                // Hide modal
-                $('#inputBahanModal').modal('hide');
-
-                // Show success message
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: 'Data bahan baku berhasil disimpan.',
-                    showConfirmButton: false,
-                    timer: 2000
-                });
-
-                // Add new row to table (in real implementation, refresh from server)
-                addNewRowToTable(data);
-
-            }, 1500);
-        });
-        // Set today's date as default for filter
-        document.getElementById('filter_date').value = new Date().toISOString().split('T')[0];
-
-        // Filter Functions
-        function applyFilter() {
-            const date = document.getElementById('filter_date').value;
-            const category = document.getElementById('filter_category').value;
-
-            // Simulate filtering (in real implementation, this would send AJAX request)
-            console.log('Applying filter:', {
-                date,
-                category
-            });
-
-            // Show loading state
-            const btn = event.target;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>Filtering...';
-            btn.disabled = true;
-
-            // Simulate API call
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-
-                // Show success message
-                showNotification('Filter berhasil diterapkan!', 'success');
-            }, 1000);
-        }
-
-        function resetFilter() {
-            document.getElementById('filter_date').value = new Date().toISOString().split('T')[0];
-            document.getElementById('filter_category').value = '';
-            showNotification('Filter berhasil direset!', 'info');
-        }
-
-        // Notification function
-        function showNotification(message, type = 'info') {
-            const alertClass = type === 'success' ? 'alert-success' : type === 'danger' ? 'alert-danger' : 'alert-info';
-            const iconClass = type === 'success' ? 'fa-check-circle' : type === 'danger' ? 'fa-exclamation-triangle' : 'fa-info-circle';
-
-            const alert = document.createElement('div');
-            alert.className = `alert ${alertClass} alert-dismissible fade show position-fixed`;
-            alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; max-width: 350px;';
-            alert.innerHTML = `
-                <i class="fas ${iconClass} mr-2"></i>
-                ${message}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            `;
-
-            document.body.appendChild(alert);
-
-            // Auto remove after 3 seconds
-            setTimeout(() => {
-                if (alert.parentNode) {
-                    alert.remove();
-                }
-            }, 3000);
-        }
-
-        // Enhanced sidebar toggle
-        document.addEventListener('DOMContentLoaded', function() {
-            const toggleButton = document.querySelector('[data-widget="pushmenu"]');
-            const toggleIcon = document.getElementById('toggleIcon');
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            const sidebar = document.querySelector('.main-sidebar');
-
-            // Function to toggle sidebar
-            function toggleSidebar() {
-                const isMobile = window.innerWidth <= 768;
-
-                if (isMobile) {
-                    // Mobile behavior
-                    document.body.classList.toggle('sidebar-open');
-                    if (mobileMenuBtn) {
-                        const icon = mobileMenuBtn.querySelector('i');
-                        if (document.body.classList.contains('sidebar-open')) {
-                            icon.classList.remove('fa-bars');
-                            icon.classList.add('fa-times');
-                        } else {
-                            icon.classList.remove('fa-times');
-                            icon.classList.add('fa-bars');
-                        }
-                    }
-                } else {
-                    // Desktop behavior
-                    document.body.classList.toggle('sidebar-collapse');
-
-                    // Update icon rotation
-                    if (toggleIcon) {
-                        if (document.body.classList.contains('sidebar-collapse')) {
-                            toggleIcon.style.transform = 'rotate(180deg)';
-                            toggleIcon.classList.remove('fa-chevron-left');
-                            toggleIcon.classList.add('fa-chevron-right');
-                        } else {
-                            toggleIcon.style.transform = 'rotate(0deg)';
-                            toggleIcon.classList.remove('fa-chevron-right');
-                            toggleIcon.classList.add('fa-chevron-left');
-                        }
-                    }
-                }
-            }
-
-            // Desktop toggle button
-            if (toggleButton) {
-                toggleButton.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    toggleSidebar();
-                });
-            }
-
-            // Mobile menu button
-            if (mobileMenuBtn) {
-                mobileMenuBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    toggleSidebar();
-                });
-            }
-
-            // Backup event listener - click anywhere on brand-link when collapsed
-            document.querySelector('.brand-link').addEventListener('click', function(e) {
-                if (document.body.classList.contains('sidebar-collapse') && window.innerWidth > 768) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    toggleSidebar();
-                }
-            });
-
-            // Close mobile sidebar when clicking outside
-            document.addEventListener('click', function(e) {
-                if (window.innerWidth <= 768 && document.body.classList.contains('sidebar-open')) {
-                    if (!sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
-                        document.body.classList.remove('sidebar-open');
-                        if (mobileMenuBtn) {
-                            const icon = mobileMenuBtn.querySelector('i');
-                            icon.classList.remove('fa-times');
-                            icon.classList.add('fa-bars');
-                        }
-                    }
-                }
-            });
-
-            // Handle window resize
-            window.addEventListener('resize', function() {
-                if (window.innerWidth > 768) {
-                    document.body.classList.remove('sidebar-open');
-                    if (mobileMenuBtn) {
-                        const icon = mobileMenuBtn.querySelector('i');
-                        icon.classList.remove('fa-times');
-                        icon.classList.add('fa-bars');
-                    }
-                }
-            });
-
-            // Keyboard shortcut: Ctrl + B to toggle sidebar
-            document.addEventListener('keydown', function(e) {
-                if (e.ctrlKey && e.key === 'b') {
-                    e.preventDefault();
-                    toggleSidebar();
-                }
-            });
-
-            // Handle treeview menu
-            document.querySelectorAll('.nav-item.has-treeview > .nav-link').forEach(function(link) {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-
-                    // Don't open treeview when sidebar is collapsed
-                    if (document.body.classList.contains('sidebar-collapse') && window.innerWidth > 768) {
-                        return;
-                    }
-
-                    const navItem = this.parentElement;
-                    const treeview = navItem.querySelector('.nav-treeview');
-                    const icon = this.querySelector('.right');
-
-                    if (treeview) {
-                        // Toggle open state
-                        navItem.classList.toggle('menu-open');
-
-                        // Animate treeview
-                        if (navItem.classList.contains('menu-open')) {
-                            treeview.style.display = 'block';
-                            treeview.style.maxHeight = '0';
-                            treeview.style.overflow = 'hidden';
-                            treeview.style.transition = 'max-height 0.3s ease';
-
-                            // Calculate height
-                            const height = treeview.scrollHeight;
-                            setTimeout(() => {
-                                treeview.style.maxHeight = height + 'px';
-                            }, 10);
-
-                            // Rotate icon
-                            if (icon) {
-                                icon.style.transform = 'rotate(-90deg)';
-                            }
-                        } else {
-                            treeview.style.maxHeight = '0';
-
-                            setTimeout(() => {
-                                treeview.style.display = 'none';
-                            }, 300);
-
-                            // Rotate icon back
-                            if (icon) {
-                                icon.style.transform = 'rotate(0deg)';
-                            }
-                        }
-                    }
-                });
-            });
-        });
-
-
-        // Add click animation to action buttons
-        document.querySelectorAll('.btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                // Add ripple effect
-                const ripple = document.createElement('span');
-                const rect = this.getBoundingClientRect();
-                const size = Math.max(rect.width, rect.height);
-                const x = e.clientX - rect.left - size / 2;
-                const y = e.clientY - rect.top - size / 2;
-
-                ripple.style.cssText = `
-                    position: absolute;
-                    width: ${size}px;
-                    height: ${size}px;
-                    left: ${x}px;
-                    top: ${y}px;
-                    background: rgba(255, 255, 255, 0.4);
-                    border-radius: 50%;
-                    transform: scale(0);
-                    animation: ripple 0.6s linear;
-                    pointer-events: none;
-                `;
-
-                this.style.position = 'relative';
-                this.style.overflow = 'hidden';
-                this.appendChild(ripple);
-
-                setTimeout(() => {
-                    ripple.remove();
-                }, 600);
-            });
-        });
-
-        // Add CSS for ripple animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes ripple {
-                to {
-                    transform: scale(4);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Initialize tooltips
-        $('[data-toggle="tooltip"]').tooltip();
-
-        // Add smooth scrolling
-        document.documentElement.style.scrollBehavior = 'smooth';
-
-        // Simulate real-time data updates for info boxes
-        function updateInfoBoxes() {
-            const infoBoxNumbers = document.querySelectorAll('.info-box-number');
-            // This would be replaced with actual API calls in production
-
-            // Just for demo - add subtle animation to show "live" data
-            infoBoxNumbers.forEach(box => {
-                box.style.transform = 'scale(1.02)';
-                setTimeout(() => {
-                    box.style.transform = 'scale(1)';
-                }, 200);
-            });
-        }
-
-        // Update info boxes every 30 seconds (demo)
-        setInterval(updateInfoBoxes, 30000);
-
-        // Add keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            // Ctrl + N for new expense
-            if (e.ctrlKey && e.key === 'n') {
-                e.preventDefault();
-                window.location.href = '/formpengeluaran';
-            }
-
-            // Ctrl + F for focus on date filter
-            if (e.ctrlKey && e.key === 'f') {
-                e.preventDefault();
-                document.getElementById('filter_date').focus();
-            }
-        });
+        // Debug function
+        window.debugExpense = function() {
+            console.log('=== Debug Info ===');
+            console.log('CSRF Token:', $('meta[name="csrf-token"]').attr('content'));
+            console.log('Categories:', kategoriList);
+            console.log('Current Edit ID:', currentEditId);
+            console.log('Axios defaults:', axios.defaults.headers.common);
+        };
+        
+        console.log('Script loaded successfully. Type debugExpense() for debug info.');
     </script>
-
 </body>
-
 </html>
